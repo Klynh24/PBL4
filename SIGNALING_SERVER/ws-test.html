@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signaling Server WebSocket Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 24px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            margin-bottom: 8px;
+        }
+        .panel {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        label {
+            display: inline-block;
+            margin-right: 12px;
+        }
+        input[type="text"] {
+            width: 260px;
+            padding: 4px 6px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 8px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        button {
+            margin: 4px 6px 4px 0;
+            padding: 6px 12px;
+        }
+        #log {
+            height: 280px;
+            overflow-y: auto;
+            background-color: #111;
+            color: #e0e0e0;
+            font-family: monospace;
+            padding: 12px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+        .log-inbound {
+            color: #4caf50;
+        }
+        .log-outbound {
+            color: #ff9800;
+        }
+        .log-error {
+            color: #f44336;
+        }
+        #status {
+            font-weight: bold;
+            margin-left: 12px;
+        }
+    </style>
+</head>
+<body>
+<h1>Signaling Server WebSocket Tester</h1>
+
+<div class="panel">
+    <label>
+        Endpoint URL:
+        <input id="url" type="text" value="ws://localhost:8080/ws">
+    </label>
+    <label>
+        Client ID:
+        <input id="clientId" type="text" placeholder="peer-a">
+    </label>
+    <button id="connectBtn">Connect</button>
+    <button id="disconnectBtn" disabled>Disconnect</button>
+    <span id="status">Disconnected</span>
+</div>
+
+<div class="panel">
+    <p>Payload (JSON):</p>
+    <textarea id="messageInput" placeholder='{"type":"join","roomId":"room-42"}'></textarea>
+    <div>
+        <button data-template="join">Fill Join</button>
+        <button data-template="leave">Fill Leave</button>
+        <button data-template="offer">Fill Offer</button>
+        <button data-template="answer">Fill Answer</button>
+        <button data-template="candidate">Fill Candidate</button>
+        <button data-template="ping">Fill Ping</button>
+    </div>
+    <button id="sendBtn">Send</button>
+</div>
+
+<div class="panel">
+    <p>Log:</p>
+    <div id="log"></div>
+</div>
+
+<script>
+    const connectBtn = document.getElementById('connectBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const statusSpan = document.getElementById('status');
+    const urlInput = document.getElementById('url');
+    const clientIdInput = document.getElementById('clientId');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const logView = document.getElementById('log');
+    const templateButtons = document.querySelectorAll('button[data-template]');
+
+    let socket = null;
+
+    const templates = {
+        join: JSON.stringify({ type: 'join', roomId: 'room-42' }, null, 2),
+        leave: JSON.stringify({ type: 'leave' }, null, 2),
+        offer: JSON.stringify({ type: 'offer', roomId: 'room-42', target: 'peer-b', payload: { sdp: '...' } }, null, 2),
+        answer: JSON.stringify({ type: 'answer', roomId: 'room-42', target: 'peer-a', payload: { sdp: '...' } }, null, 2),
+        candidate: JSON.stringify({
+            type: 'candidate',
+            roomId: 'room-42',
+            target: 'peer-b',
+            payload: { candidate: 'candidate:0 1 UDP 2122252543 192.168.1.10 54321 typ host' }
+        }, null, 2),
+        ping: JSON.stringify({ type: 'ping' }, null, 2)
+    };
+
+    const log = (message, level = 'info') => {
+        const line = document.createElement('div');
+        if (level === 'inbound') {
+            line.className = 'log-inbound';
+        } else if (level === 'outbound') {
+            line.className = 'log-outbound';
+        } else if (level === 'error') {
+            line.className = 'log-error';
+        }
+        const timestamp = new Date().toLocaleTimeString();
+        line.textContent = `[${timestamp}] ${message}`;
+        logView.appendChild(line);
+        logView.scrollTop = logView.scrollHeight;
+    };
+
+    const setConnectedState = (connected) => {
+        connectBtn.disabled = connected;
+        disconnectBtn.disabled = !connected;
+        statusSpan.textContent = connected ? 'Connected' : 'Disconnected';
+        statusSpan.style.color = connected ? '#4caf50' : '#f44336';
+    };
+
+    const buildUrl = () => {
+        const base = urlInput.value.trim();
+        const clientId = clientIdInput.value.trim();
+        if (!clientId) {
+            return base;
+        }
+        const separator = base.includes('?') ? '&' : '?';
+        return `${base}${separator}clientId=${encodeURIComponent(clientId)}`;
+    };
+
+    connectBtn.addEventListener('click', () => {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            log('WebSocket is already connected.', 'error');
+            return;
+        }
+        const url = buildUrl();
+        if (!url) {
+            log('Please provide the WebSocket endpoint URL.', 'error');
+            return;
+        }
+        log(`Connecting to ${url}...`);
+        try {
+            socket = new WebSocket(url);
+        } catch (err) {
+            log(`Failed to create WebSocket: ${err.message}`, 'error');
+            return;
+        }
+        setConnectedState(false);
+        socket.addEventListener('open', () => {
+            log('Connection opened.');
+            setConnectedState(true);
+        });
+        socket.addEventListener('message', (event) => {
+            log(`⬇ ${event.data}`, 'inbound');
+        });
+        socket.addEventListener('close', (event) => {
+            log(`Connection closed (code=${event.code}, reason=${event.reason || 'n/a'}).`);
+            setConnectedState(false);
+        });
+        socket.addEventListener('error', (event) => {
+            log('WebSocket error encountered.', 'error');
+        });
+    });
+
+    disconnectBtn.addEventListener('click', () => {
+        if (socket) {
+            socket.close(1000, 'Client requested');
+            socket = null;
+        }
+    });
+
+    sendBtn.addEventListener('click', () => {
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+            log('Cannot send message: WebSocket is not connected.', 'error');
+            return;
+        }
+        const payload = messageInput.value.trim();
+        if (!payload) {
+            log('Please enter a JSON payload before sending.', 'error');
+            return;
+        }
+        try {
+            JSON.parse(payload);
+        } catch (err) {
+            log(`Payload is not valid JSON: ${err.message}`, 'error');
+            return;
+        }
+        socket.send(payload);
+        log(`⬆ ${payload}`, 'outbound');
+    });
+
+    templateButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const key = btn.getAttribute('data-template');
+            messageInput.value = templates[key] || '';
+        });
+    });
+</script>
+</body>
+</html>

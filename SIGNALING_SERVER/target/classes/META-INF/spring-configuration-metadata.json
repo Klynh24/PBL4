@@ -1,0 +1,92 @@
+{
+  "groups": [
+    {
+      "name": "signaling",
+      "type": "com.example.signaling.config.SignalingProperties",
+      "sourceType": "com.example.signaling.config.SignalingProperties"
+    },
+    {
+      "name": "signaling.auth",
+      "type": "com.example.signaling.config.SignalingProperties$Auth",
+      "sourceType": "com.example.signaling.config.SignalingProperties",
+      "sourceMethod": "getAuth()"
+    },
+    {
+      "name": "signaling.redis",
+      "type": "com.example.signaling.config.SignalingProperties$Redis",
+      "sourceType": "com.example.signaling.config.SignalingProperties",
+      "sourceMethod": "getRedis()"
+    },
+    {
+      "name": "signaling.websocket",
+      "type": "com.example.signaling.config.SignalingProperties$Websocket",
+      "sourceType": "com.example.signaling.config.SignalingProperties",
+      "sourceMethod": "getWebsocket()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "signaling.auth.clock-skew-seconds",
+      "type": "java.lang.Long",
+      "sourceType": "com.example.signaling.config.SignalingProperties$Auth",
+      "defaultValue": 60
+    },
+    {
+      "name": "signaling.auth.enabled",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.example.signaling.config.SignalingProperties$Auth",
+      "defaultValue": false
+    },
+    {
+      "name": "signaling.auth.issuer",
+      "type": "java.lang.String",
+      "sourceType": "com.example.signaling.config.SignalingProperties$Auth",
+      "defaultValue": "signaling-server"
+    },
+    {
+      "name": "signaling.auth.jwt-secret",
+      "type": "java.lang.String",
+      "sourceType": "com.example.signaling.config.SignalingProperties$Auth",
+      "defaultValue": "change-me"
+    },
+    {
+      "name": "signaling.max-payload-bytes",
+      "type": "java.lang.Integer",
+      "sourceType": "com.example.signaling.config.SignalingProperties",
+      "defaultValue": 0
+    },
+    {
+      "name": "signaling.redis.channel-prefix",
+      "type": "java.lang.String",
+      "sourceType": "com.example.signaling.config.SignalingProperties$Redis",
+      "defaultValue": "signaling.room."
+    },
+    {
+      "name": "signaling.redis.enabled",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.example.signaling.config.SignalingProperties$Redis",
+      "defaultValue": false
+    },
+    {
+      "name": "signaling.websocket.allow-sock-js",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.example.signaling.config.SignalingProperties$Websocket",
+      "defaultValue": false
+    },
+    {
+      "name": "signaling.websocket.allowed-origins",
+      "type": "java.lang.String[]",
+      "sourceType": "com.example.signaling.config.SignalingProperties$Websocket",
+      "defaultValue": [
+        "*"
+      ]
+    },
+    {
+      "name": "signaling.websocket.path",
+      "type": "java.lang.String",
+      "sourceType": "com.example.signaling.config.SignalingProperties$Websocket",
+      "defaultValue": "\/ws"
+    }
+  ],
+  "hints": []
+}
