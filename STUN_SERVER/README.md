@@ -16,7 +16,7 @@ sudo apt-get install libboost-filesystem-dev
 
 ## Biên dịch dự án
 ```bash
-cd STUN_SERVER
+rm -rf build                 # gỡ file biên dịch cũ (nếu có)
 cmake -S . -B build          # bước cấu hình
 cmake --build build          # biên dịch tất cả target (server + client)
 ```
