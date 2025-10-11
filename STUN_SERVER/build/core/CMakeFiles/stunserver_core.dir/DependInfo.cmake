@@ -8,15 +8,15 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/root/STUN_SERVER/core/buffer.cpp" "core/CMakeFiles/stunserver_core.dir/buffer.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/buffer.cpp.o.d"
-  "/root/STUN_SERVER/core/datastream.cpp" "core/CMakeFiles/stunserver_core.dir/datastream.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/datastream.cpp.o.d"
-  "/root/STUN_SERVER/core/messagehandler.cpp" "core/CMakeFiles/stunserver_core.dir/messagehandler.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/messagehandler.cpp.o.d"
-  "/root/STUN_SERVER/core/socketaddress.cpp" "core/CMakeFiles/stunserver_core.dir/socketaddress.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/socketaddress.cpp.o.d"
-  "/root/STUN_SERVER/core/stunbuilder.cpp" "core/CMakeFiles/stunserver_core.dir/stunbuilder.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/stunbuilder.cpp.o.d"
-  "/root/STUN_SERVER/core/stunclientlogic.cpp" "core/CMakeFiles/stunserver_core.dir/stunclientlogic.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/stunclientlogic.cpp.o.d"
-  "/root/STUN_SERVER/core/stunclienttests.cpp" "core/CMakeFiles/stunserver_core.dir/stunclienttests.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/stunclienttests.cpp.o.d"
-  "/root/STUN_SERVER/core/stunreader.cpp" "core/CMakeFiles/stunserver_core.dir/stunreader.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/stunreader.cpp.o.d"
-  "/root/STUN_SERVER/core/stunutils.cpp" "core/CMakeFiles/stunserver_core.dir/stunutils.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/stunutils.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/core/buffer.cpp" "core/CMakeFiles/stunserver_core.dir/buffer.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/buffer.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/core/datastream.cpp" "core/CMakeFiles/stunserver_core.dir/datastream.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/datastream.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/core/messagehandler.cpp" "core/CMakeFiles/stunserver_core.dir/messagehandler.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/messagehandler.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/core/socketaddress.cpp" "core/CMakeFiles/stunserver_core.dir/socketaddress.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/socketaddress.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/core/stunbuilder.cpp" "core/CMakeFiles/stunserver_core.dir/stunbuilder.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/stunbuilder.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/core/stunclientlogic.cpp" "core/CMakeFiles/stunserver_core.dir/stunclientlogic.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/stunclientlogic.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/core/stunclienttests.cpp" "core/CMakeFiles/stunserver_core.dir/stunclienttests.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/stunclienttests.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/core/stunreader.cpp" "core/CMakeFiles/stunserver_core.dir/stunreader.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/stunreader.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/core/stunutils.cpp" "core/CMakeFiles/stunserver_core.dir/stunutils.cpp.o" "gcc" "core/CMakeFiles/stunserver_core.dir/stunutils.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

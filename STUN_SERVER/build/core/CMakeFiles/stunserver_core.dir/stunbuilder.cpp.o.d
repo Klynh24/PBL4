@@ -1,6 +1,6 @@
 core/CMakeFiles/stunserver_core.dir/stunbuilder.cpp.o: \
- /root/STUN_SERVER/core/stunbuilder.cpp /usr/include/stdc-predef.h \
- /root/STUN_SERVER/common/commonincludes.hpp \
+ /mnt/hgfs/STUN_SERVER/core/stunbuilder.cpp /usr/include/stdc-predef.h \
+ /mnt/hgfs/STUN_SERVER/common/commonincludes.hpp \
  /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -291,15 +291,18 @@ core/CMakeFiles/stunserver_core.dir/stunbuilder.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/epoll.h /usr/include/poll.h \
  /usr/include/x86_64-linux-gnu/sys/poll.h \
  /usr/include/x86_64-linux-gnu/bits/poll.h \
- /root/STUN_SERVER/common/hresult.h /root/STUN_SERVER/common/chkmacros.h \
- /root/STUN_SERVER/common/refcountobject.h \
- /root/STUN_SERVER/common/objectfactory.h \
- /root/STUN_SERVER/common/logger.h \
- /root/STUN_SERVER/common/stringhelper.h \
- /root/STUN_SERVER/common/atomichelpers.h \
- /root/STUN_SERVER/core/stunbuilder.h /root/STUN_SERVER/core/datastream.h \
- /root/STUN_SERVER/core/buffer.h /root/STUN_SERVER/core/socketaddress.h \
- /root/STUN_SERVER/core/stuntypes.h /usr/include/boost/crc.hpp \
+ /mnt/hgfs/STUN_SERVER/common/hresult.h \
+ /mnt/hgfs/STUN_SERVER/common/chkmacros.h \
+ /mnt/hgfs/STUN_SERVER/common/refcountobject.h \
+ /mnt/hgfs/STUN_SERVER/common/objectfactory.h \
+ /mnt/hgfs/STUN_SERVER/common/logger.h \
+ /mnt/hgfs/STUN_SERVER/common/stringhelper.h \
+ /mnt/hgfs/STUN_SERVER/common/atomichelpers.h \
+ /mnt/hgfs/STUN_SERVER/core/stunbuilder.h \
+ /mnt/hgfs/STUN_SERVER/core/datastream.h \
+ /mnt/hgfs/STUN_SERVER/core/buffer.h \
+ /mnt/hgfs/STUN_SERVER/core/socketaddress.h \
+ /mnt/hgfs/STUN_SERVER/core/stuntypes.h /usr/include/boost/crc.hpp \
  /usr/include/boost/array.hpp /usr/include/boost/detail/workaround.hpp \
  /usr/include/c++/13/iterator /usr/include/c++/13/bits/stream_iterator.h \
  /usr/include/c++/13/bits/streambuf_iterator.h \
@@ -339,4 +342,4 @@ core/CMakeFiles/stunserver_core.dir/stunbuilder.cpp.o: \
  /usr/include/openssl/bnerr.h /usr/include/openssl/objects.h \
  /usr/include/openssl/obj_mac.h /usr/include/openssl/asn1.h \
  /usr/include/openssl/asn1err.h /usr/include/openssl/objectserr.h \
- /root/STUN_SERVER/core/stunauth.h
+ /mnt/hgfs/STUN_SERVER/core/stunauth.h

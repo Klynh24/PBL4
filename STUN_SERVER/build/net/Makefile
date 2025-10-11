@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/STUN_SERVER
+CMAKE_SOURCE_DIR = /mnt/hgfs/STUN_SERVER
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/STUN_SERVER/build
+CMAKE_BINARY_DIR = /mnt/hgfs/STUN_SERVER/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /root/STUN_SERVER/build && $(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles /root/STUN_SERVER/build/net//CMakeFiles/progress.marks
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 net/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 0
+	cd /mnt/hgfs/STUN_SERVER/build && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles /mnt/hgfs/STUN_SERVER/build/net//CMakeFiles/progress.marks
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 net/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 net/clean
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 net/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,22 +103,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 net/preinstall
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 net/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 net/preinstall
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 net/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /root/STUN_SERVER/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /mnt/hgfs/STUN_SERVER/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 net/CMakeFiles/stunserver_net.dir/rule:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 net/CMakeFiles/stunserver_net.dir/rule
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 net/CMakeFiles/stunserver_net.dir/rule
 .PHONY : net/CMakeFiles/stunserver_net.dir/rule
 
 # Convenience name for target.
@@ -127,7 +127,7 @@ stunserver_net: net/CMakeFiles/stunserver_net.dir/rule
 
 # fast build rule for target.
 stunserver_net/fast:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/build
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/build
 .PHONY : stunserver_net/fast
 
 adapters.o: adapters.cpp.o
@@ -135,7 +135,7 @@ adapters.o: adapters.cpp.o
 
 # target to build an object file
 adapters.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/adapters.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/adapters.cpp.o
 .PHONY : adapters.cpp.o
 
 adapters.i: adapters.cpp.i
@@ -143,7 +143,7 @@ adapters.i: adapters.cpp.i
 
 # target to preprocess a source file
 adapters.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/adapters.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/adapters.cpp.i
 .PHONY : adapters.cpp.i
 
 adapters.s: adapters.cpp.s
@@ -151,39 +151,15 @@ adapters.s: adapters.cpp.s
 
 # target to generate assembly for a file
 adapters.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/adapters.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/adapters.cpp.s
 .PHONY : adapters.cpp.s
-
-polling.o: polling.cpp.o
-.PHONY : polling.o
-
-# target to build an object file
-polling.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/polling.cpp.o
-.PHONY : polling.cpp.o
-
-polling.i: polling.cpp.i
-.PHONY : polling.i
-
-# target to preprocess a source file
-polling.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/polling.cpp.i
-.PHONY : polling.cpp.i
-
-polling.s: polling.cpp.s
-.PHONY : polling.s
-
-# target to generate assembly for a file
-polling.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/polling.cpp.s
-.PHONY : polling.cpp.s
 
 ratelimiter.o: ratelimiter.cpp.o
 .PHONY : ratelimiter.o
 
 # target to build an object file
 ratelimiter.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/ratelimiter.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/ratelimiter.cpp.o
 .PHONY : ratelimiter.cpp.o
 
 ratelimiter.i: ratelimiter.cpp.i
@@ -191,7 +167,7 @@ ratelimiter.i: ratelimiter.cpp.i
 
 # target to preprocess a source file
 ratelimiter.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/ratelimiter.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/ratelimiter.cpp.i
 .PHONY : ratelimiter.cpp.i
 
 ratelimiter.s: ratelimiter.cpp.s
@@ -199,7 +175,7 @@ ratelimiter.s: ratelimiter.cpp.s
 
 # target to generate assembly for a file
 ratelimiter.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/ratelimiter.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/ratelimiter.cpp.s
 .PHONY : ratelimiter.cpp.s
 
 recvfromex.o: recvfromex.cpp.o
@@ -207,7 +183,7 @@ recvfromex.o: recvfromex.cpp.o
 
 # target to build an object file
 recvfromex.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/recvfromex.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/recvfromex.cpp.o
 .PHONY : recvfromex.cpp.o
 
 recvfromex.i: recvfromex.cpp.i
@@ -215,7 +191,7 @@ recvfromex.i: recvfromex.cpp.i
 
 # target to preprocess a source file
 recvfromex.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/recvfromex.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/recvfromex.cpp.i
 .PHONY : recvfromex.cpp.i
 
 recvfromex.s: recvfromex.cpp.s
@@ -223,7 +199,7 @@ recvfromex.s: recvfromex.cpp.s
 
 # target to generate assembly for a file
 recvfromex.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/recvfromex.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/recvfromex.cpp.s
 .PHONY : recvfromex.cpp.s
 
 resolvehostname.o: resolvehostname.cpp.o
@@ -231,7 +207,7 @@ resolvehostname.o: resolvehostname.cpp.o
 
 # target to build an object file
 resolvehostname.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/resolvehostname.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/resolvehostname.cpp.o
 .PHONY : resolvehostname.cpp.o
 
 resolvehostname.i: resolvehostname.cpp.i
@@ -239,7 +215,7 @@ resolvehostname.i: resolvehostname.cpp.i
 
 # target to preprocess a source file
 resolvehostname.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/resolvehostname.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/resolvehostname.cpp.i
 .PHONY : resolvehostname.cpp.i
 
 resolvehostname.s: resolvehostname.cpp.s
@@ -247,7 +223,7 @@ resolvehostname.s: resolvehostname.cpp.s
 
 # target to generate assembly for a file
 resolvehostname.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/resolvehostname.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/resolvehostname.cpp.s
 .PHONY : resolvehostname.cpp.s
 
 stunsocket.o: stunsocket.cpp.o
@@ -255,7 +231,7 @@ stunsocket.o: stunsocket.cpp.o
 
 # target to build an object file
 stunsocket.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/stunsocket.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/stunsocket.cpp.o
 .PHONY : stunsocket.cpp.o
 
 stunsocket.i: stunsocket.cpp.i
@@ -263,7 +239,7 @@ stunsocket.i: stunsocket.cpp.i
 
 # target to preprocess a source file
 stunsocket.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/stunsocket.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/stunsocket.cpp.i
 .PHONY : stunsocket.cpp.i
 
 stunsocket.s: stunsocket.cpp.s
@@ -271,7 +247,7 @@ stunsocket.s: stunsocket.cpp.s
 
 # target to generate assembly for a file
 stunsocket.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/stunsocket.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/stunsocket.cpp.s
 .PHONY : stunsocket.cpp.s
 
 # Help Target
@@ -286,9 +262,6 @@ help:
 	@echo "... adapters.o"
 	@echo "... adapters.i"
 	@echo "... adapters.s"
-	@echo "... polling.o"
-	@echo "... polling.i"
-	@echo "... polling.s"
 	@echo "... ratelimiter.o"
 	@echo "... ratelimiter.i"
 	@echo "... ratelimiter.s"
@@ -312,6 +285,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /root/STUN_SERVER/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /mnt/hgfs/STUN_SERVER/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

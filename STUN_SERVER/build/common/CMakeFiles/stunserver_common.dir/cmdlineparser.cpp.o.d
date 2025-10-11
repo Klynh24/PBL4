@@ -1,6 +1,7 @@
 common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o: \
- /root/STUN_SERVER/common/cmdlineparser.cpp /usr/include/stdc-predef.h \
- /root/STUN_SERVER/common/commonincludes.hpp \
+ /mnt/hgfs/STUN_SERVER/common/cmdlineparser.cpp \
+ /usr/include/stdc-predef.h \
+ /mnt/hgfs/STUN_SERVER/common/commonincludes.hpp \
  /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -291,9 +292,10 @@ common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/epoll.h /usr/include/poll.h \
  /usr/include/x86_64-linux-gnu/sys/poll.h \
  /usr/include/x86_64-linux-gnu/bits/poll.h \
- /root/STUN_SERVER/common/hresult.h /root/STUN_SERVER/common/chkmacros.h \
- /root/STUN_SERVER/common/refcountobject.h \
- /root/STUN_SERVER/common/objectfactory.h \
- /root/STUN_SERVER/common/logger.h /usr/include/getopt.h \
+ /mnt/hgfs/STUN_SERVER/common/hresult.h \
+ /mnt/hgfs/STUN_SERVER/common/chkmacros.h \
+ /mnt/hgfs/STUN_SERVER/common/refcountobject.h \
+ /mnt/hgfs/STUN_SERVER/common/objectfactory.h \
+ /mnt/hgfs/STUN_SERVER/common/logger.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/getopt_ext.h \
- /root/STUN_SERVER/common/cmdlineparser.h
+ /mnt/hgfs/STUN_SERVER/common/cmdlineparser.h

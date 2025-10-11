@@ -1,6 +1,6 @@
 server/CMakeFiles/server.dir/main.cpp.o: \
- /root/STUN_SERVER/server/main.cpp /usr/include/stdc-predef.h \
- /root/STUN_SERVER/common/commonincludes.hpp \
+ /mnt/hgfs/STUN_SERVER/server/main.cpp /usr/include/stdc-predef.h \
+ /mnt/hgfs/STUN_SERVER/common/commonincludes.hpp \
  /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -291,10 +291,11 @@ server/CMakeFiles/server.dir/main.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/epoll.h /usr/include/poll.h \
  /usr/include/x86_64-linux-gnu/sys/poll.h \
  /usr/include/x86_64-linux-gnu/bits/poll.h \
- /root/STUN_SERVER/common/hresult.h /root/STUN_SERVER/common/chkmacros.h \
- /root/STUN_SERVER/common/refcountobject.h \
- /root/STUN_SERVER/common/objectfactory.h \
- /root/STUN_SERVER/common/logger.h \
+ /mnt/hgfs/STUN_SERVER/common/hresult.h \
+ /mnt/hgfs/STUN_SERVER/common/chkmacros.h \
+ /mnt/hgfs/STUN_SERVER/common/refcountobject.h \
+ /mnt/hgfs/STUN_SERVER/common/objectfactory.h \
+ /mnt/hgfs/STUN_SERVER/common/logger.h \
  /usr/include/boost/property_tree/ptree.hpp \
  /usr/include/boost/property_tree/ptree_fwd.hpp \
  /usr/include/boost/optional/optional_fwd.hpp \
@@ -972,33 +973,38 @@ server/CMakeFiles/server.dir/main.cpp.o: \
  /usr/include/c++/13/fstream \
  /usr/include/x86_64-linux-gnu/c++/13/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++io.h \
- /usr/include/c++/13/bits/fstream.tcc /root/STUN_SERVER/core/stuncore.h \
- /root/STUN_SERVER/core/buffer.h /root/STUN_SERVER/core/datastream.h \
- /root/STUN_SERVER/core/socketaddress.h \
- /root/STUN_SERVER/core/stuntypes.h /root/STUN_SERVER/core/stunbuilder.h \
- /root/STUN_SERVER/core/stunreader.h /root/STUN_SERVER/common/fasthash.h \
- /root/STUN_SERVER/core/stunutils.h \
- /root/STUN_SERVER/core/messagehandler.h \
- /root/STUN_SERVER/core/stunauth.h /root/STUN_SERVER/core/socketrole.h \
- /root/STUN_SERVER/core/stunclienttests.h \
- /root/STUN_SERVER/core/stunclientlogic.h \
- /root/STUN_SERVER/server/server.h /root/STUN_SERVER/net/stunsocket.h \
- /root/STUN_SERVER/server/stunsocketthread.h \
- /root/STUN_SERVER/net/ratelimiter.h /usr/include/c++/13/chrono \
+ /usr/include/c++/13/bits/fstream.tcc \
+ /mnt/hgfs/STUN_SERVER/core/stuncore.h \
+ /mnt/hgfs/STUN_SERVER/core/buffer.h \
+ /mnt/hgfs/STUN_SERVER/core/datastream.h \
+ /mnt/hgfs/STUN_SERVER/core/socketaddress.h \
+ /mnt/hgfs/STUN_SERVER/core/stuntypes.h \
+ /mnt/hgfs/STUN_SERVER/core/stunbuilder.h \
+ /mnt/hgfs/STUN_SERVER/core/stunreader.h \
+ /mnt/hgfs/STUN_SERVER/common/fasthash.h \
+ /mnt/hgfs/STUN_SERVER/core/stunutils.h \
+ /mnt/hgfs/STUN_SERVER/core/messagehandler.h \
+ /mnt/hgfs/STUN_SERVER/core/stunauth.h \
+ /mnt/hgfs/STUN_SERVER/core/socketrole.h \
+ /mnt/hgfs/STUN_SERVER/core/stunclienttests.h \
+ /mnt/hgfs/STUN_SERVER/core/stunclientlogic.h \
+ /mnt/hgfs/STUN_SERVER/server/server.h \
+ /mnt/hgfs/STUN_SERVER/net/stunsocket.h \
+ /mnt/hgfs/STUN_SERVER/server/stunsocketthread.h \
+ /mnt/hgfs/STUN_SERVER/net/ratelimiter.h /usr/include/c++/13/chrono \
  /usr/include/c++/13/bits/chrono.h /usr/include/c++/13/ratio \
  /usr/include/c++/13/cstdint /usr/include/c++/13/bits/parse_numbers.h \
  /usr/include/c++/13/mutex /usr/include/c++/13/bits/std_mutex.h \
  /usr/include/c++/13/bits/unique_lock.h \
- /root/STUN_SERVER/core/socketaddress.h /root/STUN_SERVER/core/stunauth.h \
- /root/STUN_SERVER/core/messagehandler.h \
- /root/STUN_SERVER/server/tcpserver.h \
- /root/STUN_SERVER/server/stunconnection.h \
- /root/STUN_SERVER/net/polling.h /root/STUN_SERVER/net/adapters.h \
- /root/STUN_SERVER/common/cmdlineparser.h /usr/include/getopt.h \
+ /mnt/hgfs/STUN_SERVER/core/socketaddress.h \
+ /mnt/hgfs/STUN_SERVER/core/stunauth.h \
+ /mnt/hgfs/STUN_SERVER/core/messagehandler.h \
+ /mnt/hgfs/STUN_SERVER/net/adapters.h \
+ /mnt/hgfs/STUN_SERVER/common/cmdlineparser.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/getopt_ext.h \
- /root/STUN_SERVER/common/prettyprint.h \
- /root/STUN_SERVER/common/oshelper.h \
- /root/STUN_SERVER/common/stringhelper.h \
- /root/STUN_SERVER/resources/stunserver.txtcode \
- /root/STUN_SERVER/resources/stunserver_lite.txtcode \
- /root/STUN_SERVER/net/resolvehostname.h
+ /mnt/hgfs/STUN_SERVER/common/prettyprint.h \
+ /mnt/hgfs/STUN_SERVER/common/oshelper.h \
+ /mnt/hgfs/STUN_SERVER/common/stringhelper.h \
+ /mnt/hgfs/STUN_SERVER/resources/stunserver.txtcode \
+ /mnt/hgfs/STUN_SERVER/resources/stunserver_lite.txtcode \
+ /mnt/hgfs/STUN_SERVER/net/resolvehostname.h

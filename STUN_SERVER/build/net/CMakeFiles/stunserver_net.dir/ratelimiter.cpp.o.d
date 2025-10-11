@@ -1,6 +1,6 @@
 net/CMakeFiles/stunserver_net.dir/ratelimiter.cpp.o: \
- /root/STUN_SERVER/net/ratelimiter.cpp /usr/include/stdc-predef.h \
- /root/STUN_SERVER/common/commonincludes.hpp \
+ /mnt/hgfs/STUN_SERVER/net/ratelimiter.cpp /usr/include/stdc-predef.h \
+ /mnt/hgfs/STUN_SERVER/common/commonincludes.hpp \
  /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -291,12 +291,15 @@ net/CMakeFiles/stunserver_net.dir/ratelimiter.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/epoll.h /usr/include/poll.h \
  /usr/include/x86_64-linux-gnu/sys/poll.h \
  /usr/include/x86_64-linux-gnu/bits/poll.h \
- /root/STUN_SERVER/common/hresult.h /root/STUN_SERVER/common/chkmacros.h \
- /root/STUN_SERVER/common/refcountobject.h \
- /root/STUN_SERVER/common/objectfactory.h \
- /root/STUN_SERVER/common/logger.h /root/STUN_SERVER/core/socketaddress.h \
- /root/STUN_SERVER/core/stuntypes.h /root/STUN_SERVER/common/fasthash.h \
- /root/STUN_SERVER/net/ratelimiter.h /usr/include/c++/13/chrono \
+ /mnt/hgfs/STUN_SERVER/common/hresult.h \
+ /mnt/hgfs/STUN_SERVER/common/chkmacros.h \
+ /mnt/hgfs/STUN_SERVER/common/refcountobject.h \
+ /mnt/hgfs/STUN_SERVER/common/objectfactory.h \
+ /mnt/hgfs/STUN_SERVER/common/logger.h \
+ /mnt/hgfs/STUN_SERVER/core/socketaddress.h \
+ /mnt/hgfs/STUN_SERVER/core/stuntypes.h \
+ /mnt/hgfs/STUN_SERVER/common/fasthash.h \
+ /mnt/hgfs/STUN_SERVER/net/ratelimiter.h /usr/include/c++/13/chrono \
  /usr/include/c++/13/bits/chrono.h /usr/include/c++/13/ratio \
  /usr/include/c++/13/cstdint /usr/include/c++/13/limits \
  /usr/include/c++/13/ctime /usr/include/c++/13/bits/parse_numbers.h \

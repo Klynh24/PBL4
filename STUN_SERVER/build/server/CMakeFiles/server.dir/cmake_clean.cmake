@@ -5,12 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/server.dir/sampleauthprovider.cpp.o.d"
   "CMakeFiles/server.dir/server.cpp.o"
   "CMakeFiles/server.dir/server.cpp.o.d"
-  "CMakeFiles/server.dir/stunconnection.cpp.o"
-  "CMakeFiles/server.dir/stunconnection.cpp.o.d"
   "CMakeFiles/server.dir/stunsocketthread.cpp.o"
   "CMakeFiles/server.dir/stunsocketthread.cpp.o.d"
-  "CMakeFiles/server.dir/tcpserver.cpp.o"
-  "CMakeFiles/server.dir/tcpserver.cpp.o.d"
   "server"
   "server.pdb"
 )

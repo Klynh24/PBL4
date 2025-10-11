@@ -1,6 +1,7 @@
 server/CMakeFiles/server.dir/sampleauthprovider.cpp.o: \
- /root/STUN_SERVER/server/sampleauthprovider.cpp \
- /usr/include/stdc-predef.h /root/STUN_SERVER/common/commonincludes.hpp \
+ /mnt/hgfs/STUN_SERVER/server/sampleauthprovider.cpp \
+ /usr/include/stdc-predef.h \
+ /mnt/hgfs/STUN_SERVER/common/commonincludes.hpp \
  /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -291,10 +292,11 @@ server/CMakeFiles/server.dir/sampleauthprovider.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/epoll.h /usr/include/poll.h \
  /usr/include/x86_64-linux-gnu/sys/poll.h \
  /usr/include/x86_64-linux-gnu/bits/poll.h \
- /root/STUN_SERVER/common/hresult.h /root/STUN_SERVER/common/chkmacros.h \
- /root/STUN_SERVER/common/refcountobject.h \
- /root/STUN_SERVER/common/objectfactory.h \
- /root/STUN_SERVER/common/logger.h /usr/include/openssl/hmac.h \
+ /mnt/hgfs/STUN_SERVER/common/hresult.h \
+ /mnt/hgfs/STUN_SERVER/common/chkmacros.h \
+ /mnt/hgfs/STUN_SERVER/common/refcountobject.h \
+ /mnt/hgfs/STUN_SERVER/common/objectfactory.h \
+ /mnt/hgfs/STUN_SERVER/common/logger.h /usr/include/openssl/hmac.h \
  /usr/include/openssl/macros.h \
  /usr/include/x86_64-linux-gnu/openssl/opensslconf.h \
  /usr/include/x86_64-linux-gnu/openssl/configuration.h \
@@ -318,19 +320,23 @@ server/CMakeFiles/server.dir/sampleauthprovider.cpp.o: \
  /usr/include/openssl/bnerr.h /usr/include/openssl/objects.h \
  /usr/include/openssl/obj_mac.h /usr/include/openssl/asn1.h \
  /usr/include/openssl/asn1err.h /usr/include/openssl/objectserr.h \
- /root/STUN_SERVER/core/stuncore.h /root/STUN_SERVER/core/buffer.h \
- /root/STUN_SERVER/core/datastream.h \
- /root/STUN_SERVER/core/socketaddress.h \
- /root/STUN_SERVER/core/stuntypes.h /root/STUN_SERVER/core/stunbuilder.h \
- /root/STUN_SERVER/core/stunreader.h /root/STUN_SERVER/common/fasthash.h \
- /root/STUN_SERVER/core/stunutils.h \
- /root/STUN_SERVER/core/messagehandler.h \
- /root/STUN_SERVER/core/stunauth.h /root/STUN_SERVER/core/socketrole.h \
- /root/STUN_SERVER/core/stunclienttests.h \
- /root/STUN_SERVER/core/stunclientlogic.h \
- /root/STUN_SERVER/net/stunsocket.h \
- /root/STUN_SERVER/server/stunsocketthread.h \
- /root/STUN_SERVER/net/ratelimiter.h /usr/include/c++/13/chrono \
+ /mnt/hgfs/STUN_SERVER/core/stuncore.h \
+ /mnt/hgfs/STUN_SERVER/core/buffer.h \
+ /mnt/hgfs/STUN_SERVER/core/datastream.h \
+ /mnt/hgfs/STUN_SERVER/core/socketaddress.h \
+ /mnt/hgfs/STUN_SERVER/core/stuntypes.h \
+ /mnt/hgfs/STUN_SERVER/core/stunbuilder.h \
+ /mnt/hgfs/STUN_SERVER/core/stunreader.h \
+ /mnt/hgfs/STUN_SERVER/common/fasthash.h \
+ /mnt/hgfs/STUN_SERVER/core/stunutils.h \
+ /mnt/hgfs/STUN_SERVER/core/messagehandler.h \
+ /mnt/hgfs/STUN_SERVER/core/stunauth.h \
+ /mnt/hgfs/STUN_SERVER/core/socketrole.h \
+ /mnt/hgfs/STUN_SERVER/core/stunclienttests.h \
+ /mnt/hgfs/STUN_SERVER/core/stunclientlogic.h \
+ /mnt/hgfs/STUN_SERVER/net/stunsocket.h \
+ /mnt/hgfs/STUN_SERVER/server/stunsocketthread.h \
+ /mnt/hgfs/STUN_SERVER/net/ratelimiter.h /usr/include/c++/13/chrono \
  /usr/include/c++/13/bits/chrono.h /usr/include/c++/13/ratio \
  /usr/include/c++/13/cstdint /usr/include/c++/13/limits \
  /usr/include/c++/13/ctime /usr/include/c++/13/bits/parse_numbers.h \
@@ -338,7 +344,8 @@ server/CMakeFiles/server.dir/sampleauthprovider.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/13/bits/error_constants.h \
  /usr/include/c++/13/bits/std_mutex.h \
  /usr/include/c++/13/bits/unique_lock.h \
- /root/STUN_SERVER/core/socketaddress.h /root/STUN_SERVER/server/server.h \
- /root/STUN_SERVER/core/stunauth.h \
- /root/STUN_SERVER/core/messagehandler.h \
- /root/STUN_SERVER/server/sampleauthprovider.h
+ /mnt/hgfs/STUN_SERVER/core/socketaddress.h \
+ /mnt/hgfs/STUN_SERVER/server/server.h \
+ /mnt/hgfs/STUN_SERVER/core/stunauth.h \
+ /mnt/hgfs/STUN_SERVER/core/messagehandler.h \
+ /mnt/hgfs/STUN_SERVER/server/sampleauthprovider.h

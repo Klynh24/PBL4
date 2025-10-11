@@ -1,7 +1,7 @@
 include ../common.inc
 
 PROJECT_TARGET := stunserver
-PROJECT_OBJS := main.o server.o stunconnection.o stunsocketthread.o tcpserver.o
+PROJECT_OBJS := main.o server.o stunsocketthread.o
 
 INCLUDES := $(BOOST_INCLUDE) $(OPENSSL_INCLUDE) -I../common -I../stuncore -I../networkutils -I../resources
 LIB_PATH := -L../common -L../stuncore -L../networkutils

@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/STUN_SERVER
+CMAKE_SOURCE_DIR = /mnt/hgfs/STUN_SERVER
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/STUN_SERVER/build
+CMAKE_BINARY_DIR = /mnt/hgfs/STUN_SERVER/build
 
 # Include any dependencies generated for this target.
 include server/CMakeFiles/server.dir/depend.make
@@ -70,97 +70,67 @@ include server/CMakeFiles/server.dir/progress.make
 include server/CMakeFiles/server.dir/flags.make
 
 server/CMakeFiles/server.dir/main.cpp.o: server/CMakeFiles/server.dir/flags.make
-server/CMakeFiles/server.dir/main.cpp.o: /root/STUN_SERVER/server/main.cpp
+server/CMakeFiles/server.dir/main.cpp.o: /mnt/hgfs/STUN_SERVER/server/main.cpp
 server/CMakeFiles/server.dir/main.cpp.o: server/CMakeFiles/server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object server/CMakeFiles/server.dir/main.cpp.o"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT server/CMakeFiles/server.dir/main.cpp.o -MF CMakeFiles/server.dir/main.cpp.o.d -o CMakeFiles/server.dir/main.cpp.o -c /root/STUN_SERVER/server/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object server/CMakeFiles/server.dir/main.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT server/CMakeFiles/server.dir/main.cpp.o -MF CMakeFiles/server.dir/main.cpp.o.d -o CMakeFiles/server.dir/main.cpp.o -c /mnt/hgfs/STUN_SERVER/server/main.cpp
 
 server/CMakeFiles/server.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/server.dir/main.cpp.i"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/server/main.cpp > CMakeFiles/server.dir/main.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/server/main.cpp > CMakeFiles/server.dir/main.cpp.i
 
 server/CMakeFiles/server.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/server.dir/main.cpp.s"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/server/main.cpp -o CMakeFiles/server.dir/main.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/server/main.cpp -o CMakeFiles/server.dir/main.cpp.s
 
 server/CMakeFiles/server.dir/sampleauthprovider.cpp.o: server/CMakeFiles/server.dir/flags.make
-server/CMakeFiles/server.dir/sampleauthprovider.cpp.o: /root/STUN_SERVER/server/sampleauthprovider.cpp
+server/CMakeFiles/server.dir/sampleauthprovider.cpp.o: /mnt/hgfs/STUN_SERVER/server/sampleauthprovider.cpp
 server/CMakeFiles/server.dir/sampleauthprovider.cpp.o: server/CMakeFiles/server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object server/CMakeFiles/server.dir/sampleauthprovider.cpp.o"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT server/CMakeFiles/server.dir/sampleauthprovider.cpp.o -MF CMakeFiles/server.dir/sampleauthprovider.cpp.o.d -o CMakeFiles/server.dir/sampleauthprovider.cpp.o -c /root/STUN_SERVER/server/sampleauthprovider.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object server/CMakeFiles/server.dir/sampleauthprovider.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT server/CMakeFiles/server.dir/sampleauthprovider.cpp.o -MF CMakeFiles/server.dir/sampleauthprovider.cpp.o.d -o CMakeFiles/server.dir/sampleauthprovider.cpp.o -c /mnt/hgfs/STUN_SERVER/server/sampleauthprovider.cpp
 
 server/CMakeFiles/server.dir/sampleauthprovider.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/server.dir/sampleauthprovider.cpp.i"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/server/sampleauthprovider.cpp > CMakeFiles/server.dir/sampleauthprovider.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/server/sampleauthprovider.cpp > CMakeFiles/server.dir/sampleauthprovider.cpp.i
 
 server/CMakeFiles/server.dir/sampleauthprovider.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/server.dir/sampleauthprovider.cpp.s"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/server/sampleauthprovider.cpp -o CMakeFiles/server.dir/sampleauthprovider.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/server/sampleauthprovider.cpp -o CMakeFiles/server.dir/sampleauthprovider.cpp.s
 
 server/CMakeFiles/server.dir/server.cpp.o: server/CMakeFiles/server.dir/flags.make
-server/CMakeFiles/server.dir/server.cpp.o: /root/STUN_SERVER/server/server.cpp
+server/CMakeFiles/server.dir/server.cpp.o: /mnt/hgfs/STUN_SERVER/server/server.cpp
 server/CMakeFiles/server.dir/server.cpp.o: server/CMakeFiles/server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object server/CMakeFiles/server.dir/server.cpp.o"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT server/CMakeFiles/server.dir/server.cpp.o -MF CMakeFiles/server.dir/server.cpp.o.d -o CMakeFiles/server.dir/server.cpp.o -c /root/STUN_SERVER/server/server.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object server/CMakeFiles/server.dir/server.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT server/CMakeFiles/server.dir/server.cpp.o -MF CMakeFiles/server.dir/server.cpp.o.d -o CMakeFiles/server.dir/server.cpp.o -c /mnt/hgfs/STUN_SERVER/server/server.cpp
 
 server/CMakeFiles/server.dir/server.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/server.dir/server.cpp.i"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/server/server.cpp > CMakeFiles/server.dir/server.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/server/server.cpp > CMakeFiles/server.dir/server.cpp.i
 
 server/CMakeFiles/server.dir/server.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/server.dir/server.cpp.s"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/server/server.cpp -o CMakeFiles/server.dir/server.cpp.s
-
-server/CMakeFiles/server.dir/stunconnection.cpp.o: server/CMakeFiles/server.dir/flags.make
-server/CMakeFiles/server.dir/stunconnection.cpp.o: /root/STUN_SERVER/server/stunconnection.cpp
-server/CMakeFiles/server.dir/stunconnection.cpp.o: server/CMakeFiles/server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object server/CMakeFiles/server.dir/stunconnection.cpp.o"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT server/CMakeFiles/server.dir/stunconnection.cpp.o -MF CMakeFiles/server.dir/stunconnection.cpp.o.d -o CMakeFiles/server.dir/stunconnection.cpp.o -c /root/STUN_SERVER/server/stunconnection.cpp
-
-server/CMakeFiles/server.dir/stunconnection.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/server.dir/stunconnection.cpp.i"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/server/stunconnection.cpp > CMakeFiles/server.dir/stunconnection.cpp.i
-
-server/CMakeFiles/server.dir/stunconnection.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/server.dir/stunconnection.cpp.s"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/server/stunconnection.cpp -o CMakeFiles/server.dir/stunconnection.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/server/server.cpp -o CMakeFiles/server.dir/server.cpp.s
 
 server/CMakeFiles/server.dir/stunsocketthread.cpp.o: server/CMakeFiles/server.dir/flags.make
-server/CMakeFiles/server.dir/stunsocketthread.cpp.o: /root/STUN_SERVER/server/stunsocketthread.cpp
+server/CMakeFiles/server.dir/stunsocketthread.cpp.o: /mnt/hgfs/STUN_SERVER/server/stunsocketthread.cpp
 server/CMakeFiles/server.dir/stunsocketthread.cpp.o: server/CMakeFiles/server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object server/CMakeFiles/server.dir/stunsocketthread.cpp.o"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT server/CMakeFiles/server.dir/stunsocketthread.cpp.o -MF CMakeFiles/server.dir/stunsocketthread.cpp.o.d -o CMakeFiles/server.dir/stunsocketthread.cpp.o -c /root/STUN_SERVER/server/stunsocketthread.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object server/CMakeFiles/server.dir/stunsocketthread.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT server/CMakeFiles/server.dir/stunsocketthread.cpp.o -MF CMakeFiles/server.dir/stunsocketthread.cpp.o.d -o CMakeFiles/server.dir/stunsocketthread.cpp.o -c /mnt/hgfs/STUN_SERVER/server/stunsocketthread.cpp
 
 server/CMakeFiles/server.dir/stunsocketthread.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/server.dir/stunsocketthread.cpp.i"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/server/stunsocketthread.cpp > CMakeFiles/server.dir/stunsocketthread.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/server/stunsocketthread.cpp > CMakeFiles/server.dir/stunsocketthread.cpp.i
 
 server/CMakeFiles/server.dir/stunsocketthread.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/server.dir/stunsocketthread.cpp.s"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/server/stunsocketthread.cpp -o CMakeFiles/server.dir/stunsocketthread.cpp.s
-
-server/CMakeFiles/server.dir/tcpserver.cpp.o: server/CMakeFiles/server.dir/flags.make
-server/CMakeFiles/server.dir/tcpserver.cpp.o: /root/STUN_SERVER/server/tcpserver.cpp
-server/CMakeFiles/server.dir/tcpserver.cpp.o: server/CMakeFiles/server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object server/CMakeFiles/server.dir/tcpserver.cpp.o"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT server/CMakeFiles/server.dir/tcpserver.cpp.o -MF CMakeFiles/server.dir/tcpserver.cpp.o.d -o CMakeFiles/server.dir/tcpserver.cpp.o -c /root/STUN_SERVER/server/tcpserver.cpp
-
-server/CMakeFiles/server.dir/tcpserver.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/server.dir/tcpserver.cpp.i"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/server/tcpserver.cpp > CMakeFiles/server.dir/tcpserver.cpp.i
-
-server/CMakeFiles/server.dir/tcpserver.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/server.dir/tcpserver.cpp.s"
-	cd /root/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/server/tcpserver.cpp -o CMakeFiles/server.dir/tcpserver.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/server && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/server/stunsocketthread.cpp -o CMakeFiles/server.dir/stunsocketthread.cpp.s
 
 # Object files for target server
 server_OBJECTS = \
 "CMakeFiles/server.dir/main.cpp.o" \
 "CMakeFiles/server.dir/sampleauthprovider.cpp.o" \
 "CMakeFiles/server.dir/server.cpp.o" \
-"CMakeFiles/server.dir/stunconnection.cpp.o" \
-"CMakeFiles/server.dir/stunsocketthread.cpp.o" \
-"CMakeFiles/server.dir/tcpserver.cpp.o"
+"CMakeFiles/server.dir/stunsocketthread.cpp.o"
 
 # External object files for target server
 server_EXTERNAL_OBJECTS =
@@ -168,9 +138,7 @@ server_EXTERNAL_OBJECTS =
 server/server: server/CMakeFiles/server.dir/main.cpp.o
 server/server: server/CMakeFiles/server.dir/sampleauthprovider.cpp.o
 server/server: server/CMakeFiles/server.dir/server.cpp.o
-server/server: server/CMakeFiles/server.dir/stunconnection.cpp.o
 server/server: server/CMakeFiles/server.dir/stunsocketthread.cpp.o
-server/server: server/CMakeFiles/server.dir/tcpserver.cpp.o
 server/server: server/CMakeFiles/server.dir/build.make
 server/server: /usr/lib/x86_64-linux-gnu/libssl.so
 server/server: /usr/lib/x86_64-linux-gnu/libcrypto.so
@@ -187,18 +155,18 @@ server/server: /usr/lib/x86_64-linux-gnu/libboost_system.so.1.83.0
 server/server: /usr/lib/x86_64-linux-gnu/libssl.so
 server/server: /usr/lib/x86_64-linux-gnu/libcrypto.so
 server/server: server/CMakeFiles/server.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable server"
-	cd /root/STUN_SERVER/build/server && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/server.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable server"
+	cd /mnt/hgfs/STUN_SERVER/build/server && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/server.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 server/CMakeFiles/server.dir/build: server/server
 .PHONY : server/CMakeFiles/server.dir/build
 
 server/CMakeFiles/server.dir/clean:
-	cd /root/STUN_SERVER/build/server && $(CMAKE_COMMAND) -P CMakeFiles/server.dir/cmake_clean.cmake
+	cd /mnt/hgfs/STUN_SERVER/build/server && $(CMAKE_COMMAND) -P CMakeFiles/server.dir/cmake_clean.cmake
 .PHONY : server/CMakeFiles/server.dir/clean
 
 server/CMakeFiles/server.dir/depend:
-	cd /root/STUN_SERVER/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/STUN_SERVER /root/STUN_SERVER/server /root/STUN_SERVER/build /root/STUN_SERVER/build/server /root/STUN_SERVER/build/server/CMakeFiles/server.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /mnt/hgfs/STUN_SERVER/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/hgfs/STUN_SERVER /mnt/hgfs/STUN_SERVER/server /mnt/hgfs/STUN_SERVER/build /mnt/hgfs/STUN_SERVER/build/server /mnt/hgfs/STUN_SERVER/build/server/CMakeFiles/server.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : server/CMakeFiles/server.dir/depend
 

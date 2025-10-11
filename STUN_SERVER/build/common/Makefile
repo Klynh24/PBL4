@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/STUN_SERVER
+CMAKE_SOURCE_DIR = /mnt/hgfs/STUN_SERVER
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/STUN_SERVER/build
+CMAKE_BINARY_DIR = /mnt/hgfs/STUN_SERVER/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /root/STUN_SERVER/build && $(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles /root/STUN_SERVER/build/common//CMakeFiles/progress.marks
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 0
+	cd /mnt/hgfs/STUN_SERVER/build && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles /mnt/hgfs/STUN_SERVER/build/common//CMakeFiles/progress.marks
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common/clean
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,22 +103,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common/preinstall
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common/preinstall
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /root/STUN_SERVER/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /mnt/hgfs/STUN_SERVER/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 common/CMakeFiles/stunserver_common.dir/rule:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common/CMakeFiles/stunserver_common.dir/rule
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common/CMakeFiles/stunserver_common.dir/rule
 .PHONY : common/CMakeFiles/stunserver_common.dir/rule
 
 # Convenience name for target.
@@ -127,7 +127,7 @@ stunserver_common: common/CMakeFiles/stunserver_common.dir/rule
 
 # fast build rule for target.
 stunserver_common/fast:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/build
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/build
 .PHONY : stunserver_common/fast
 
 atomichelpers.o: atomichelpers.cpp.o
@@ -135,7 +135,7 @@ atomichelpers.o: atomichelpers.cpp.o
 
 # target to build an object file
 atomichelpers.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o
 .PHONY : atomichelpers.cpp.o
 
 atomichelpers.i: atomichelpers.cpp.i
@@ -143,7 +143,7 @@ atomichelpers.i: atomichelpers.cpp.i
 
 # target to preprocess a source file
 atomichelpers.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.i
 .PHONY : atomichelpers.cpp.i
 
 atomichelpers.s: atomichelpers.cpp.s
@@ -151,7 +151,7 @@ atomichelpers.s: atomichelpers.cpp.s
 
 # target to generate assembly for a file
 atomichelpers.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.s
 .PHONY : atomichelpers.cpp.s
 
 cmdlineparser.o: cmdlineparser.cpp.o
@@ -159,7 +159,7 @@ cmdlineparser.o: cmdlineparser.cpp.o
 
 # target to build an object file
 cmdlineparser.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o
 .PHONY : cmdlineparser.cpp.o
 
 cmdlineparser.i: cmdlineparser.cpp.i
@@ -167,7 +167,7 @@ cmdlineparser.i: cmdlineparser.cpp.i
 
 # target to preprocess a source file
 cmdlineparser.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.i
 .PHONY : cmdlineparser.cpp.i
 
 cmdlineparser.s: cmdlineparser.cpp.s
@@ -175,7 +175,7 @@ cmdlineparser.s: cmdlineparser.cpp.s
 
 # target to generate assembly for a file
 cmdlineparser.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.s
 .PHONY : cmdlineparser.cpp.s
 
 common.o: common.cpp.o
@@ -183,7 +183,7 @@ common.o: common.cpp.o
 
 # target to build an object file
 common.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/common.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/common.cpp.o
 .PHONY : common.cpp.o
 
 common.i: common.cpp.i
@@ -191,7 +191,7 @@ common.i: common.cpp.i
 
 # target to preprocess a source file
 common.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/common.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/common.cpp.i
 .PHONY : common.cpp.i
 
 common.s: common.cpp.s
@@ -199,7 +199,7 @@ common.s: common.cpp.s
 
 # target to generate assembly for a file
 common.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/common.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/common.cpp.s
 .PHONY : common.cpp.s
 
 fasthash.o: fasthash.cpp.o
@@ -207,7 +207,7 @@ fasthash.o: fasthash.cpp.o
 
 # target to build an object file
 fasthash.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/fasthash.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/fasthash.cpp.o
 .PHONY : fasthash.cpp.o
 
 fasthash.i: fasthash.cpp.i
@@ -215,7 +215,7 @@ fasthash.i: fasthash.cpp.i
 
 # target to preprocess a source file
 fasthash.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/fasthash.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/fasthash.cpp.i
 .PHONY : fasthash.cpp.i
 
 fasthash.s: fasthash.cpp.s
@@ -223,7 +223,7 @@ fasthash.s: fasthash.cpp.s
 
 # target to generate assembly for a file
 fasthash.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/fasthash.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/fasthash.cpp.s
 .PHONY : fasthash.cpp.s
 
 getconsolewidth.o: getconsolewidth.cpp.o
@@ -231,7 +231,7 @@ getconsolewidth.o: getconsolewidth.cpp.o
 
 # target to build an object file
 getconsolewidth.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o
 .PHONY : getconsolewidth.cpp.o
 
 getconsolewidth.i: getconsolewidth.cpp.i
@@ -239,7 +239,7 @@ getconsolewidth.i: getconsolewidth.cpp.i
 
 # target to preprocess a source file
 getconsolewidth.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.i
 .PHONY : getconsolewidth.cpp.i
 
 getconsolewidth.s: getconsolewidth.cpp.s
@@ -247,7 +247,7 @@ getconsolewidth.s: getconsolewidth.cpp.s
 
 # target to generate assembly for a file
 getconsolewidth.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.s
 .PHONY : getconsolewidth.cpp.s
 
 getmillisecondcounter.o: getmillisecondcounter.cpp.o
@@ -255,7 +255,7 @@ getmillisecondcounter.o: getmillisecondcounter.cpp.o
 
 # target to build an object file
 getmillisecondcounter.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o
 .PHONY : getmillisecondcounter.cpp.o
 
 getmillisecondcounter.i: getmillisecondcounter.cpp.i
@@ -263,7 +263,7 @@ getmillisecondcounter.i: getmillisecondcounter.cpp.i
 
 # target to preprocess a source file
 getmillisecondcounter.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.i
 .PHONY : getmillisecondcounter.cpp.i
 
 getmillisecondcounter.s: getmillisecondcounter.cpp.s
@@ -271,7 +271,7 @@ getmillisecondcounter.s: getmillisecondcounter.cpp.s
 
 # target to generate assembly for a file
 getmillisecondcounter.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.s
 .PHONY : getmillisecondcounter.cpp.s
 
 logger.o: logger.cpp.o
@@ -279,7 +279,7 @@ logger.o: logger.cpp.o
 
 # target to build an object file
 logger.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/logger.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/logger.cpp.o
 .PHONY : logger.cpp.o
 
 logger.i: logger.cpp.i
@@ -287,7 +287,7 @@ logger.i: logger.cpp.i
 
 # target to preprocess a source file
 logger.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/logger.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/logger.cpp.i
 .PHONY : logger.cpp.i
 
 logger.s: logger.cpp.s
@@ -295,7 +295,7 @@ logger.s: logger.cpp.s
 
 # target to generate assembly for a file
 logger.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/logger.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/logger.cpp.s
 .PHONY : logger.cpp.s
 
 prettyprint.o: prettyprint.cpp.o
@@ -303,7 +303,7 @@ prettyprint.o: prettyprint.cpp.o
 
 # target to build an object file
 prettyprint.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.o
 .PHONY : prettyprint.cpp.o
 
 prettyprint.i: prettyprint.cpp.i
@@ -311,7 +311,7 @@ prettyprint.i: prettyprint.cpp.i
 
 # target to preprocess a source file
 prettyprint.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.i
 .PHONY : prettyprint.cpp.i
 
 prettyprint.s: prettyprint.cpp.s
@@ -319,7 +319,7 @@ prettyprint.s: prettyprint.cpp.s
 
 # target to generate assembly for a file
 prettyprint.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.s
 .PHONY : prettyprint.cpp.s
 
 refcountobject.o: refcountobject.cpp.o
@@ -327,7 +327,7 @@ refcountobject.o: refcountobject.cpp.o
 
 # target to build an object file
 refcountobject.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.o
 .PHONY : refcountobject.cpp.o
 
 refcountobject.i: refcountobject.cpp.i
@@ -335,7 +335,7 @@ refcountobject.i: refcountobject.cpp.i
 
 # target to preprocess a source file
 refcountobject.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.i
 .PHONY : refcountobject.cpp.i
 
 refcountobject.s: refcountobject.cpp.s
@@ -343,7 +343,7 @@ refcountobject.s: refcountobject.cpp.s
 
 # target to generate assembly for a file
 refcountobject.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.s
 .PHONY : refcountobject.cpp.s
 
 stringhelper.o: stringhelper.cpp.o
@@ -351,7 +351,7 @@ stringhelper.o: stringhelper.cpp.o
 
 # target to build an object file
 stringhelper.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.o
 .PHONY : stringhelper.cpp.o
 
 stringhelper.i: stringhelper.cpp.i
@@ -359,7 +359,7 @@ stringhelper.i: stringhelper.cpp.i
 
 # target to preprocess a source file
 stringhelper.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.i
 .PHONY : stringhelper.cpp.i
 
 stringhelper.s: stringhelper.cpp.s
@@ -367,7 +367,7 @@ stringhelper.s: stringhelper.cpp.s
 
 # target to generate assembly for a file
 stringhelper.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.s
 .PHONY : stringhelper.cpp.s
 
 # Help Target
@@ -420,6 +420,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /root/STUN_SERVER/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /mnt/hgfs/STUN_SERVER/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

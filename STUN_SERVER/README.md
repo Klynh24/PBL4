@@ -37,6 +37,8 @@ Server hỗ trợ khá nhiều tham số dòng lệnh. Bạn có thể xem mô t
 ./build/server/server --help
 ```
 
+Lưu ý: Phiên bản này chỉ hỗ trợ UDP (đã loại bỏ TCP).
+
 Ví dụ khởi động server chế độ cơ bản (lắng nghe UDP trên cổng mặc định 3478, mọi giao diện):
 ```bash
 ./build/server/server --mode basic --primaryinterface 0.0.0.0 --primaryport 3478
@@ -54,12 +56,24 @@ Client dòng lệnh cũng có hướng dẫn kèm theo:
 ./build/client/client --help
 ```
 
-Ví dụ kiểm tra kết nối tới một STUN server nghe tại `127.0.0.1` cổng 3478:
+Ví dụ nhanh:
 ```bash
-./build/client/client --mode binding --remote 127.0.0.1 --port 3478
-hoặc
-./build/client/client --mode behavior 127.0.0.1 3478
-./build/client/client --mode filtering 127.0.0.1 3478
+# Lấy Public IP và cổng thông qua STUN công khai (chỉ cần "basic")
+./build/client/client stun.l.google.com 19302 --mode basic
+# Kết quả sẽ in dòng "Mapped address: <PUBLIC_IP>:<PORT>"
+
+# Nếu bạn chạy server của dự án trên máy cục bộ (UDP 3478)
+./build/client/client --mode basic --remote 127.0.0.1 --port 3478
+```
+
+Phát hiện loại NAT (Behavior/Filtering) yêu cầu STUN server hỗ trợ RFC 5780 ("full mode" với ít nhất 2 địa chỉ IP). Bạn có thể:
+- Tự chạy server kèm `--mode full --primaryinterface <IP1> --altinterface <IP2>` trên máy có 2 IP công khai.
+- Hoặc sử dụng một STUN server công khai có hỗ trợ RFC 5780 (không phải tất cả máy chủ STUN đều hỗ trợ).
+
+Ví dụ với server cục bộ hỗ trợ full mode:
+```bash
+./build/client/client --mode behavior 127.0.0.1 3478   # kiểm tra NAT Behavior
+./build/client/client --mode filtering 127.0.0.1 3478  # kiểm tra NAT Filtering (UDP)
 ```
 Tham số chính xác (tên tùy chọn `--remote`, `--port`, `--protocol`, v.v.) được liệt kê chi tiết trong phần trợ giúp của chương trình.
 

@@ -1,4 +1,4 @@
-# Install script for directory: /root/STUN_SERVER
+# Install script for directory: /mnt/hgfs/STUN_SERVER
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -44,11 +44,11 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/root/STUN_SERVER/build/common/cmake_install.cmake")
-  include("/root/STUN_SERVER/build/core/cmake_install.cmake")
-  include("/root/STUN_SERVER/build/net/cmake_install.cmake")
-  include("/root/STUN_SERVER/build/client/cmake_install.cmake")
-  include("/root/STUN_SERVER/build/server/cmake_install.cmake")
+  include("/mnt/hgfs/STUN_SERVER/build/common/cmake_install.cmake")
+  include("/mnt/hgfs/STUN_SERVER/build/core/cmake_install.cmake")
+  include("/mnt/hgfs/STUN_SERVER/build/net/cmake_install.cmake")
+  include("/mnt/hgfs/STUN_SERVER/build/client/cmake_install.cmake")
+  include("/mnt/hgfs/STUN_SERVER/build/server/cmake_install.cmake")
 
 endif()
 
@@ -60,5 +60,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/root/STUN_SERVER/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/mnt/hgfs/STUN_SERVER/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

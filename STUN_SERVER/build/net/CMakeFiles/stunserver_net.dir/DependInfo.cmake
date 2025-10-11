@@ -8,12 +8,11 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/root/STUN_SERVER/net/adapters.cpp" "net/CMakeFiles/stunserver_net.dir/adapters.cpp.o" "gcc" "net/CMakeFiles/stunserver_net.dir/adapters.cpp.o.d"
-  "/root/STUN_SERVER/net/polling.cpp" "net/CMakeFiles/stunserver_net.dir/polling.cpp.o" "gcc" "net/CMakeFiles/stunserver_net.dir/polling.cpp.o.d"
-  "/root/STUN_SERVER/net/ratelimiter.cpp" "net/CMakeFiles/stunserver_net.dir/ratelimiter.cpp.o" "gcc" "net/CMakeFiles/stunserver_net.dir/ratelimiter.cpp.o.d"
-  "/root/STUN_SERVER/net/recvfromex.cpp" "net/CMakeFiles/stunserver_net.dir/recvfromex.cpp.o" "gcc" "net/CMakeFiles/stunserver_net.dir/recvfromex.cpp.o.d"
-  "/root/STUN_SERVER/net/resolvehostname.cpp" "net/CMakeFiles/stunserver_net.dir/resolvehostname.cpp.o" "gcc" "net/CMakeFiles/stunserver_net.dir/resolvehostname.cpp.o.d"
-  "/root/STUN_SERVER/net/stunsocket.cpp" "net/CMakeFiles/stunserver_net.dir/stunsocket.cpp.o" "gcc" "net/CMakeFiles/stunserver_net.dir/stunsocket.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/net/adapters.cpp" "net/CMakeFiles/stunserver_net.dir/adapters.cpp.o" "gcc" "net/CMakeFiles/stunserver_net.dir/adapters.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/net/ratelimiter.cpp" "net/CMakeFiles/stunserver_net.dir/ratelimiter.cpp.o" "gcc" "net/CMakeFiles/stunserver_net.dir/ratelimiter.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/net/recvfromex.cpp" "net/CMakeFiles/stunserver_net.dir/recvfromex.cpp.o" "gcc" "net/CMakeFiles/stunserver_net.dir/recvfromex.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/net/resolvehostname.cpp" "net/CMakeFiles/stunserver_net.dir/resolvehostname.cpp.o" "gcc" "net/CMakeFiles/stunserver_net.dir/resolvehostname.cpp.o.d"
+  "/mnt/hgfs/STUN_SERVER/net/stunsocket.cpp" "net/CMakeFiles/stunserver_net.dir/stunsocket.cpp.o" "gcc" "net/CMakeFiles/stunserver_net.dir/stunsocket.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

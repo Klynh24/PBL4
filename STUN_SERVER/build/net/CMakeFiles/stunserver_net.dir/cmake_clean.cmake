@@ -1,8 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/stunserver_net.dir/adapters.cpp.o"
   "CMakeFiles/stunserver_net.dir/adapters.cpp.o.d"
-  "CMakeFiles/stunserver_net.dir/polling.cpp.o"
-  "CMakeFiles/stunserver_net.dir/polling.cpp.o.d"
   "CMakeFiles/stunserver_net.dir/ratelimiter.cpp.o"
   "CMakeFiles/stunserver_net.dir/ratelimiter.cpp.o.d"
   "CMakeFiles/stunserver_net.dir/recvfromex.cpp.o"

@@ -54,10 +54,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/STUN_SERVER
+CMAKE_SOURCE_DIR = /mnt/hgfs/STUN_SERVER
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/STUN_SERVER/build
+CMAKE_BINARY_DIR = /mnt/hgfs/STUN_SERVER/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -168,14 +168,14 @@ server/clean: server/CMakeFiles/server.dir/clean
 common/CMakeFiles/stunserver_common.dir/all:
 	$(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/depend
 	$(MAKE) $(MAKESILENT) -f common/CMakeFiles/stunserver_common.dir/build.make common/CMakeFiles/stunserver_common.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=10,11,12,13,14,15,16,17,18,19,20 "Built target stunserver_common"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=8,9,10,11,12,13,14,15,16,17,18 "Built target stunserver_common"
 .PHONY : common/CMakeFiles/stunserver_common.dir/all
 
 # Build rule for subdir invocation for target.
 common/CMakeFiles/stunserver_common.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 11
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 11
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common/CMakeFiles/stunserver_common.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 0
 .PHONY : common/CMakeFiles/stunserver_common.dir/rule
 
 # Convenience name for target.
@@ -194,14 +194,14 @@ common/CMakeFiles/stunserver_common.dir/clean:
 core/CMakeFiles/stunserver_core.dir/all: common/CMakeFiles/stunserver_common.dir/all
 	$(MAKE) $(MAKESILENT) -f core/CMakeFiles/stunserver_core.dir/build.make core/CMakeFiles/stunserver_core.dir/depend
 	$(MAKE) $(MAKESILENT) -f core/CMakeFiles/stunserver_core.dir/build.make core/CMakeFiles/stunserver_core.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=21,22,23,24,25,26,27,28,29,30 "Built target stunserver_core"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=19,20,21,22,23,24,25,26,27,28 "Built target stunserver_core"
 .PHONY : core/CMakeFiles/stunserver_core.dir/all
 
 # Build rule for subdir invocation for target.
 core/CMakeFiles/stunserver_core.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 21
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 21
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 core/CMakeFiles/stunserver_core.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 0
 .PHONY : core/CMakeFiles/stunserver_core.dir/rule
 
 # Convenience name for target.
@@ -221,14 +221,14 @@ net/CMakeFiles/stunserver_net.dir/all: common/CMakeFiles/stunserver_common.dir/a
 net/CMakeFiles/stunserver_net.dir/all: core/CMakeFiles/stunserver_core.dir/all
 	$(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/depend
 	$(MAKE) $(MAKESILENT) -f net/CMakeFiles/stunserver_net.dir/build.make net/CMakeFiles/stunserver_net.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=31,32,33,34,35,36,37 "Built target stunserver_net"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=29,30,31,32,33,34 "Built target stunserver_net"
 .PHONY : net/CMakeFiles/stunserver_net.dir/all
 
 # Build rule for subdir invocation for target.
 net/CMakeFiles/stunserver_net.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 28
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 27
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 net/CMakeFiles/stunserver_net.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 0
 .PHONY : net/CMakeFiles/stunserver_net.dir/rule
 
 # Convenience name for target.
@@ -249,14 +249,14 @@ client/CMakeFiles/client.dir/all: core/CMakeFiles/stunserver_core.dir/all
 client/CMakeFiles/client.dir/all: net/CMakeFiles/stunserver_net.dir/all
 	$(MAKE) $(MAKESILENT) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/depend
 	$(MAKE) $(MAKESILENT) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=1,2 "Built target client"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=1,2 "Built target client"
 .PHONY : client/CMakeFiles/client.dir/all
 
 # Build rule for subdir invocation for target.
 client/CMakeFiles/client.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 30
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 29
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 client/CMakeFiles/client.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 0
 .PHONY : client/CMakeFiles/client.dir/rule
 
 # Convenience name for target.
@@ -277,14 +277,14 @@ server/CMakeFiles/server.dir/all: core/CMakeFiles/stunserver_core.dir/all
 server/CMakeFiles/server.dir/all: net/CMakeFiles/stunserver_net.dir/all
 	$(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/depend
 	$(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=3,4,5,6,7,8,9 "Built target server"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=3,4,5,6,7 "Built target server"
 .PHONY : server/CMakeFiles/server.dir/all
 
 # Build rule for subdir invocation for target.
 server/CMakeFiles/server.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 35
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 32
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server/CMakeFiles/server.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 0
 .PHONY : server/CMakeFiles/server.dir/rule
 
 # Convenience name for target.

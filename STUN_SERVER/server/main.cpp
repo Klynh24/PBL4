@@ -6,7 +6,6 @@
 
 #include "stuncore.h"
 #include "server.h"
-#include "tcpserver.h"
 #include "adapters.h"
 #include "cmdlineparser.h"
 
@@ -306,37 +305,31 @@ HRESULT BuildServerConfigurationFromArgs(StartupArgs& argsIn, CStunServerConfig*
     }
 
     // ---- PROTOCOL --------------------------------------------------------
+    // Only UDP is supported. If explicitly set to TCP, reject.
     if (args.strProtocol.length() > 0)
     {
-        if ((args.strProtocol != "udp") && (args.strProtocol != "tcp"))
+        if (args.strProtocol == "tcp")
         {
-            Logging::LogMsg(LL_ALWAYS, "Protocol argument must be 'udp' or 'tcp'. 'tls' is not supported yet");
+            Logging::LogMsg(LL_ALWAYS, "TCP is not supported in this build. Use --protocol udp (or omit).\n");
             Chk(E_INVALIDARG);
         }
-        
-        config.fTCP = (args.strProtocol == "tcp");
+        if (args.strProtocol != "udp")
+        {
+            Logging::LogMsg(LL_ALWAYS, "Unsupported protocol. Only 'udp' is allowed");
+            Chk(E_INVALIDARG);
+        }
     }
+    config.fTCP = false;
     
     
     // ---- MAX Connections -----------------------------------------------------
     nMaxConnections = 0;
+    // TCP max-connections not applicable; ignore if specified
     if (args.strMaxConnections.length() > 0)
     {
-        if (config.fTCP == false)
-        {
-            Logging::LogMsg(LL_ALWAYS, "Max connections parameter has no meaning in UDP mode. Did you mean to specify \"--protocol=tcp ?\"");
-        }
-        else
-        {
-            hr = StringHelper::ValidateNumberString(args.strMaxConnections.c_str(), 1, 100000, &nMaxConnections);
-            if (FAILED(hr))
-            {
-                Logging::LogMsg(LL_ALWAYS, "Max connections must be between 1-100000");
-                Chk(hr);
-            }
-        }
-        config.nMaxConnections = nMaxConnections;
+        Logging::LogMsg(LL_ALWAYS, "Warning: --maxconn is ignored (UDP only)");
     }
+    config.nMaxConnections = 0;
 
 
     // ---- PRIMARY PORT --------------------------------------------------------
@@ -679,30 +672,6 @@ HRESULT StartUDP(CRefCountedPtr<CStunServer>& spServer, CStunServerConfig& confi
     return S_OK;
 }
 
-HRESULT StartTCP(CRefCountedPtr<CTCPServer>& spTCPServer, CStunServerConfig& config)
-{
-    HRESULT hr;
-    
-    hr = CTCPServer::CreateInstance(config, spTCPServer.GetPointerPointer());
-    if (FAILED(hr))
-    {
-        Logging::LogMsg(LL_ALWAYS, "Unable to initialize TCP server (error code = x%x)", hr);
-        LogHR(LL_ALWAYS, hr);
-        return hr;
-    }
-    
-    hr = spTCPServer->Start();
-    if (FAILED(hr))
-    {
-        Logging::LogMsg(LL_ALWAYS, "Unable to start TCP server (error code = x%x)", hr);
-        LogHR(LL_ALWAYS, hr);
-        return hr;
-    }
-    
-    return S_OK;
-    
-}
-
 int main(int argc, char** argv)
 {
     HRESULT hr = S_OK;
@@ -711,10 +680,7 @@ int main(int argc, char** argv)
     int serverindex = 1;
     
     typedef CRefCountedPtr<CStunServer> UdpServerPtr;
-    typedef CRefCountedPtr<CTCPServer> TcpServerPtr;
-    
     std::vector<UdpServerPtr> udpServers;
-    std::vector<TcpServerPtr> tcpServers;
     
      // block sigpipe so that socket send calls from raising SIGPIPE
     signal(SIGPIPE, SIG_IGN);
@@ -788,17 +754,7 @@ int main(int argc, char** argv)
             }
             DumpConfig(config);
             
-            if (config.fTCP)
-            {
-                TcpServerPtr spTcpServer;
-                hr = StartTCP(spTcpServer, config);
-                
-                if (SUCCEEDED(hr))
-                {
-                    tcpServers.push_back(spTcpServer);
-                }
-            }
-            else
+            // Always UDP
             {
                 UdpServerPtr spUdpServer;
                 hr = StartUDP(spUdpServer, config);
@@ -833,12 +789,7 @@ int main(int argc, char** argv)
         server->Stop();
     }
     
-    for (std::vector<TcpServerPtr>::iterator itor = tcpServers.begin(); itor != tcpServers.end(); itor++)
-    {
-        Logging::LogMsg(LL_DEBUG, "Shutting down TCP server");
-        TcpServerPtr server = *itor;
-        server->Stop();
-    }
+    // No TCP servers in this build
     
     return 0;
 }

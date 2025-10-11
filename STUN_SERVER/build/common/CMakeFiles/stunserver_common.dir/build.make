@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/STUN_SERVER
+CMAKE_SOURCE_DIR = /mnt/hgfs/STUN_SERVER
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/STUN_SERVER/build
+CMAKE_BINARY_DIR = /mnt/hgfs/STUN_SERVER/build
 
 # Include any dependencies generated for this target.
 include common/CMakeFiles/stunserver_common.dir/depend.make
@@ -70,144 +70,144 @@ include common/CMakeFiles/stunserver_common.dir/progress.make
 include common/CMakeFiles/stunserver_common.dir/flags.make
 
 common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o: common/CMakeFiles/stunserver_common.dir/flags.make
-common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o: /root/STUN_SERVER/common/atomichelpers.cpp
+common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o: /mnt/hgfs/STUN_SERVER/common/atomichelpers.cpp
 common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o: common/CMakeFiles/stunserver_common.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o -MF CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o.d -o CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o -c /root/STUN_SERVER/common/atomichelpers.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o -MF CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o.d -o CMakeFiles/stunserver_common.dir/atomichelpers.cpp.o -c /mnt/hgfs/STUN_SERVER/common/atomichelpers.cpp
 
 common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/stunserver_common.dir/atomichelpers.cpp.i"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/common/atomichelpers.cpp > CMakeFiles/stunserver_common.dir/atomichelpers.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/common/atomichelpers.cpp > CMakeFiles/stunserver_common.dir/atomichelpers.cpp.i
 
 common/CMakeFiles/stunserver_common.dir/atomichelpers.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/stunserver_common.dir/atomichelpers.cpp.s"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/common/atomichelpers.cpp -o CMakeFiles/stunserver_common.dir/atomichelpers.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/common/atomichelpers.cpp -o CMakeFiles/stunserver_common.dir/atomichelpers.cpp.s
 
 common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o: common/CMakeFiles/stunserver_common.dir/flags.make
-common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o: /root/STUN_SERVER/common/cmdlineparser.cpp
+common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o: /mnt/hgfs/STUN_SERVER/common/cmdlineparser.cpp
 common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o: common/CMakeFiles/stunserver_common.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o -MF CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o.d -o CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o -c /root/STUN_SERVER/common/cmdlineparser.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o -MF CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o.d -o CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.o -c /mnt/hgfs/STUN_SERVER/common/cmdlineparser.cpp
 
 common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.i"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/common/cmdlineparser.cpp > CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/common/cmdlineparser.cpp > CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.i
 
 common/CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.s"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/common/cmdlineparser.cpp -o CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/common/cmdlineparser.cpp -o CMakeFiles/stunserver_common.dir/cmdlineparser.cpp.s
 
 common/CMakeFiles/stunserver_common.dir/common.cpp.o: common/CMakeFiles/stunserver_common.dir/flags.make
-common/CMakeFiles/stunserver_common.dir/common.cpp.o: /root/STUN_SERVER/common/common.cpp
+common/CMakeFiles/stunserver_common.dir/common.cpp.o: /mnt/hgfs/STUN_SERVER/common/common.cpp
 common/CMakeFiles/stunserver_common.dir/common.cpp.o: common/CMakeFiles/stunserver_common.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object common/CMakeFiles/stunserver_common.dir/common.cpp.o"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/common.cpp.o -MF CMakeFiles/stunserver_common.dir/common.cpp.o.d -o CMakeFiles/stunserver_common.dir/common.cpp.o -c /root/STUN_SERVER/common/common.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object common/CMakeFiles/stunserver_common.dir/common.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/common.cpp.o -MF CMakeFiles/stunserver_common.dir/common.cpp.o.d -o CMakeFiles/stunserver_common.dir/common.cpp.o -c /mnt/hgfs/STUN_SERVER/common/common.cpp
 
 common/CMakeFiles/stunserver_common.dir/common.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/stunserver_common.dir/common.cpp.i"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/common/common.cpp > CMakeFiles/stunserver_common.dir/common.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/common/common.cpp > CMakeFiles/stunserver_common.dir/common.cpp.i
 
 common/CMakeFiles/stunserver_common.dir/common.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/stunserver_common.dir/common.cpp.s"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/common/common.cpp -o CMakeFiles/stunserver_common.dir/common.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/common/common.cpp -o CMakeFiles/stunserver_common.dir/common.cpp.s
 
 common/CMakeFiles/stunserver_common.dir/fasthash.cpp.o: common/CMakeFiles/stunserver_common.dir/flags.make
-common/CMakeFiles/stunserver_common.dir/fasthash.cpp.o: /root/STUN_SERVER/common/fasthash.cpp
+common/CMakeFiles/stunserver_common.dir/fasthash.cpp.o: /mnt/hgfs/STUN_SERVER/common/fasthash.cpp
 common/CMakeFiles/stunserver_common.dir/fasthash.cpp.o: common/CMakeFiles/stunserver_common.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object common/CMakeFiles/stunserver_common.dir/fasthash.cpp.o"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/fasthash.cpp.o -MF CMakeFiles/stunserver_common.dir/fasthash.cpp.o.d -o CMakeFiles/stunserver_common.dir/fasthash.cpp.o -c /root/STUN_SERVER/common/fasthash.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object common/CMakeFiles/stunserver_common.dir/fasthash.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/fasthash.cpp.o -MF CMakeFiles/stunserver_common.dir/fasthash.cpp.o.d -o CMakeFiles/stunserver_common.dir/fasthash.cpp.o -c /mnt/hgfs/STUN_SERVER/common/fasthash.cpp
 
 common/CMakeFiles/stunserver_common.dir/fasthash.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/stunserver_common.dir/fasthash.cpp.i"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/common/fasthash.cpp > CMakeFiles/stunserver_common.dir/fasthash.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/common/fasthash.cpp > CMakeFiles/stunserver_common.dir/fasthash.cpp.i
 
 common/CMakeFiles/stunserver_common.dir/fasthash.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/stunserver_common.dir/fasthash.cpp.s"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/common/fasthash.cpp -o CMakeFiles/stunserver_common.dir/fasthash.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/common/fasthash.cpp -o CMakeFiles/stunserver_common.dir/fasthash.cpp.s
 
 common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o: common/CMakeFiles/stunserver_common.dir/flags.make
-common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o: /root/STUN_SERVER/common/getconsolewidth.cpp
+common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o: /mnt/hgfs/STUN_SERVER/common/getconsolewidth.cpp
 common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o: common/CMakeFiles/stunserver_common.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o -MF CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o.d -o CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o -c /root/STUN_SERVER/common/getconsolewidth.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o -MF CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o.d -o CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.o -c /mnt/hgfs/STUN_SERVER/common/getconsolewidth.cpp
 
 common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.i"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/common/getconsolewidth.cpp > CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/common/getconsolewidth.cpp > CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.i
 
 common/CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.s"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/common/getconsolewidth.cpp -o CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/common/getconsolewidth.cpp -o CMakeFiles/stunserver_common.dir/getconsolewidth.cpp.s
 
 common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o: common/CMakeFiles/stunserver_common.dir/flags.make
-common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o: /root/STUN_SERVER/common/getmillisecondcounter.cpp
+common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o: /mnt/hgfs/STUN_SERVER/common/getmillisecondcounter.cpp
 common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o: common/CMakeFiles/stunserver_common.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o -MF CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o.d -o CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o -c /root/STUN_SERVER/common/getmillisecondcounter.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o -MF CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o.d -o CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.o -c /mnt/hgfs/STUN_SERVER/common/getmillisecondcounter.cpp
 
 common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.i"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/common/getmillisecondcounter.cpp > CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/common/getmillisecondcounter.cpp > CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.i
 
 common/CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.s"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/common/getmillisecondcounter.cpp -o CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/common/getmillisecondcounter.cpp -o CMakeFiles/stunserver_common.dir/getmillisecondcounter.cpp.s
 
 common/CMakeFiles/stunserver_common.dir/logger.cpp.o: common/CMakeFiles/stunserver_common.dir/flags.make
-common/CMakeFiles/stunserver_common.dir/logger.cpp.o: /root/STUN_SERVER/common/logger.cpp
+common/CMakeFiles/stunserver_common.dir/logger.cpp.o: /mnt/hgfs/STUN_SERVER/common/logger.cpp
 common/CMakeFiles/stunserver_common.dir/logger.cpp.o: common/CMakeFiles/stunserver_common.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object common/CMakeFiles/stunserver_common.dir/logger.cpp.o"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/logger.cpp.o -MF CMakeFiles/stunserver_common.dir/logger.cpp.o.d -o CMakeFiles/stunserver_common.dir/logger.cpp.o -c /root/STUN_SERVER/common/logger.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object common/CMakeFiles/stunserver_common.dir/logger.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/logger.cpp.o -MF CMakeFiles/stunserver_common.dir/logger.cpp.o.d -o CMakeFiles/stunserver_common.dir/logger.cpp.o -c /mnt/hgfs/STUN_SERVER/common/logger.cpp
 
 common/CMakeFiles/stunserver_common.dir/logger.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/stunserver_common.dir/logger.cpp.i"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/common/logger.cpp > CMakeFiles/stunserver_common.dir/logger.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/common/logger.cpp > CMakeFiles/stunserver_common.dir/logger.cpp.i
 
 common/CMakeFiles/stunserver_common.dir/logger.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/stunserver_common.dir/logger.cpp.s"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/common/logger.cpp -o CMakeFiles/stunserver_common.dir/logger.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/common/logger.cpp -o CMakeFiles/stunserver_common.dir/logger.cpp.s
 
 common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.o: common/CMakeFiles/stunserver_common.dir/flags.make
-common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.o: /root/STUN_SERVER/common/prettyprint.cpp
+common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.o: /mnt/hgfs/STUN_SERVER/common/prettyprint.cpp
 common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.o: common/CMakeFiles/stunserver_common.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.o"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.o -MF CMakeFiles/stunserver_common.dir/prettyprint.cpp.o.d -o CMakeFiles/stunserver_common.dir/prettyprint.cpp.o -c /root/STUN_SERVER/common/prettyprint.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.o -MF CMakeFiles/stunserver_common.dir/prettyprint.cpp.o.d -o CMakeFiles/stunserver_common.dir/prettyprint.cpp.o -c /mnt/hgfs/STUN_SERVER/common/prettyprint.cpp
 
 common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/stunserver_common.dir/prettyprint.cpp.i"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/common/prettyprint.cpp > CMakeFiles/stunserver_common.dir/prettyprint.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/common/prettyprint.cpp > CMakeFiles/stunserver_common.dir/prettyprint.cpp.i
 
 common/CMakeFiles/stunserver_common.dir/prettyprint.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/stunserver_common.dir/prettyprint.cpp.s"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/common/prettyprint.cpp -o CMakeFiles/stunserver_common.dir/prettyprint.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/common/prettyprint.cpp -o CMakeFiles/stunserver_common.dir/prettyprint.cpp.s
 
 common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.o: common/CMakeFiles/stunserver_common.dir/flags.make
-common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.o: /root/STUN_SERVER/common/refcountobject.cpp
+common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.o: /mnt/hgfs/STUN_SERVER/common/refcountobject.cpp
 common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.o: common/CMakeFiles/stunserver_common.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.o"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.o -MF CMakeFiles/stunserver_common.dir/refcountobject.cpp.o.d -o CMakeFiles/stunserver_common.dir/refcountobject.cpp.o -c /root/STUN_SERVER/common/refcountobject.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.o -MF CMakeFiles/stunserver_common.dir/refcountobject.cpp.o.d -o CMakeFiles/stunserver_common.dir/refcountobject.cpp.o -c /mnt/hgfs/STUN_SERVER/common/refcountobject.cpp
 
 common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/stunserver_common.dir/refcountobject.cpp.i"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/common/refcountobject.cpp > CMakeFiles/stunserver_common.dir/refcountobject.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/common/refcountobject.cpp > CMakeFiles/stunserver_common.dir/refcountobject.cpp.i
 
 common/CMakeFiles/stunserver_common.dir/refcountobject.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/stunserver_common.dir/refcountobject.cpp.s"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/common/refcountobject.cpp -o CMakeFiles/stunserver_common.dir/refcountobject.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/common/refcountobject.cpp -o CMakeFiles/stunserver_common.dir/refcountobject.cpp.s
 
 common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.o: common/CMakeFiles/stunserver_common.dir/flags.make
-common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.o: /root/STUN_SERVER/common/stringhelper.cpp
+common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.o: /mnt/hgfs/STUN_SERVER/common/stringhelper.cpp
 common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.o: common/CMakeFiles/stunserver_common.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.o"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.o -MF CMakeFiles/stunserver_common.dir/stringhelper.cpp.o.d -o CMakeFiles/stunserver_common.dir/stringhelper.cpp.o -c /root/STUN_SERVER/common/stringhelper.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.o"
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.o -MF CMakeFiles/stunserver_common.dir/stringhelper.cpp.o.d -o CMakeFiles/stunserver_common.dir/stringhelper.cpp.o -c /mnt/hgfs/STUN_SERVER/common/stringhelper.cpp
 
 common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/stunserver_common.dir/stringhelper.cpp.i"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /root/STUN_SERVER/common/stringhelper.cpp > CMakeFiles/stunserver_common.dir/stringhelper.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/hgfs/STUN_SERVER/common/stringhelper.cpp > CMakeFiles/stunserver_common.dir/stringhelper.cpp.i
 
 common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/stunserver_common.dir/stringhelper.cpp.s"
-	cd /root/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /root/STUN_SERVER/common/stringhelper.cpp -o CMakeFiles/stunserver_common.dir/stringhelper.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build/common && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/hgfs/STUN_SERVER/common/stringhelper.cpp -o CMakeFiles/stunserver_common.dir/stringhelper.cpp.s
 
 # Object files for target stunserver_common
 stunserver_common_OBJECTS = \
@@ -237,19 +237,19 @@ common/libstunserver_common.a: common/CMakeFiles/stunserver_common.dir/refcounto
 common/libstunserver_common.a: common/CMakeFiles/stunserver_common.dir/stringhelper.cpp.o
 common/libstunserver_common.a: common/CMakeFiles/stunserver_common.dir/build.make
 common/libstunserver_common.a: common/CMakeFiles/stunserver_common.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/root/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX static library libstunserver_common.a"
-	cd /root/STUN_SERVER/build/common && $(CMAKE_COMMAND) -P CMakeFiles/stunserver_common.dir/cmake_clean_target.cmake
-	cd /root/STUN_SERVER/build/common && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/stunserver_common.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/mnt/hgfs/STUN_SERVER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX static library libstunserver_common.a"
+	cd /mnt/hgfs/STUN_SERVER/build/common && $(CMAKE_COMMAND) -P CMakeFiles/stunserver_common.dir/cmake_clean_target.cmake
+	cd /mnt/hgfs/STUN_SERVER/build/common && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/stunserver_common.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 common/CMakeFiles/stunserver_common.dir/build: common/libstunserver_common.a
 .PHONY : common/CMakeFiles/stunserver_common.dir/build
 
 common/CMakeFiles/stunserver_common.dir/clean:
-	cd /root/STUN_SERVER/build/common && $(CMAKE_COMMAND) -P CMakeFiles/stunserver_common.dir/cmake_clean.cmake
+	cd /mnt/hgfs/STUN_SERVER/build/common && $(CMAKE_COMMAND) -P CMakeFiles/stunserver_common.dir/cmake_clean.cmake
 .PHONY : common/CMakeFiles/stunserver_common.dir/clean
 
 common/CMakeFiles/stunserver_common.dir/depend:
-	cd /root/STUN_SERVER/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/STUN_SERVER /root/STUN_SERVER/common /root/STUN_SERVER/build /root/STUN_SERVER/build/common /root/STUN_SERVER/build/common/CMakeFiles/stunserver_common.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /mnt/hgfs/STUN_SERVER/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/hgfs/STUN_SERVER /mnt/hgfs/STUN_SERVER/common /mnt/hgfs/STUN_SERVER/build /mnt/hgfs/STUN_SERVER/build/common /mnt/hgfs/STUN_SERVER/build/common/CMakeFiles/stunserver_common.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : common/CMakeFiles/stunserver_common.dir/depend
 

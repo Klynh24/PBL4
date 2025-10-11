@@ -1,4 +1,4 @@
-# Install script for directory: /root/STUN_SERVER/server
+# Install script for directory: /mnt/hgfs/STUN_SERVER/server
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/STUN_SERVER
+CMAKE_SOURCE_DIR = /mnt/hgfs/STUN_SERVER
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/STUN_SERVER/build
+CMAKE_BINARY_DIR = /mnt/hgfs/STUN_SERVER/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /root/STUN_SERVER/build && $(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles /root/STUN_SERVER/build/server//CMakeFiles/progress.marks
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/STUN_SERVER/build/CMakeFiles 0
+	cd /mnt/hgfs/STUN_SERVER/build && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles /mnt/hgfs/STUN_SERVER/build/server//CMakeFiles/progress.marks
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/STUN_SERVER/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server/clean
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,22 +103,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server/preinstall
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server/preinstall
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /root/STUN_SERVER/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /mnt/hgfs/STUN_SERVER/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 server/CMakeFiles/server.dir/rule:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server/CMakeFiles/server.dir/rule
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server/CMakeFiles/server.dir/rule
 .PHONY : server/CMakeFiles/server.dir/rule
 
 # Convenience name for target.
@@ -127,7 +127,7 @@ server: server/CMakeFiles/server.dir/rule
 
 # fast build rule for target.
 server/fast:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/build
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/build
 .PHONY : server/fast
 
 main.o: main.cpp.o
@@ -135,7 +135,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/main.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -143,7 +143,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/main.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -151,7 +151,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/main.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 sampleauthprovider.o: sampleauthprovider.cpp.o
@@ -159,7 +159,7 @@ sampleauthprovider.o: sampleauthprovider.cpp.o
 
 # target to build an object file
 sampleauthprovider.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/sampleauthprovider.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/sampleauthprovider.cpp.o
 .PHONY : sampleauthprovider.cpp.o
 
 sampleauthprovider.i: sampleauthprovider.cpp.i
@@ -167,7 +167,7 @@ sampleauthprovider.i: sampleauthprovider.cpp.i
 
 # target to preprocess a source file
 sampleauthprovider.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/sampleauthprovider.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/sampleauthprovider.cpp.i
 .PHONY : sampleauthprovider.cpp.i
 
 sampleauthprovider.s: sampleauthprovider.cpp.s
@@ -175,7 +175,7 @@ sampleauthprovider.s: sampleauthprovider.cpp.s
 
 # target to generate assembly for a file
 sampleauthprovider.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/sampleauthprovider.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/sampleauthprovider.cpp.s
 .PHONY : sampleauthprovider.cpp.s
 
 server.o: server.cpp.o
@@ -183,7 +183,7 @@ server.o: server.cpp.o
 
 # target to build an object file
 server.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/server.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/server.cpp.o
 .PHONY : server.cpp.o
 
 server.i: server.cpp.i
@@ -191,7 +191,7 @@ server.i: server.cpp.i
 
 # target to preprocess a source file
 server.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/server.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/server.cpp.i
 .PHONY : server.cpp.i
 
 server.s: server.cpp.s
@@ -199,39 +199,15 @@ server.s: server.cpp.s
 
 # target to generate assembly for a file
 server.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/server.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/server.cpp.s
 .PHONY : server.cpp.s
-
-stunconnection.o: stunconnection.cpp.o
-.PHONY : stunconnection.o
-
-# target to build an object file
-stunconnection.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/stunconnection.cpp.o
-.PHONY : stunconnection.cpp.o
-
-stunconnection.i: stunconnection.cpp.i
-.PHONY : stunconnection.i
-
-# target to preprocess a source file
-stunconnection.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/stunconnection.cpp.i
-.PHONY : stunconnection.cpp.i
-
-stunconnection.s: stunconnection.cpp.s
-.PHONY : stunconnection.s
-
-# target to generate assembly for a file
-stunconnection.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/stunconnection.cpp.s
-.PHONY : stunconnection.cpp.s
 
 stunsocketthread.o: stunsocketthread.cpp.o
 .PHONY : stunsocketthread.o
 
 # target to build an object file
 stunsocketthread.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/stunsocketthread.cpp.o
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/stunsocketthread.cpp.o
 .PHONY : stunsocketthread.cpp.o
 
 stunsocketthread.i: stunsocketthread.cpp.i
@@ -239,7 +215,7 @@ stunsocketthread.i: stunsocketthread.cpp.i
 
 # target to preprocess a source file
 stunsocketthread.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/stunsocketthread.cpp.i
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/stunsocketthread.cpp.i
 .PHONY : stunsocketthread.cpp.i
 
 stunsocketthread.s: stunsocketthread.cpp.s
@@ -247,32 +223,8 @@ stunsocketthread.s: stunsocketthread.cpp.s
 
 # target to generate assembly for a file
 stunsocketthread.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/stunsocketthread.cpp.s
+	cd /mnt/hgfs/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/stunsocketthread.cpp.s
 .PHONY : stunsocketthread.cpp.s
-
-tcpserver.o: tcpserver.cpp.o
-.PHONY : tcpserver.o
-
-# target to build an object file
-tcpserver.cpp.o:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/tcpserver.cpp.o
-.PHONY : tcpserver.cpp.o
-
-tcpserver.i: tcpserver.cpp.i
-.PHONY : tcpserver.i
-
-# target to preprocess a source file
-tcpserver.cpp.i:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/tcpserver.cpp.i
-.PHONY : tcpserver.cpp.i
-
-tcpserver.s: tcpserver.cpp.s
-.PHONY : tcpserver.s
-
-# target to generate assembly for a file
-tcpserver.cpp.s:
-	cd /root/STUN_SERVER/build && $(MAKE) $(MAKESILENT) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/tcpserver.cpp.s
-.PHONY : tcpserver.cpp.s
 
 # Help Target
 help:
@@ -292,15 +244,9 @@ help:
 	@echo "... server.o"
 	@echo "... server.i"
 	@echo "... server.s"
-	@echo "... stunconnection.o"
-	@echo "... stunconnection.i"
-	@echo "... stunconnection.s"
 	@echo "... stunsocketthread.o"
 	@echo "... stunsocketthread.i"
 	@echo "... stunsocketthread.s"
-	@echo "... tcpserver.o"
-	@echo "... tcpserver.i"
-	@echo "... tcpserver.s"
 .PHONY : help
 
 
@@ -312,6 +258,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /root/STUN_SERVER/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /mnt/hgfs/STUN_SERVER/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 
