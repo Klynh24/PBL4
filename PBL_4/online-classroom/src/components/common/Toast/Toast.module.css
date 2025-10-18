@@ -1,0 +1,32 @@
+/* src/components/common/Toast/Toast.module.css */
+.toastContainer {
+  position: fixed;
+  top: 80px; /* Dưới header */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2e7d32; /* Màu xanh lá cây đậm */
+  color: var(--white);
+  padding: 12px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  animation: slideDown 0.5s ease-out;
+}
+
+.icon {
+  font-size: 20px;
+}
+
+@keyframes slideDown {
+  from {
+    top: 0;
+    opacity: 0;
+  }
+  to {
+    top: 80px;
+    opacity: 1;
+  }
+}

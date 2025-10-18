@@ -1,0 +1,128 @@
+/* src/pages/ClassesPage/ClassesPage.module.css */
+.container {
+  max-width: 1400px; /* Tăng chiều rộng tối đa để chứa được nhiều thẻ hơn */
+  margin: 0 auto;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.title {
+  font-size: 28px;
+  color: var(--text-dark);
+}
+.actionButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+}
+/* SỬA LỖI: Đảm bảo không có gạch chân khi hover */
+.cardLink:hover {
+    text-decoration: none;
+}
+
+.card {
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  height: 280px; /* Chiều cao cố định cho thẻ */
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border-color);
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px var(--shadow-color);
+}
+
+.cardAvatar {
+  height: 120px;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 600;
+  color: var(--white);
+}
+
+/* CẬP NHẬT: Thay thế màu đơn bằng các dải màu gradient pastel */
+.color1 { 
+    background-image: linear-gradient(45deg, #ff8ba7 0%, #ffc0cb 100%); /* Original Pink */
+}
+.color2 { 
+    background-image: linear-gradient(45deg, #84fab0 0%, #8fd3f4 100%); /* Green-Blue */
+}
+.color3 { 
+    background-image: linear-gradient(45deg, #a18cd1 0%, #fbc2eb 100%); /* Purple-Pink */
+}
+.color4 { 
+    background-image: linear-gradient(45deg, #f6d365 0%, #fda085 100%); /* Orange-Yellow */
+}
+.color5 { 
+    background-image: linear-gradient(45deg, #81e6d9 0%, #d4f1f4 100%); /* Teal-Light Blue */
+}
+
+
+.cardContent {
+  padding: 16px;
+  flex-grow: 1;
+}
+.cardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  /* Giới hạn 2 dòng chữ */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2; /* Thêm thuộc tính tiêu chuẩn */
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  min-height: 44px; /* Chiều cao tương đương 2 dòng */
+}
+.cardSubtext {
+  font-size: 14px;
+  color: var(--text-light);
+  margin: 0;
+}
+
+.cardFooter {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-light);
+}
+
+/* SỬA LỖI: Ẩn nút "..." ở góc */
+.moreOptionsButton {
+  display: none;
+}
+
+.message {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-light);
+  font-size: 18px;
+}
+

@@ -1,0 +1,118 @@
+/* src/pages/admin/AdminDashboardPage/AdminDashboardPage.module.css */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* THÊM MỚI: Style cho phần header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+.title {
+  font-size: 28px;
+  color: var(--text-dark);
+  margin: 0;
+}
+.actionButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.actionButton:hover {
+    background-color: var(--primary-hover-color);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 24px;
+}
+.tabButton {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-light);
+  border-bottom: 3px solid transparent;
+  transform: translateY(1px);
+}
+.tabButton.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+.content {
+  background-color: var(--white);
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th, .table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+.table th {
+  background-color: var(--background-light);
+  font-weight: 600;
+}
+.table tr:last-child td {
+  border-bottom: none;
+}
+.table tr:hover {
+  background-color: var(--background-light);
+}
+.editButton, .deleteButton {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-right: 8px;
+}
+.editButton {
+  background-color: #e0e7ff;
+  color: #4f46e5;
+}
+.deleteButton {
+  background-color: var(--background-light);
+  color: var(--error-color);
+}
+.message { text-align: center; padding: 40px; }
+.error { color: var(--error-color); }
+
+/* THÊM MỚI: Style cho form gửi thông báo */
+.notificationForm h2 {
+    font-size: 20px;
+    margin-top: 0;
+}
+.notificationForm textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    margin-bottom: 16px;
+}
+.notificationForm textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--background-light);
+}

@@ -1,0 +1,40 @@
+/* src/components/layout/Footer/Footer.module.css */
+.footer {
+  background-color: var(--background-light);
+  padding: 24px 32px;
+  border-top: 1px solid var(--border-color);
+  margin-top: auto; /* Đẩy footer xuống cuối trang */
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.text {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.links {
+  display: flex;
+  gap: 24px;
+}
+
+.link {
+  color: var(--text-light);
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}

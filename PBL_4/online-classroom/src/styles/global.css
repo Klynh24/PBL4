@@ -1,0 +1,37 @@
+/* src/styles/global.css */
+:root {
+  --primary-color: #ff8ba7;
+  --primary-hover-color: #e65a7c;
+  --background-light: #fff5f7;
+  --background-main: #fceef2;
+  --text-dark: #3c3c3c;
+  --text-light: #6b7280;
+  --border-color: #ffcedb;
+  --white: #ffffff;
+  --shadow-color: rgba(99, 58, 72, 0.08);
+  --success-color: #5ddc9b;
+  --error-color: #ff6b6b;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-main);
+  color: var(--text-dark);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: var(--primary-hover-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
