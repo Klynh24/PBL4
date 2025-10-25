@@ -21,8 +21,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
     private final ObjectProvider<JwtService> jwtServiceProvider;
 
     public WebSocketConfig(SignalingWebSocketHandler webSocketHandler,
-                           SignalingProperties properties,
-                           ObjectProvider<JwtService> jwtServiceProvider) {
+            SignalingProperties properties,
+            ObjectProvider<JwtService> jwtServiceProvider) {
         this.webSocketHandler = webSocketHandler;
         this.properties = properties;
         this.jwtServiceProvider = jwtServiceProvider;

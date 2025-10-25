@@ -65,9 +65,9 @@ public class RoomRegistry {
             if (descriptor.sessionId.equals(excludeSessionId)) {
                 continue;
             }
-             if (targetSubject != null && !targetSubject.equals(descriptor.principal.subject())) {
-                 continue;
-             }
+            if (targetSubject != null && !targetSubject.equals(descriptor.principal.subject())) {
+                continue;
+            }
             WebSocketSession session = descriptor.session;
             if (!session.isOpen()) {
                 continue;
@@ -75,7 +75,8 @@ public class RoomRegistry {
             try {
                 session.sendMessage(message);
             } catch (IOException e) {
-                log.warn("Failed to send message to session {} in room {}: {}", session.getId(), roomId, e.getMessage());
+                log.warn("Failed to send message to session {} in room {}: {}", session.getId(), roomId,
+                        e.getMessage());
                 try {
                     session.close();
                 } catch (IOException closeEx) {
@@ -93,8 +94,10 @@ public class RoomRegistry {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (!(obj instanceof SessionDescriptor that)) return false;
+            if (this == obj)
+                return true;
+            if (!(obj instanceof SessionDescriptor that))
+                return false;
             return sessionId.equals(that.sessionId);
         }
 

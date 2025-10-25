@@ -25,8 +25,7 @@ public class SignalingWebSocketHandler extends TextWebSocketHandler {
 
     private static final Logger log = LoggerFactory.getLogger(SignalingWebSocketHandler.class);
     private static final Set<String> SUPPORTED_TYPES = Set.of(
-            "join", "leave", "offer", "answer", "candidate", "ping"
-    );
+            "join", "leave", "offer", "answer", "candidate", "ping");
 
     private final ObjectMapper objectMapper;
     private final RoomRegistry roomRegistry;
@@ -35,10 +34,10 @@ public class SignalingWebSocketHandler extends TextWebSocketHandler {
     private final InstanceIdProvider instanceIdProvider;
 
     public SignalingWebSocketHandler(ObjectMapper objectMapper,
-                                     RoomRegistry roomRegistry,
-                                     SignalingProperties properties,
-                                     RoomMessagePublisher roomMessagePublisher,
-                                     InstanceIdProvider instanceIdProvider) {
+            RoomRegistry roomRegistry,
+            SignalingProperties properties,
+            RoomMessagePublisher roomMessagePublisher,
+            InstanceIdProvider instanceIdProvider) {
         this.objectMapper = objectMapper;
         this.roomRegistry = roomRegistry;
         this.properties = properties;
@@ -54,7 +53,8 @@ public class SignalingWebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         if (message.getPayloadLength() > properties.getMaxPayloadBytes()) {
-            log.warn("Dropping oversized message from session {} ({} bytes)", session.getId(), message.getPayloadLength());
+            log.warn("Dropping oversized message from session {} ({} bytes)", session.getId(),
+                    message.getPayloadLength());
             session.close(CloseStatus.POLICY_VIOLATION);
             return;
         }
@@ -76,6 +76,9 @@ public class SignalingWebSocketHandler extends TextWebSocketHandler {
             return;
         }
         switch (signalingMessage.getType().toLowerCase()) {
+            case "offer" -> handleRawRelay(session, principal, signalingMessage, message.getPayload());
+            case "answer" -> handleRawRelay(session, principal, signalingMessage, message.getPayload());
+            case "candidate" -> handleRawRelay(session, principal, signalingMessage, message.getPayload());
             case "join" -> handleJoin(session, principal, signalingMessage);
             case "leave" -> handleLeave(session, principal, signalingMessage);
             case "ping" -> handlePing(session);
@@ -88,13 +91,31 @@ public class SignalingWebSocketHandler extends TextWebSocketHandler {
         roomRegistry.findRoomForSession(session).ifPresent(roomId -> {
             roomRegistry.removeSession(session);
             broadcastLifecycleEvent(roomId, "peer-left", session, Map.of(
-                    "reason", status.getReason() != null ? status.getReason() : status.toString()
-            ));
+                    "reason", status.getReason() != null ? status.getReason() : status.toString()));
         });
         log.debug("Session {} closed: {}", session.getId(), status);
     }
 
-    private void handleJoin(WebSocketSession session, ClientPrincipal principal, SignalingMessage message) throws IOException {
+    private void handleRawRelay(WebSocketSession session, ClientPrincipal principal, SignalingMessage message,
+            String rawPayload) {
+        roomRegistry.findRoomForSession(session).ifPresentOrElse(roomId -> {
+            if (message.requiresRoom() && (message.getRoomId() == null ||
+                    !roomId.equals(message.getRoomId()))) {
+                sendErrorAsync(session, "Invalid room for message");
+                return;
+            }
+            String target = message.getTarget();
+            if (target != null && target.isBlank()) {
+                target = null;
+            }
+            roomRegistry.broadcastLocal(roomId, rawPayload, session.getId(), target);
+            roomMessagePublisher.publish(roomId, rawPayload, session.getId(), instanceIdProvider.getInstanceId(),
+                    target);
+        }, () -> sendErrorAsync(session, "Join a room before exchanging signaling data"));
+    }
+
+    private void handleJoin(WebSocketSession session, ClientPrincipal principal, SignalingMessage message)
+            throws IOException {
         String roomId = message.getRoomId();
         if (roomId == null || roomId.isBlank()) {
             session.sendMessage(new TextMessage("{\"type\":\"error\",\"message\":\"roomId is required\"}"));
@@ -144,15 +165,18 @@ public class SignalingWebSocketHandler extends TextWebSocketHandler {
             }
             String targetSubject = message.getTarget();
             roomRegistry.broadcastLocal(roomId, serialized, session.getId(), targetSubject);
-            roomMessagePublisher.publish(roomId, serialized, session.getId(), instanceIdProvider.getInstanceId(), targetSubject);
+            roomMessagePublisher.publish(roomId, serialized, session.getId(), instanceIdProvider.getInstanceId(),
+                    targetSubject);
         }, () -> sendErrorAsync(session, "Join a room before exchanging signaling data"));
     }
 
-    private void broadcastLifecycleEvent(String roomId, String eventType, WebSocketSession origin, Map<String, Object> data) {
+    private void broadcastLifecycleEvent(String roomId, String eventType, WebSocketSession origin,
+            Map<String, Object> data) {
         ObjectNode outbound = objectMapper.createObjectNode();
         outbound.put("type", eventType);
         outbound.put("roomId", roomId);
-        data.forEach((key, value) -> outbound.set(key, objectMapper.valueToTree(value)));
+        if (data != null)
+            data.forEach((key, value) -> outbound.set(key, objectMapper.valueToTree(value)));
         String serialized;
         try {
             serialized = objectMapper.writeValueAsString(outbound);
@@ -168,8 +192,7 @@ public class SignalingWebSocketHandler extends TextWebSocketHandler {
         try {
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(Map.of(
                     "type", "error",
-                    "message", message
-            ))));
+                    "message", message))));
         } catch (IOException e) {
             log.debug("Failed to send error message to {}: {}", session.getId(), e.getMessage());
         }
