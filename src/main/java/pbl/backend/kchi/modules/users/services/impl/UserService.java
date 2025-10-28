@@ -19,6 +19,9 @@ import pbl.backend.kchi.services.JwtService;
 import java.util.HashMap;
 import java.util.Map;
 
+import pbl.backend.kchi.resources.ErrorResource;
+import pbl.backend.kchi.services.JwtService;
+
 @Service
 public class UserService extends BaseService implements UserServiceInterface  {
 
@@ -44,7 +47,7 @@ public class UserService extends BaseService implements UserServiceInterface  {
             }
 
 
-            UserResource userResource = new UserResource(user.getId(), user.getEmail(), user.getName());
+            UserResource userResource = new UserResource(user.getId(), user.getEmail(), user.getName(), user.getPhone());
             String token = jwtService.generateToken(user.getId(), user.getEmail());
 
             return new LoginResources(token, userResource);
