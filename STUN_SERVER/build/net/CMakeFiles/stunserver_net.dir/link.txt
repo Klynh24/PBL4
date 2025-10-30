@@ -1,0 +1,2 @@
+/usr/bin/ar qc libstunserver_net.a CMakeFiles/stunserver_net.dir/adapters.cpp.o CMakeFiles/stunserver_net.dir/ratelimiter.cpp.o CMakeFiles/stunserver_net.dir/recvfromex.cpp.o CMakeFiles/stunserver_net.dir/resolvehostname.cpp.o CMakeFiles/stunserver_net.dir/stunsocket.cpp.o
+/usr/bin/ranlib libstunserver_net.a
