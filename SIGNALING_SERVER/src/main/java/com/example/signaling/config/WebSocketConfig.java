@@ -41,8 +41,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
         var websocketProps = properties.getWebsocket();
         var registration = registry
                 .addHandler(webSocketHandler, websocketProps.getPath())
-                .addInterceptors(new JwtHandshakeInterceptor(properties, jwtServiceProvider.getIfAvailable()))
                 .setAllowedOrigins(websocketProps.getAllowedOrigins());
+        if (properties.getAuth().isEnabled()) {
+            registration.addInterceptors(new JwtHandshakeInterceptor(properties, jwtServiceProvider.getIfAvailable()));
+        }
         if (websocketProps.isAllowSockJs()) {
             registration.withSockJS();
         }
