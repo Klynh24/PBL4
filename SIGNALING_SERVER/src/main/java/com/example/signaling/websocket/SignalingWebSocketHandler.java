@@ -58,11 +58,19 @@ public class SignalingWebSocketHandler extends TextWebSocketHandler {
             session.close(CloseStatus.POLICY_VIOLATION);
             return;
         }
-        ClientPrincipal principal = (ClientPrincipal) session.getAttributes().get(ClientPrincipal.ATTRIBUTE_KEY);
-        if (principal == null) {
+
+        // === LẤY PRINCIPAL AN TOÀN ===
+        ClientPrincipal principal = properties.getAuth().isEnabled()
+                ? (ClientPrincipal) session.getAttributes().get(ClientPrincipal.ATTRIBUTE_KEY)
+                : new ClientPrincipal("anonymous", Map.of());
+
+        // Nếu auth bật nhưng không có principal → từ chối
+        if (properties.getAuth().isEnabled() && principal == null) {
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason("Missing authentication context"));
             return;
         }
+
+        // === Parse message ===
         SignalingMessage signalingMessage;
         try {
             signalingMessage = objectMapper.readValue(message.getPayload(), SignalingMessage.class);
@@ -71,10 +79,13 @@ public class SignalingWebSocketHandler extends TextWebSocketHandler {
             session.close(CloseStatus.BAD_DATA.withReason("Invalid signaling payload"));
             return;
         }
+
         if (signalingMessage.getType() == null || !SUPPORTED_TYPES.contains(signalingMessage.getType().toLowerCase())) {
             session.sendMessage(new TextMessage("{\"type\":\"error\",\"message\":\"Unsupported signaling type\"}"));
             return;
         }
+
+        // === XỬ LÝ THEO LOẠI ===
         switch (signalingMessage.getType().toLowerCase()) {
             case "offer" -> handleRawRelay(session, principal, signalingMessage, message.getPayload());
             case "answer" -> handleRawRelay(session, principal, signalingMessage, message.getPayload());
@@ -121,14 +132,17 @@ public class SignalingWebSocketHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage("{\"type\":\"error\",\"message\":\"roomId is required\"}"));
             return;
         }
+
+        String subject = principal.subject(); // ← an toàn: AnonymousPrincipal trả về "anonymous"
+
         roomRegistry.joinRoom(roomId, session, principal);
         ObjectNode ack = objectMapper.createObjectNode();
         ack.put("type", "joined");
         ack.put("roomId", roomId);
-        ack.put("subject", principal.subject());
+        ack.put("subject", subject);
         session.sendMessage(new TextMessage(objectMapper.writeValueAsString(ack)));
-        broadcastLifecycleEvent(roomId, "peer-joined", session, Map.of("subject", principal.subject()));
-        log.info("Subject {} joined room {} (session {})", principal.subject(), roomId, session.getId());
+        broadcastLifecycleEvent(roomId, "peer-joined", session, Map.of("subject", subject));
+        log.info("Subject {} joined room {} (session {})", subject, roomId, session.getId());
     }
 
     private void handleLeave(WebSocketSession session, ClientPrincipal principal, SignalingMessage message) {
