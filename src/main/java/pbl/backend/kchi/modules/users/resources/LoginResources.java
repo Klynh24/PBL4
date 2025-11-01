@@ -3,15 +3,20 @@ package pbl.backend.kchi.modules.users.resources;
 public class LoginResources {
 
     private final String token;
+    private final String refreshToken;
     private final UserResource user;
 
     public LoginResources(
             String token,
+            String refreshToken,
             UserResource user
     ) {
         this.token = token;
+        this.refreshToken = refreshToken;
         this.user = user;
     }
+
+    public String getRefreshToken() { return refreshToken;}
 
     public String getToken() {
         return token;

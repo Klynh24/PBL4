@@ -12,16 +12,22 @@ import org.springframework.stereotype.Service;
 import pbl.backend.kchi.config.JwtConfig;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 import io.jsonwebtoken.security.Keys;
 import pbl.backend.kchi.modules.users.services.impl.UserService;
 import java.util.function.Function;
-import io.jsonwebtoken.security.SignatureException;
+import java.util.UUID;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import pbl.backend.kchi.modules.users.repositories.BlacklistedTokenRespository;
+import pbl.backend.kchi.modules.refresh_tokens.entities.Refresh_tokens;
+import pbl.backend.kchi.modules.refresh_tokens.repositories.RefreshtokensRepository;
 
 
 @Service
@@ -34,6 +40,9 @@ public class JwtService {
 
     @Autowired
     private BlacklistedTokenRespository blacklistedTokenRespository;
+
+    @Autowired
+    private RefreshtokensRepository refreshtokensRepository;
 
     public JwtService (
             JwtConfig jwtConfig
@@ -105,7 +114,7 @@ public class JwtService {
      //       logger.info(token);
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
-        } catch (SignatureException e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -116,13 +125,13 @@ public class JwtService {
     }
 
     public boolean isTokenExpired(String token) {
-        try {
-
-            final Date expiration = getClaimFromToken(token, Claims::getExpiration);
-            return expiration.after(new Date());
-        } catch (ExpiredJwtException e) {
-            return false;
-        }
+       try {
+           Date expiration = getClaimFromToken(token, Claims::getExpiration);
+           logger.info("Expirai: {}", expiration);
+           return expiration.before(new Date());
+       } catch (Exception e) {
+           return false;
+       }
     }
 
     private Claims extractAllClaims(String token) {
@@ -134,11 +143,43 @@ public class JwtService {
     }
 
     public Claims getALlClaimsFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return null;
+        }
+    }
+
+    public String generateRefreshToken(Long userId, String email) {
+        logger.info("Generating refresh token.....");
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtConfig.getRefreshTokenExpirationTime());
+
+        String refreshToken = UUID.randomUUID().toString();
+
+        LocalDateTime localExpiryDate = expiryDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+        Optional<Refresh_tokens> optionalRefreshTokens = refreshtokensRepository.findByUserId(userId);
+
+        if(optionalRefreshTokens.isPresent()) {
+            Refresh_tokens dBRefreshToken = optionalRefreshTokens.get();
+            dBRefreshToken.setRefreshToken(refreshToken);
+            dBRefreshToken.setExpiryDate(localExpiryDate);
+            refreshtokensRepository.save(dBRefreshToken);
+
+        } else {
+            Refresh_tokens insertToken = new Refresh_tokens();
+            insertToken.setRefreshToken(refreshToken);
+            insertToken.setExpiryDate(localExpiryDate);
+            insertToken.setUserId(userId);
+
+            refreshtokensRepository.save(insertToken);
+        }
+        return refreshToken;
     }
 
     public<T> T getClaimFromToken(String token,java.util.function.Function<Claims, T> claimsResolver) {
@@ -153,5 +194,18 @@ public class JwtService {
 
     public boolean isBlacklistedToken(String token) {
         return blacklistedTokenRespository.existsByToken(token);
+    }
+
+    public boolean isRefreshTokenValid(String token) {
+        try {
+            Refresh_tokens refreshToken = refreshtokensRepository.findByRefreshToken(token).orElseThrow(() ->
+                    new RuntimeException("Refresh Token không tồn tại"));
+            LocalDateTime expirationLocalDateTime = refreshToken.getExpiryDate();
+            Date expirationDate = Date.from(expirationLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            return  expirationDate.after(new Date());
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import pbl.backend.kchi.modules.refresh_tokens.entities.Refresh_tokens;
+import pbl.backend.kchi.modules.users.entities.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -18,4 +20,8 @@ import java.util.function.Function;
 
 @Repository
 public interface RefreshtokensRepository  extends JpaRepository<Refresh_tokens, Long>{
+    boolean existsByRefreshToken(String refreshToken);
+    Optional<Refresh_tokens> findByRefreshToken(String refreshToken);
+    Optional<Refresh_tokens> findByUserId(Long userId);
+
 }

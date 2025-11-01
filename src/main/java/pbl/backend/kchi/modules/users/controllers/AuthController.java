@@ -1,7 +1,6 @@
 package pbl.backend.kchi.modules.users.controllers;
 //đăng nhập
 
-import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
+import pbl.backend.kchi.modules.refresh_tokens.requests.RefreshTokenRequest;
 import pbl.backend.kchi.modules.users.requests.LoginRequest;
 import pbl.backend.kchi.modules.users.resources.LoginResources;
 import pbl.backend.kchi.modules.users.services.interfaces.UserServiceInterface;
@@ -18,8 +18,11 @@ import pbl.backend.kchi.modules.users.requests.BlacklistedTokenRequest;
 import pbl.backend.kchi.modules.users.services.impl.BlacklistService;
 import pbl.backend.kchi.modules.users.resources.MessageResource;
 import pbl.backend.kchi.services.JwtService;
-
-import java.util.Date;
+import org.springframework.web.bind.annotation.RequestHeader;
+import pbl.backend.kchi.modules.refresh_tokens.resources.RefreshTokenResource;
+import pbl.backend.kchi.modules.refresh_tokens.repositories.RefreshtokensRepository;
+import pbl.backend.kchi.modules.refresh_tokens.entities.Refresh_tokens;
+import java.util.Optional;
 
 
 @Validated
@@ -35,6 +38,9 @@ public class AuthController {
 
     @Autowired
     private BlacklistService blacklistService;
+
+    @Autowired
+    private RefreshtokensRepository refreshTokenRepository;
     public AuthController(
             UserServiceInterface userService
     ) {
@@ -86,6 +92,30 @@ public class AuthController {
         }
 
     }
+
+    @PostMapping("refresh")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        String refreshToken = request.getRefreshToken();
+        if(!jwtService.isRefreshTokenValid(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResource("Refresh Token không hợp lệ"));
+        }
+
+        Optional<Refresh_tokens> dbRefreshTokenOptional = refreshTokenRepository.findByRefreshToken(refreshToken);
+
+        if(dbRefreshTokenOptional.isPresent()) {
+            Refresh_tokens dbRefreshToken = dbRefreshTokenOptional.get();
+
+            Long userId = dbRefreshToken.getUserId();
+            String email = dbRefreshToken.getUser().getEmail();
+            String newToken = jwtService.generateToken(userId, email);
+            String newRefreshToken = jwtService.generateRefreshToken(userId, email);
+            return ResponseEntity.ok(new RefreshTokenResource(newToken, newRefreshToken));
+
+        }
+        return ResponseEntity.internalServerError().body(new pbl.backend.kchi.resources.MessageResource("Network Error!"));
+
+    }
+
 
 
 }

@@ -29,7 +29,7 @@ POST
 <User Object>
 Logout
 POST
-/api/auth/logout
+/api/auth/logout(lamroi)
 -
 { "message": "Logged out" }
 

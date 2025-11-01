@@ -1,60 +1,43 @@
 package pbl.backend.kchi.modules.refresh_tokens.entities;
 
+import lombok.*;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+import pbl.backend.kchi.modules.users.entities.User;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Entity
 @Table(name = "refresh_tokens")
 public class Refresh_tokens {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", updatable = false)
+    @Column(name = "user_id")
     private Long userId;
 
-    private String tokenHash;
+    @Column(name="refresh_token",nullable = false, unique = true)
+    private String refreshToken;
 
-    @Column(name = "expires_at")
-    private LocalDateTime expiresAt;
+    @Column(name = "expires_at", nullable = false)
+    private LocalDateTime expiryDate;
 
-    @Column(name = "revoked_at")
-    private LocalDateTime revokedAt;
-
-    @Column(name = "created_at")
+    @CreationTimestamp
+    @Column(name="created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @PrePersist
-    protected void onCreated() {
-        LocalDateTime now = LocalDateTime.now();
+    @UpdateTimestamp
+    @Column(name ="revoked_at")
+    private LocalDateTime revokedAt;
 
-        if(createdAt == null)
-            createdAt = now;
-        if(revokedAt == null)
-            revokedAt = now;
-        if(expiresAt == null)
-            expiresAt = now.plusDays(1);
-    }
-
-    public Long getId() { return id; }
-
-    public void setId(Long id) { this.id = id; }
-
-    public Long getUserId() { return userId; }
-
-    public void setUserId(Long userId) { this.userId = userId; }
-
-    public String getTokenHash() { return tokenHash; }
-
-    public void setTokenHash(String tokenHash) { this.tokenHash = tokenHash;}
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-
-    public LocalDateTime getExpiresAt() { return expiresAt; }
-
-    public LocalDateTime getRevokedAt() { return revokedAt; }
-
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private User user;
 
 }
