@@ -3,18 +3,18 @@ import io.jsonwebtoken.Claims;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import pbl.backend.kchi.modules.users.entities.User;
+
+import org.springframework.http.HttpStatus;
 import pbl.backend.kchi.modules.users.repositories.BlacklistedTokenRespository;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
 
 import pbl.backend.kchi.modules.users.entities.BlacklistedToken;
 import pbl.backend.kchi.modules.users.requests.BlacklistedTokenRequest;
-import pbl.backend.kchi.resources.ErrorResource;
+import pbl.backend.kchi.modules.users.resources.ApiResource;
 import pbl.backend.kchi.services.JwtService;
 import pbl.backend.kchi.resources.MessageResource;
 
@@ -31,8 +31,7 @@ public class BlacklistService {
     public Object create(BlacklistedTokenRequest request) {
         try {
             if(blacklistedTokenRespository.existsByToken(request.getToken())) {
-//
-                throw new RuntimeException("Token này đã tồn tại trong danh sách blacklist");
+                return ApiResource.error("TOKEN-ERROR","Token đã tồn tại trong database", HttpStatus.BAD_REQUEST);
             }
             logger.info(request.getToken());
 

@@ -23,5 +23,7 @@ public interface RefreshtokensRepository  extends JpaRepository<Refresh_tokens, 
     boolean existsByRefreshToken(String refreshToken);
     Optional<Refresh_tokens> findByRefreshToken(String refreshToken);
     Optional<Refresh_tokens> findByUserId(Long userId);
+    int deleteByExpiryDateBefore(LocalDateTime currentDataTime);
+
 
 }

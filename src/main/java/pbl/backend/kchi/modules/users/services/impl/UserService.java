@@ -8,19 +8,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pbl.backend.kchi.modules.users.entities.User;
 import pbl.backend.kchi.modules.users.repositories.UserRepository;
+import pbl.backend.kchi.modules.users.resources.ApiResource;
 import pbl.backend.kchi.modules.users.resources.UserResource;
 import pbl.backend.kchi.modules.users.services.interfaces.UserServiceInterface;
-import pbl.backend.kchi.resources.ErrorResource;
+
 import pbl.backend.kchi.services.BaseService;
 import pbl.backend.kchi.modules.users.resources.LoginResources;
 import pbl.backend.kchi.modules.users.requests.LoginRequest;
 import pbl.backend.kchi.services.JwtService;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import pbl.backend.kchi.resources.ErrorResource;
-import pbl.backend.kchi.services.JwtService;
+import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class UserService extends BaseService implements UserServiceInterface  {
@@ -36,6 +33,9 @@ public class UserService extends BaseService implements UserServiceInterface  {
     @Autowired
     private UserRepository userRepository;
 
+    @Value("${jwt.defaultExpiration}")
+    private long defaultExpiration;
+
     @Override
     public Object authenticate(LoginRequest request) {
         try {
@@ -48,7 +48,7 @@ public class UserService extends BaseService implements UserServiceInterface  {
 
 
             UserResource userResource = new UserResource(user.getId(), user.getEmail(), user.getName(), user.getPhone());
-            String token = jwtService.generateToken(user.getId(), user.getEmail());
+            String token = jwtService.generateToken(user.getId(), user.getEmail(), defaultExpiration);
 
             String refreshToken = jwtService.generateRefreshToken(user.getId(), user.getEmail());
 
@@ -60,10 +60,7 @@ public class UserService extends BaseService implements UserServiceInterface  {
 
             logger.error("Lỗi xác thực {}" , e.getMessage());
 
-            Map<String, String> errors = new HashMap<>();
-            errors.put("message", e.getMessage());
-            ErrorResource errorResource = new ErrorResource("Có vấn đề xảy ra trong quá trình xác thực", errors);
-            return errorResource;
+            return ApiResource.error("AUTH_ERROR",e.getMessage(), HttpStatus.UNAUTHORIZED);
 
         }
     }

@@ -23,6 +23,7 @@ import pbl.backend.kchi.modules.refresh_tokens.resources.RefreshTokenResource;
 import pbl.backend.kchi.modules.refresh_tokens.repositories.RefreshtokensRepository;
 import pbl.backend.kchi.modules.refresh_tokens.entities.Refresh_tokens;
 import java.util.Optional;
+import pbl.backend.kchi.modules.users.resources.ApiResource;
 
 
 @Validated
@@ -52,10 +53,11 @@ public class AuthController {
         Object result = userService.authenticate(request);
 
         if(result instanceof LoginResources loginResources) {
-            return ResponseEntity.ok(loginResources);
+            ApiResource<LoginResources> response = ApiResource.ok(loginResources, "SUCCESS");
+            return ResponseEntity.ok(response);
         }
 
-        if(result instanceof ErrorResource errorResource) {
+        if(result instanceof ApiResource errorResource) {
             return ResponseEntity.unprocessableEntity().body(errorResource);
         }
 
@@ -85,10 +87,21 @@ public class AuthController {
             request.setToken(token);
 
             Object message = blacklistService.create(request);
-            return ResponseEntity.ok(message);
+            ApiResource<Void> Response = ApiResource.<Void>builder()
+                    .success(true)
+                    .message("Đăng xuất thành công!")
+                    .status(HttpStatus.OK)
+                    .build();
+            return ResponseEntity.ok(Response);
 
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new pbl.backend.kchi.resources.MessageResource("Network Error!"));
+            ApiResource<Void> errorResponse = ApiResource.<Void>builder()
+                    .success(false)
+                    .message("Network Error!")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
 
     }
@@ -107,7 +120,7 @@ public class AuthController {
 
             Long userId = dbRefreshToken.getUserId();
             String email = dbRefreshToken.getUser().getEmail();
-            String newToken = jwtService.generateToken(userId, email);
+            String newToken = jwtService.generateToken(userId, email, null);
             String newRefreshToken = jwtService.generateRefreshToken(userId, email);
             return ResponseEntity.ok(new RefreshTokenResource(newToken, newRefreshToken));
 

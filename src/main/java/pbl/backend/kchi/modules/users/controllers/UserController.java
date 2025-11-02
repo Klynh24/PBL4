@@ -10,8 +10,8 @@ import pbl.backend.kchi.modules.users.entities.User;
 import pbl.backend.kchi.modules.users.resources.UserResource;
 import pbl.backend.kchi.modules.users.repositories.UserRepository;
 import pbl.backend.kchi.modules.users.services.impl.UserService;
-import pbl.backend.kchi.resources.SuccessResource;
 import org.springframework.security.core.context.SecurityContextHolder;
+import pbl.backend.kchi.modules.users.resources.ApiResource;
 
 @RestController
 @RequestMapping("api/v1")
@@ -38,7 +38,8 @@ public class UserController {
                 .phone(user.getPhone())
                 .build();
 
-        SuccessResource<UserResource> response = new SuccessResource<>("SUCCESS", userResource);
+        ApiResource<UserResource> response = ApiResource.ok(userResource, "SUCCESS");
+
         logger.info("SUCCESS!");
         return ResponseEntity.ok(response);
     }
