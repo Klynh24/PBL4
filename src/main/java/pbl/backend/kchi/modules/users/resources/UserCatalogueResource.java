@@ -11,5 +11,5 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class UserCatalogueResource {
     private final Long id;
     private final String name;
-    private final String publish;
+    private final Integer publish;
 }

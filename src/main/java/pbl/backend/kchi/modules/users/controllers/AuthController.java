@@ -13,7 +13,6 @@ import pbl.backend.kchi.modules.refresh_tokens.requests.RefreshTokenRequest;
 import pbl.backend.kchi.modules.users.requests.LoginRequest;
 import pbl.backend.kchi.modules.users.resources.LoginResources;
 import pbl.backend.kchi.modules.users.services.interfaces.UserServiceInterface;
-import pbl.backend.kchi.resources.ErrorResource;
 import pbl.backend.kchi.modules.users.requests.BlacklistedTokenRequest;
 import pbl.backend.kchi.modules.users.services.impl.BlacklistService;
 import pbl.backend.kchi.modules.users.resources.MessageResource;
@@ -23,7 +22,7 @@ import pbl.backend.kchi.modules.refresh_tokens.resources.RefreshTokenResource;
 import pbl.backend.kchi.modules.refresh_tokens.repositories.RefreshtokensRepository;
 import pbl.backend.kchi.modules.refresh_tokens.entities.Refresh_tokens;
 import java.util.Optional;
-import pbl.backend.kchi.modules.users.resources.ApiResource;
+import pbl.backend.kchi.resources.ApiResource;
 
 
 @Validated

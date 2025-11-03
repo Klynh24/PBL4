@@ -11,7 +11,7 @@ import pbl.backend.kchi.modules.users.resources.UserResource;
 import pbl.backend.kchi.modules.users.repositories.UserRepository;
 import pbl.backend.kchi.modules.users.services.impl.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
-import pbl.backend.kchi.modules.users.resources.ApiResource;
+import pbl.backend.kchi.resources.ApiResource;
 
 @RestController
 @RequestMapping("api/v1")

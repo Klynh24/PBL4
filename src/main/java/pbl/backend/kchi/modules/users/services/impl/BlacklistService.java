@@ -14,7 +14,7 @@ import java.util.Date;
 
 import pbl.backend.kchi.modules.users.entities.BlacklistedToken;
 import pbl.backend.kchi.modules.users.requests.BlacklistedTokenRequest;
-import pbl.backend.kchi.modules.users.resources.ApiResource;
+import pbl.backend.kchi.resources.ApiResource;
 import pbl.backend.kchi.services.JwtService;
 import pbl.backend.kchi.resources.MessageResource;
 

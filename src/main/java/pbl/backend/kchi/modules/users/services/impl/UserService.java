@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pbl.backend.kchi.modules.users.entities.User;
 import pbl.backend.kchi.modules.users.repositories.UserRepository;
-import pbl.backend.kchi.modules.users.resources.ApiResource;
+import pbl.backend.kchi.resources.ApiResource;
 import pbl.backend.kchi.modules.users.resources.UserResource;
 import pbl.backend.kchi.modules.users.services.interfaces.UserServiceInterface;
 

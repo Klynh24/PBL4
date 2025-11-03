@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Data
-public class StoreRequest {
+public class UpdateRequest {
     @NotBlank(message = "Tên nhóm thành viên không được để trống")
     private String name;
 

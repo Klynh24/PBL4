@@ -1,8 +1,7 @@
-package pbl.backend.kchi.modules.users.resources;
+package pbl.backend.kchi.resources;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import pbl.backend.kchi.resources.ErrorResource;
 
 import java.time.LocalDateTime;
 

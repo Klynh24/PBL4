@@ -2,11 +2,13 @@ package pbl.backend.kchi.modules.users.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -17,6 +19,8 @@ public class UserCatalogue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String name;
 
     @Column(name = "publish", nullable = false, columnDefinition = "TINYINT")
     private Integer publish;
