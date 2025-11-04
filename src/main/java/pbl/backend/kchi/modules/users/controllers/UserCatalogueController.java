@@ -9,13 +9,16 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import pbl.backend.kchi.modules.users.entities.UserCatalogue;
+import pbl.backend.kchi.modules.users.services.impl.UserCatalogueService;
 import pbl.backend.kchi.modules.users.services.interfaces.UserCatalogueServiceInterface;
 import pbl.backend.kchi.modules.users.requests.UserCatalogue.StoreRequest;
 import pbl.backend.kchi.resources.ApiResource;
 import pbl.backend.kchi.modules.users.resources.UserCatalogueResource;
 import pbl.backend.kchi.modules.users.requests.UserCatalogue.UpdateRequest;
-
+import jakarta.servlet.http.HttpServletRequest;
 import javax.persistence.EntityNotFoundException;
+import java.util.Map;
+import org.springframework.data.domain.Page;
 
 //phân quyền
 @Validated
@@ -23,7 +26,7 @@ import javax.persistence.EntityNotFoundException;
 @RequestMapping("api/v1")
 public class UserCatalogueController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserCatalogueController.class);
     private final UserCatalogueServiceInterface userCatalogueService;
 
 
@@ -32,6 +35,24 @@ public class UserCatalogueController {
     ) {
         this.userCatalogueService = userCatalogueService;
 
+    }
+
+    @GetMapping("user_catalogues")
+    public ResponseEntity<?> index(HttpServletRequest request) {
+        Map<String, String[]> parameters = request.getParameterMap();
+        Page<UserCatalogue> userCatalogues = userCatalogueService.paginate(parameters);
+        Page<UserCatalogueResource> userCatalogueResource = userCatalogues.map(userCatalogue ->
+                UserCatalogueResource.builder()
+                        .id(userCatalogue.getId())
+                        .name(userCatalogue.getName())
+                        .publish(userCatalogue.getPublish())
+                        .build()
+                );
+
+        ApiResource<Page<UserCatalogueResource>> response = ApiResource.ok(userCatalogueResource, "SUCCESS");
+
+        logger.info("Method getUserCatalogues Running....");
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/user_catalogues")

@@ -1,5 +1,6 @@
 package pbl.backend.kchi.modules.users.services.impl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pbl.backend.kchi.modules.users.entities.UserCatalogue;
@@ -12,12 +13,28 @@ import pbl.backend.kchi.services.BaseService;
 import pbl.backend.kchi.modules.users.repositories.UserCataloguesRespository;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Map;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 @Service
 public class UserCatalogueService extends BaseService implements UserCatalogueServiceInterface {
     @Autowired
     private UserCataloguesRespository userCataloguesRespository;
+
+    //http://localhost:8080/user_catalogues?keyword=abc&publish=1&prepre=40&sort=name, asc | id, desc | ....
+    @Override
+    public Page<UserCatalogue> paginate(Map<String, String[]> parameters) {
+        int page = parameters.containsKey("page") ? Integer.parseInt(parameters.get("page")[0]) : 1;
+        int perpage = parameters.containsKey("perpage") ? Integer.parseInt(parameters.get("perpage")[0]) : 20;
+        String sortParam = parameters.containsKey("sort") ? parameters.get("sort")[0] : null;
+        Sort sort = createSort(sortParam);
+        Pageable pageable = PageRequest.of(page - 1, perpage, sort);
+        return userCataloguesRespository.findAll(pageable);
+
+    }
 
     @Override
     @Transactional
