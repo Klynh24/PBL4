@@ -32,7 +32,8 @@ public class SecurityConfig {
                         //1.Routes AUTH - NO JWT
                         .requestMatchers(
                                 "/api/v1/auth/login",
-                                "/api/v1/auth/refresh"
+                                "/api/v1/auth/refresh",
+                                "/api/v1/users"
                         ).permitAll()
                         //2.Routes PUBLIC
 

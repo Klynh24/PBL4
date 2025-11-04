@@ -12,6 +12,10 @@ public class UserResource {
     private final Long id;
     private final String email;
     private final String name;
+    private final String password;
     private final String phone;
+    private final String address;
+    private final String image;
+    private final Long userCatalogueId;
 
 }

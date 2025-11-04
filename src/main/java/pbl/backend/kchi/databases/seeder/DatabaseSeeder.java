@@ -34,17 +34,17 @@ public class DatabaseSeeder implements CommandLineRunner{
     @Transactional
     @Override
     public void run(String... args) throws Exception {
-        if(isTableEmpty()) {
-
-            String passwordEncode = passwordEncoder.encode("password");
-
-            User user = new User("toan", "tuitentoan3004@gmai.com", passwordEncode,1L,"012345678");
-            userRepository.save(user);
-            logger.info("Seeding user data");
-
-
-            System.out.println("password: " + passwordEncode);
-        }
+//        if(isTableEmpty()) {
+//
+//            String passwordEncode = passwordEncoder.encode("password");
+//
+//            User user = new User("toan", "tuitentoan3004@gmai.com", passwordEncode,1L,"012345678");
+//            userRepository.save(user);
+//            logger.info("Seeding user data");
+//
+//
+//            System.out.println("password: " + passwordEncode);
+//        }
 
     }
 
