@@ -1,8 +1,10 @@
 package pbl.backend.kchi.modules.users.controllers;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +25,7 @@ import pbl.backend.kchi.modules.users.services.interfaces.UserServiceInterface;
 import pbl.backend.kchi.resources.ApiResource;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1")
@@ -116,6 +119,29 @@ public class UserController {
 
             );
         }
+    }
+
+    @GetMapping("users")
+    public ResponseEntity<?> index(HttpServletRequest request) {
+        Map<String, String[]> parameters = request.getParameterMap();
+        Page<User> users = userService.paginate(parameters);
+        Page<UserResource> userResource = users.map(user ->
+                UserResource.builder()
+                        .id(user.getId())
+                        .name(user.getName())
+                        .phone(user.getPhone())
+                        .address(user.getAddress())
+                        .image(user.getImage())
+                        .email(user.getEmail())
+                        .userCatalogueId(user.getUserCatalogueid())
+                        .build()
+
+        );
+
+        ApiResource<Page<UserResource>> response = ApiResource.ok(userResource, "SUCCESS");
+
+        logger.info("Method getUserCatalogues Running....");
+        return ResponseEntity.ok(response);
     }
 
 }

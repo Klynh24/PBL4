@@ -40,7 +40,7 @@ Endpoint
 Request
 Response
 Lấy DS User
-GET
+GET<roi>
 /api/users
 -
 [ <User Object> ]
@@ -50,7 +50,7 @@ POST<roi>
 { "email": "...", "password": "...", "role": "..." }
 <User Object>
 Cập nhật User
-PUT
+PUT<roi>
 /api/users/{id}
 { "name": "...", "dob": "...", "gender": "..." }
 <User Object>
