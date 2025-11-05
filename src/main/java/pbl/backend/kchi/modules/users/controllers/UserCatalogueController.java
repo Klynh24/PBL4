@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import pbl.backend.kchi.modules.users.entities.UserCatalogue;
-import pbl.backend.kchi.modules.users.services.impl.UserCatalogueService;
+
 import pbl.backend.kchi.modules.users.services.interfaces.UserCatalogueServiceInterface;
 import pbl.backend.kchi.modules.users.requests.UserCatalogue.StoreRequest;
 import pbl.backend.kchi.resources.ApiResource;

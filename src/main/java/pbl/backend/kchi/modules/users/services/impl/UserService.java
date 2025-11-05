@@ -11,6 +11,7 @@ import pbl.backend.kchi.modules.users.entities.User;
 import pbl.backend.kchi.modules.users.entities.UserCatalogue;
 import pbl.backend.kchi.modules.users.repositories.UserRepository;
 import pbl.backend.kchi.modules.users.requests.StoreUserRequest;
+import pbl.backend.kchi.modules.users.requests.UpdateUserRequest;
 import pbl.backend.kchi.resources.ApiResource;
 import pbl.backend.kchi.modules.users.resources.UserResource;
 import pbl.backend.kchi.modules.users.services.interfaces.UserServiceInterface;
@@ -21,6 +22,8 @@ import pbl.backend.kchi.modules.users.requests.LoginRequest;
 import pbl.backend.kchi.services.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.persistence.EntityNotFoundException;
 
 @Service
 public class UserService extends BaseService implements UserServiceInterface  {
@@ -57,6 +60,24 @@ public class UserService extends BaseService implements UserServiceInterface  {
         } catch (Exception e) {
             throw new RuntimeException("Transaction failed" + e.getMessage());
         }
+    }
+
+    @Override
+    @Transactional
+    public User update(Long id, UpdateUserRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Nhóm thành viên không tồn tại"));
+            User payload = user.toBuilder()
+                    .name(request.getName())
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .phone(request.getPhone())
+                    .address(request.getAddress())
+                    .image(request.getImage())
+                    .userCatalogueid(request.getUserCatalogueId())
+                    .build();
+            return userRepository.save(payload);
+
     }
 
 

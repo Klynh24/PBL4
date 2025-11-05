@@ -50,7 +50,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull HttpServletRequest request
     ) {
         String path = request.getRequestURI();
-        return path.startsWith("/api/v1/auth/login") || path.startsWith("/api/v1/auth/refresh") || path.startsWith("/api/v1/users");
+        return path.startsWith("/api/v1/auth/login") || path.startsWith("/api/v1/auth/refresh") || path.startsWith("/api/v1/users") ;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if(authHeader == null || !authHeader.startsWith("Bearer")) {
 
-//            logger.error("Test");
+        logger.error("Test");
 
             sendErrorResponse(response,
                     request,
@@ -75,7 +75,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     "Xác thực không thành công!",
                     "Không tìm thấy token"
             );
-//                filterChain.doFilter(request, response);
+               filterChain.doFilter(request, response);
                return;
 
             }

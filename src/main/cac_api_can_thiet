@@ -45,7 +45,7 @@ GET
 -
 [ <User Object> ]
 Tạo User (Admin)
-POST
+POST<roi>
 /api/users
 { "email": "...", "password": "...", "role": "..." }
 <User Object>

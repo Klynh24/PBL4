@@ -3,13 +3,16 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pbl.backend.kchi.modules.users.entities.User;
 import pbl.backend.kchi.modules.users.entities.UserCatalogue;
 import pbl.backend.kchi.modules.users.requests.StoreUserRequest;
+import pbl.backend.kchi.modules.users.requests.UpdateUserRequest;
 import pbl.backend.kchi.modules.users.requests.UserCatalogue.StoreRequest;
+import pbl.backend.kchi.modules.users.requests.UserCatalogue.UpdateRequest;
 import pbl.backend.kchi.modules.users.resources.UserCatalogueResource;
 import pbl.backend.kchi.modules.users.resources.UserResource;
 import pbl.backend.kchi.modules.users.repositories.UserRepository;
@@ -18,6 +21,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import pbl.backend.kchi.modules.users.services.interfaces.UserCatalogueServiceInterface;
 import pbl.backend.kchi.modules.users.services.interfaces.UserServiceInterface;
 import pbl.backend.kchi.resources.ApiResource;
+
+import javax.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("api/v1")
@@ -29,7 +34,7 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private static Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserServiceInterface userService;
 
     public UserController(
@@ -42,7 +47,7 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<?> me() {
-       // String email = "tuitentoan3004@gmai.com";
+        // String email = "tuitentoan3004@gmai.com";
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         logger.info(email);
@@ -77,6 +82,40 @@ public class UserController {
         ApiResource<UserResource> response = ApiResource.ok(userResource, "Thêm mới bản ghi thành công");
         logger.info("Method Store Running....");
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/user/{id}")
+    public ResponseEntity<?> update(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateUserRequest request
+    ) {
+        logger.info("Method Store Running....");
+        try {
+            User user = userService.update(id, request);
+            UserResource userResource = UserResource.builder()
+                    .id(user.getId())
+                    .name(user.getName())
+                    .phone(user.getPhone())
+                    .address(user.getAddress())
+                    .image(user.getImage())
+                    .email(user.getEmail())
+                    .userCatalogueId(user.getUserCatalogueid())
+                    .build();
+            ApiResource<UserResource> response = ApiResource.ok(userResource, "Cập nhật bản ghi thành công");
+
+            return ResponseEntity.ok(response);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    ApiResource.error("NOT_FOUND",e.getMessage(),HttpStatus.BAD_REQUEST)
+            );
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ApiResource.error("INTERNAL_SERVER_ERROR","Có lỗi xảy ra trong quá trình cập nhật",
+                            HttpStatus.INTERNAL_SERVER_ERROR)
+
+            );
+        }
     }
 
 }
