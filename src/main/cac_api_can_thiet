@@ -77,7 +77,7 @@ POST<roi>
 { "name": "..." }
 { "id": 2, "name": "...", "teacher": "..." }
 Xem chi tiết
-GET
+GET<roi>
 /api/classes/{id}
 -
 { "id": 1, "name": "...", "teacher": "...", "teacherId": 2, "students": [ <User Object> ] }
@@ -108,11 +108,7 @@ POST
 /api/assignments/{id}/submit
 { "fileUrl": "..." }
 { "message": "Submitted" }
-Chấm bài (Teacher)
-POST
-/api/assignments/{id}/grade
-{ "studentId": 10, "score": 9 }
-{ "message": "Graded" }
+
 
 💬 Chat (Trò chuyện)
 Action
@@ -152,38 +148,6 @@ PUT
 /api/notifications/{id}
 { "read": true }
 { "id": 2, "read": true }
-
-📅 Calendar / Events (Lịch)
-Action
-Method
-Endpoint
-Request
-Response
-Lấy DS sự kiện
-GET
-/api/events
--
-[ { "id": 1, "title": "...", "date": "..." } ]
-Tạo sự kiện
-POST
-/api/events
-{ "title": "...", "date": "...", "description": "..." }
-{ "id": 1, "title": "..." }
-Xóa sự kiện
-DELETE
-/api/events/{id}
--
-{ "message": "Event deleted" }
-
-📊 Stats (Thống kê)
-Action
-Method
-Endpoint
-Response
-Thống kê tổng (Admin)
-GET
-/api/stats
-{ "users": 120, "classes": 15, "assignments": 45 }
 
 3. REALTIME CONTRACT (WebSocket)
 🔴 Room & Meeting Events
