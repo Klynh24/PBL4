@@ -13,25 +13,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "messages")
-public class Messages {
-
+@Table(name = "conversations")
+public class Conversations {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
 
-    @Column(name="session_id", updatable = false)
-    private Long sessionId;
-
-    @Column(name="user_id", updatable = false)
-    private Long userId;
-
-    @Column(name="created_at", updatable = false)
+    @Column(name="create_at", updatable = false)
     private LocalDateTime createdAt;
 
-    private String text;
 
     @PrePersist
     protected void onCreated() { createdAt = LocalDateTime.now(); }
-
 }

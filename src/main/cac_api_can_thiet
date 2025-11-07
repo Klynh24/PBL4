@@ -67,12 +67,12 @@ Endpoint
 Request
 Response
 Lấy DS lớp
-GET
+GET<roi>
 /api/classes
 -
 [ { "id": 1, "name": "...", "teacher": "..." } ]
 Tạo lớp (Teacher)
-POST
+POST<roi>
 /api/classes
 { "name": "..." }
 { "id": 2, "name": "...", "teacher": "..." }

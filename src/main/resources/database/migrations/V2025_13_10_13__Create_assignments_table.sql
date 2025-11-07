@@ -1,0 +1,12 @@
+CREATE TABLE assignments (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    class_id INT UNSIGNED ,
+    title VARCHAR(50) NOT NULL,
+    description VARCHAR(100),
+    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    due_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_class_id FOREIGN KEY (class_id)
+        REFERENCES classes(id)
+        ON DELETE CASCADE
+);
