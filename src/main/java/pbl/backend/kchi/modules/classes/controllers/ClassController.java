@@ -16,9 +16,6 @@ import pbl.backend.kchi.modules.classes.resources.ClassResource;
 import pbl.backend.kchi.modules.classes.services.interfaces.ClassServiceInterface;
 import pbl.backend.kchi.modules.users.controllers.UserCatalogueController;
 
-import pbl.backend.kchi.modules.users.entities.UserCatalogue;
-import pbl.backend.kchi.modules.users.requests.UserCatalogue.UpdateRequest;
-import pbl.backend.kchi.modules.users.resources.UserCatalogueResource;
 import pbl.backend.kchi.resources.ApiResource;
 
 import javax.persistence.EntityNotFoundException;

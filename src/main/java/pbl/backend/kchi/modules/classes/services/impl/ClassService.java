@@ -15,13 +15,10 @@ import pbl.backend.kchi.modules.classes.entities.Classes;
 import pbl.backend.kchi.modules.classes.repositories.ClassRepository;
 import pbl.backend.kchi.modules.classes.requests.StoreClassRequest;
 import pbl.backend.kchi.modules.classes.requests.UpdateClassRequest;
-import pbl.backend.kchi.modules.classes.resources.ClassResource;
 import pbl.backend.kchi.modules.classes.services.interfaces.ClassServiceInterface;
 import pbl.backend.kchi.modules.users.entities.User;
 import pbl.backend.kchi.modules.users.repositories.UserRepository;
-import pbl.backend.kchi.modules.users.requests.StoreUserRequest;
-import pbl.backend.kchi.modules.users.services.impl.UserService;
-import pbl.backend.kchi.resources.ApiResource;
+
 import pbl.backend.kchi.services.BaseService;
 
 import javax.persistence.EntityNotFoundException;

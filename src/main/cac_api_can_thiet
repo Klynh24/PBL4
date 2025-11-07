@@ -94,17 +94,17 @@ Endpoint
 Request
 Response
 Lấy DS bài tập
-GET
+GET<roi>
 /api/assignments?classId=1
 -
 [ { "id": 101, "title": "...", "dueDate": "..." } ]
 Tạo bài tập (Teacher)
-POST
+POST <roi>
 /api/assignments
 { "classId": 1, "title": "...", "description": "...", "dueDate": "..." }
 { "id": 101, "title": "..." }
 Nộp bài (Student)
-POST
+POST <roi>
 /api/assignments/{id}/submit
 { "fileUrl": "..." }
 { "message": "Submitted" }
