@@ -20,8 +20,8 @@ public class Messages {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="session_id", updatable = false)
-    private Long sessionId;
+    @Column(name="conversation_id", updatable = false)
+    private Long conversationId;
 
     @Column(name="user_id", updatable = false)
     private Long userId;

@@ -117,12 +117,12 @@ Endpoint
 Request
 Response
 Lấy lịch sử chat
-GET
+GET<lam roi>
 /api/chat/{otherUserId}
 -
 [ { "id": 1, "from": 1, "to": 2, "message": "Hello", "timestamp": "..." } ]
 Gửi tin nhắn
-POST
+POST<lam roi>
 /api/chat/{otherUserId}
 { "message": "Hi there!" }
 { "id": 2, "from": 2, "to": 1, "message": "Hi there!", "timestamp": "..." }
