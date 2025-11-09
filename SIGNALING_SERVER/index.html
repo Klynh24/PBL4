@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebRTC SFU Signaling Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      #controls {
+        margin-bottom: 20px;
+      }
+      #videos {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      video {
+        width: 320px;
+        height: 240px;
+        border: 1px solid black;
+        background-color: #eee;
+      }
+      textarea {
+        width: 100%;
+        height: 200px;
+        margin-top: 10px;
+      }
+      button {
+        padding: 10px 15px;
+        margin-right: 10px;
+      }
+      input {
+        padding: 8px;
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WebRTC SFU Signaling Test</h1>
+
+    <div id="controls">
+      <label for="wsUrl">WebSocket URL:</label>
+      <input type="text" id="wsUrl" value="ws://localhost:8082/ws" size="40" />
+      <br /><br />
+      <label for="roomID">Room ID:</label>
+      <input type="text" id="roomID" value="test-room" />
+      <label for="userID">User ID:</label>
+      <input
+        type="text"
+        id="userID"
+        value="user1"
+        +
+        Math.floor(Math.random()
+        *
+        1000)
+      />
+      <label for="token">JWT Token:</label>
+      <input
+        type="text"
+        id="token"
+        value="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjI2MDc3NzgsImlhdCI6MTc2MjU3ODk3OCwic3ViIjoidXNlcjEifQ.Cniwl7pMtolZ_OFHNDvOXfuG5MEwYmFQKgMdSLwVeEEBwXYUXjMP3HvzdEcHZro0h7ADZXT7akYBIAy2_ZRRTvrAFDGi3weH_lewwelraqRFuqRIhW26Cz8UBO0-_Rj7pyJmN1OBY8jvngSpCu6cQjs-ebnjpgqiH0Pdgi5qODT7fpO6V-hWtTLLUxgabRMn3JJAWDAtVNf_LLdD2Rt7MUcRnhRKNPYnUme8ghdt8c3jyqCCY-Lc8dhJpsFpsYN_0RIs5oKZDOo9iEiCgq881MzYQeA7XVi-WPt6AYa6coIfqaBoptMjEcT2pmhYBx-C_pwgpJIfDJguFY0rcPJN6A"
+        size="50"
+      />
+      <br /><br />
+      <button id="connectWsBtn">Connect WS</button>
+      <button id="disconnectWsBtn" disabled>Disconnect WS</button>
+      <button id="joinRoomBtn" disabled>Join Room</button>
+      <button id="createOfferBtn" disabled>Create Offer & Start Stream</button>
+      <button id="leaveRoomBtn" disabled>Leave Room</button>
+    </div>
+
+    <div id="videos">
+      <div>
+        <h2>Local Stream</h2>
+        <video id="localVideo" autoplay muted playsinline></video>
+      </div>
+      <div>
+        <h2>Remote Stream (from SFU)</h2>
+        <video id="remoteVideo" autoplay playsinline></video>
+      </div>
+    </div>
+
+    <h2>Log</h2>
+    <textarea id="log" rows="15" cols="80" readonly></textarea>
+
+    <script>
+      const connectButton = document.getElementById("connectWsBtn");
+      const joinButton = document.getElementById("joinRoomBtn");
+      const serverUrlInput = document.getElementById("wsUrl");
+      const roomIdInput = document.getElementById("roomID");
+      const statusDiv = document.getElementById("log"); // Using log textarea for status
+      const localVideo = document.getElementById("localVideo");
+      const remoteVideo = document.getElementById("remoteVideo");
+
+      let ws;
+      let pc;
+      let localStream;
+      // "isPolite" dùng để tránh trường hợp cả 2 peer cùng gửi offer một lúc.
+      // Peer thứ 2 tham gia phòng sẽ là "polite" và sẽ đợi offer từ peer kia.
+      let isPolite = false;
+
+      const configuration = {
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      };
+
+      connectButton.onclick = async () => {
+        const baseUrl = serverUrlInput.value;
+        const room = roomIdInput.value;
+        const user = document.getElementById("userID").value;
+        const token = document.getElementById("token").value;
+
+        if (!room || !user || !token) {
+          alert(
+            "Please fill in Room ID, User ID, and Token before connecting."
+          );
+          return;
+        }
+
+        const url = `${baseUrl}?room=${encodeURIComponent(
+          room
+        )}&user=${encodeURIComponent(user)}&token=${encodeURIComponent(token)}`;
+
+        statusDiv.textContent = `Connecting to ${url}...`;
+        ws = new WebSocket(url);
+
+        ws.onopen = () => {
+          statusDiv.textContent = "Connection Status: Connected";
+          connectButton.disabled = true;
+          disconnectWsBtn.disabled = false;
+          joinRoomBtn.disabled = false; // Or handle joining differently
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            handleSignalingData(data);
+            log.value += `Received: ${event.data}\n`;
+          } catch (e) {
+            log.value += `Received non-JSON message: ${event.data}\n`;
+          }
+        };
+
+        ws.onclose = (event) => {
+          statusDiv.textContent = `Connection Status: Disconnected (Code: ${event.code}, Reason: ${event.reason})`;
+          connectButton.disabled = false;
+          disconnectWsBtn.disabled = true;
+          joinButton.disabled = true;
+          createOfferBtn.disabled = true;
+          leaveRoomBtn.disabled = true;
+          if (pc) {
+            pc.close();
+            pc = null;
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error("WebSocket Error:", error);
+          statusDiv.textContent = "Connection Status: Error";
+        };
+      };
+
+      joinButton.onclick = async () => {
+        const roomId = roomIdInput.value;
+        if (!roomId) {
+          alert("Please enter a Room ID");
+          return;
+        }
+
+        try {
+          localStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+          });
+          localVideo.srcObject = localStream;
+        } catch (e) {
+          alert(`Could not get camera/microphone: ${e.name}`);
+          return;
+        }
+
+        const token = document.getElementById("token").value;
+        const userId = document.getElementById("userID").value;
+        sendMessage({
+          type: "join",
+          room: roomId,
+          userId: userId,
+          token: token,
+        });
+        joinButton.disabled = true;
+        roomIdInput.disabled = true;
+      };
+
+      function sendMessage(message) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify(message));
+        }
+      }
+
+      async function createPeerConnection() {
+        if (pc) return;
+
+        pc = new RTCPeerConnection(configuration);
+
+        pc.onicecandidate = (event) => {
+          if (event.candidate) {
+            sendMessage({ type: "candidate", candidate: event.candidate });
+          }
+        };
+
+        pc.ontrack = (event) => {
+          remoteVideo.srcObject = event.streams[0];
+        };
+
+        localStream
+          .getTracks()
+          .forEach((track) => pc.addTrack(track, localStream));
+      }
+
+      async function handleSignalingData(data) {
+        console.log("Received signaling data:", data);
+        switch (data.type) {
+          // Đây là một message giả định. Server của bạn cần gửi message này
+          // để cho client biết nó có phải là người join sau ("polite") hay không.
+          case "join-response":
+            isPolite = data.isPolite;
+            await createPeerConnection();
+            // Nếu không phải là "polite" (là người đầu tiên), hãy tạo offer.
+            if (!isPolite) {
+              const offer = await pc.createOffer();
+              await pc.setLocalDescription(offer);
+              sendMessage({ type: "offer", sdp: pc.localDescription });
+            }
+            break;
+          case "offer":
+            await createPeerConnection();
+            await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            sendMessage({ type: "answer", sdp: pc.localDescription });
+            break;
+          case "answer":
+            await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+            break;
+          case "candidate":
+            if (data.candidate) {
+              try {
+                await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+              } catch (e) {
+                console.error("Error adding received ice candidate", e);
+              }
+            }
+            break;
+          case "peer-left":
+            remoteVideo.srcObject = null;
+            if (pc) {
+              pc.close();
+              pc = null;
+            }
+            joinButton.disabled = false;
+            roomIdInput.disabled = false;
+            statusDiv.textContent =
+              "Peer has left the room. You can join again.";
+            break;
+          default:
+            console.warn("Unknown message type:", data.type);
+        }
+      }
+    </script>
+  </body>
+</html>

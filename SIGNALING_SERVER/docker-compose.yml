@@ -1,0 +1,15 @@
+# This is a test comment to verify the file is being read.
+services:
+  signaling-server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./configs:/app/configs
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
