@@ -139,12 +139,12 @@ GET
 -
 [ { "id": 1, "message": "...", "read": false } ]
 Tạo thông báo (Admin)
-POST
+POST<roi>
 /api/notifications
 { "message": "...", "targetRole": "..." }
 { "id": 2, "message": "..." }
 Đánh dấu đã đọc
-PUT
+PUT<roi>
 /api/notifications/{id}
 { "read": true }
 { "id": 2, "read": true }
@@ -193,10 +193,6 @@ private-message
 Client ↔ Server
 { "to": 12, "from": 10, "message": "..." }
 Gửi/nhận tin nhắn riêng.
-raise-hand
-Client ↔ Server
-{ "roomId": "class_1", "userId": 10, "raised": true }
-Báo cho mọi người biết ai đó đang giơ/hạ tay.
 
 🎥 WebRTC Signaling
 Các sự kiện này giữ nguyên để phục vụ cho việc truyền video/âm thanh.
