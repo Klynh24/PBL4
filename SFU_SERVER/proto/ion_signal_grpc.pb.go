@@ -24,7 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type IonSFUClient interface {
 	CreatePeer(ctx context.Context, in *CreatePeerRequest, opts ...grpc.CallOption) (*CreatePeerResponse, error)
 	AddICECandidate(ctx context.Context, in *AddCandidateRequest, opts ...grpc.CallOption) (*Ack, error)
-	ClosePeer(ctx context.Context, in *AddCandidateRequest, opts ...grpc.CallOption) (*Ack, error)
+	ClosePeer(ctx context.Context, in *ClosePeerRequest, opts ...grpc.CallOption) (*Ack, error)
+	HealthCheck(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error)
 }
 
 type ionSFUClient struct {
@@ -53,9 +54,18 @@ func (c *ionSFUClient) AddICECandidate(ctx context.Context, in *AddCandidateRequ
 	return out, nil
 }
 
-func (c *ionSFUClient) ClosePeer(ctx context.Context, in *AddCandidateRequest, opts ...grpc.CallOption) (*Ack, error) {
+func (c *ionSFUClient) ClosePeer(ctx context.Context, in *ClosePeerRequest, opts ...grpc.CallOption) (*Ack, error) {
 	out := new(Ack)
 	err := c.cc.Invoke(ctx, "/proto.IonSFU/ClosePeer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ionSFUClient) HealthCheck(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error) {
+	out := new(HealthCheckResponse)
+	err := c.cc.Invoke(ctx, "/proto.IonSFU/HealthCheck", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +78,8 @@ func (c *ionSFUClient) ClosePeer(ctx context.Context, in *AddCandidateRequest, o
 type IonSFUServer interface {
 	CreatePeer(context.Context, *CreatePeerRequest) (*CreatePeerResponse, error)
 	AddICECandidate(context.Context, *AddCandidateRequest) (*Ack, error)
-	ClosePeer(context.Context, *AddCandidateRequest) (*Ack, error)
+	ClosePeer(context.Context, *ClosePeerRequest) (*Ack, error)
+	HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error)
 	mustEmbedUnimplementedIonSFUServer()
 }
 
@@ -82,8 +93,11 @@ func (UnimplementedIonSFUServer) CreatePeer(context.Context, *CreatePeerRequest)
 func (UnimplementedIonSFUServer) AddICECandidate(context.Context, *AddCandidateRequest) (*Ack, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddICECandidate not implemented")
 }
-func (UnimplementedIonSFUServer) ClosePeer(context.Context, *AddCandidateRequest) (*Ack, error) {
+func (UnimplementedIonSFUServer) ClosePeer(context.Context, *ClosePeerRequest) (*Ack, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ClosePeer not implemented")
+}
+func (UnimplementedIonSFUServer) HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HealthCheck not implemented")
 }
 func (UnimplementedIonSFUServer) mustEmbedUnimplementedIonSFUServer() {}
 
@@ -135,7 +149,7 @@ func _IonSFU_AddICECandidate_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _IonSFU_ClosePeer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddCandidateRequest)
+	in := new(ClosePeerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -147,7 +161,25 @@ func _IonSFU_ClosePeer_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: "/proto.IonSFU/ClosePeer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IonSFUServer).ClosePeer(ctx, req.(*AddCandidateRequest))
+		return srv.(IonSFUServer).ClosePeer(ctx, req.(*ClosePeerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IonSFU_HealthCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HealthCheckRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IonSFUServer).HealthCheck(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.IonSFU/HealthCheck",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IonSFUServer).HealthCheck(ctx, req.(*HealthCheckRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -170,6 +202,10 @@ var IonSFU_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ClosePeer",
 			Handler:    _IonSFU_ClosePeer_Handler,
+		},
+		{
+			MethodName: "HealthCheck",
+			Handler:    _IonSFU_HealthCheck_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

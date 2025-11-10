@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Signaling & STUN Server Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 { color: #333; }
+        h2 { color: #666; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .status { padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .warning { background-color: #fff3cd; color: #856404; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #cccccc; cursor: not-allowed; }
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 300px;
+            margin: 5px;
+        }
+        .video-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        video {
+            width: 400px;
+            height: 300px;
+            background: #000;
+            border-radius: 4px;
+        }
+        .log {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>🚀 WebRTC Server Test Suite</h1>
+
+    <div class="container">
+        <h2>1. STUN Server Test</h2>
+        <div>
+            <input type="text" id="stunServer" value="stun:localhost:3478" placeholder="STUN server address">
+            <button onclick="testStunServer()">Test STUN Server</button>
+        </div>
+        <div id="stunStatus"></div>
+        <div id="stunLog" class="log"></div>
+    </div>
+
+    <div class="container">
+        <h2>2. Signaling Server Test</h2>
+        <div>
+            <input type="text" id="signalingServer" value="ws://localhost:8080/ws" placeholder="WebSocket URL">
+            <input type="text" id="jwtToken" value="" placeholder="JWT Token (optional)">
+            <button onclick="testSignalingServer()">Connect to Signaling Server</button>
+            <button onclick="disconnectSignaling()" id="disconnectBtn" disabled>Disconnect</button>
+        </div>
+        <div id="signalingStatus"></div>
+        <div id="signalingLog" class="log"></div>
+    </div>
+
+    <div class="container">
+        <h2>3. WebRTC Connection Test</h2>
+        <div>
+            <input type="text" id="roomId" value="test-room" placeholder="Room ID">
+            <button onclick="startLocalStream()">Start Local Stream</button>
+            <button onclick="createOffer()" id="offerBtn" disabled>Create Offer</button>
+            <button onclick="stopStreams()">Stop All</button>
+        </div>
+        <div id="webrtcStatus"></div>
+        <div class="video-container">
+            <div>
+                <h3>Local Video</h3>
+                <video id="localVideo" autoplay muted playsinline></video>
+            </div>
+            <div>
+                <h3>Remote Video</h3>
+                <video id="remoteVideo" autoplay playsinline></video>
+            </div>
+        </div>
+        <div id="webrtcLog" class="log"></div>
+    </div>
+
+    <script>
+        let ws = null;
+        let peerConnection = null;
+        let localStream = null;
+
+        // Logging functions
+        function logStun(message, type = 'info') {
+            const log = document.getElementById('stunLog');
+            log.innerHTML += `<div class="log-entry">[${new Date().toLocaleTimeString()}] ${message}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function logSignaling(message, type = 'info') {
+            const log = document.getElementById('signalingLog');
+            log.innerHTML += `<div class="log-entry">[${new Date().toLocaleTimeString()}] ${message}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function logWebRTC(message, type = 'info') {
+            const log = document.getElementById('webrtcLog');
+            log.innerHTML += `<div class="log-entry">[${new Date().toLocaleTimeString()}] ${message}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // STUN Server Test
+        async function testStunServer() {
+            const stunServer = document.getElementById('stunServer').value;
+            const statusDiv = document.getElementById('stunStatus');
+            
+            logStun(`Testing STUN server: ${stunServer}`);
+            statusDiv.innerHTML = '<div class="status warning">Testing STUN server...</div>';
+
+            const configuration = {
+                iceServers: [{ urls: stunServer }]
+            };
+
+            try {
+                const pc = new RTCPeerConnection(configuration);
+                
+                pc.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        logStun(`ICE Candidate: ${event.candidate.candidate}`);
+                        if (event.candidate.candidate.includes('srflx')) {
+                            statusDiv.innerHTML = '<div class="status success">✓ STUN server is working! Server reflexive candidate received.</div>';
+                            logStun('SUCCESS: STUN server is functional');
+                        }
+                    }
+                };
+
+                pc.onicegatheringstatechange = () => {
+                    logStun(`ICE Gathering State: ${pc.iceGatheringState}`);
+                };
+
+                // Create a dummy data channel to trigger ICE gathering
+                pc.createDataChannel('test');
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+
+                setTimeout(() => {
+                    if (pc.iceGatheringState === 'complete') {
+                        logStun('ICE gathering completed');
+                    }
+                    pc.close();
+                }, 5000);
+
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">✗ STUN server test failed: ${error.message}</div>`;
+                logStun(`ERROR: ${error.message}`);
+            }
+        }
+
+        // Signaling Server Test
+        function testSignalingServer() {
+            const wsUrl = document.getElementById('signalingServer').value;
+            const token = document.getElementById('jwtToken').value;
+            const statusDiv = document.getElementById('signalingStatus');
+
+            logSignaling(`Connecting to: ${wsUrl}`);
+            statusDiv.innerHTML = '<div class="status warning">Connecting to signaling server...</div>';
+
+            try {
+                const url = token ? `${wsUrl}?token=${token}` : wsUrl;
+                ws = new WebSocket(url);
+
+                ws.onopen = () => {
+                    statusDiv.innerHTML = '<div class="status success">✓ Connected to signaling server</div>';
+                    logSignaling('WebSocket connection established');
+                    document.getElementById('disconnectBtn').disabled = false;
+                    document.getElementById('offerBtn').disabled = false;
+                };
+
+                ws.onmessage = (event) => {
+                    logSignaling(`Received: ${event.data}`);
+                    try {
+                        const message = JSON.parse(event.data);
+                        handleSignalingMessage(message);
+                    } catch (e) {
+                        logSignaling(`Non-JSON message: ${event.data}`);
+                    }
+                };
+
+                ws.onerror = (error) => {
+                    statusDiv.innerHTML = '<div class="status error">✗ WebSocket error occurred</div>';
+                    logSignaling(`ERROR: ${error}`);
+                };
+
+                ws.onclose = () => {
+                    statusDiv.innerHTML = '<div class="status info">WebSocket connection closed</div>';
+                    logSignaling('WebSocket connection closed');
+                    document.getElementById('disconnectBtn').disabled = true;
+                    document.getElementById('offerBtn').disabled = true;
+                };
+
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">✗ Connection failed: ${error.message}</div>`;
+                logSignaling(`ERROR: ${error.message}`);
+            }
+        }
+
+        function disconnectSignaling() {
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+        }
+
+        function handleSignalingMessage(message) {
+            logSignaling(`Message type: ${message.type || 'unknown'}`);
+            
+            if (message.type === 'offer') {
+                handleOffer(message);
+            } else if (message.type === 'answer') {
+                handleAnswer(message);
+            } else if (message.type === 'ice-candidate') {
+                handleIceCandidate(message);
+            }
+        }
+
+        // WebRTC Functions
+        async function startLocalStream() {
+            const statusDiv = document.getElementById('webrtcStatus');
+            
+            try {
+                logWebRTC('Requesting local media stream...');
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true
+                });
+
+                document.getElementById('localVideo').srcObject = localStream;
+                statusDiv.innerHTML = '<div class="status success">✓ Local stream started</div>';
+                logWebRTC('Local stream acquired successfully');
+
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">✗ Failed to get local stream: ${error.message}</div>`;
+                logWebRTC(`ERROR: ${error.message}`);
+            }
+        }
+
+        async function createOffer() {
+            const stunServer = document.getElementById('stunServer').value;
+            const roomId = document.getElementById('roomId').value;
+            const statusDiv = document.getElementById('webrtcStatus');
+
+            if (!localStream) {
+                statusDiv.innerHTML = '<div class="status error">✗ Please start local stream first</div>';
+                return;
+            }
+
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                statusDiv.innerHTML = '<div class="status error">✗ Please connect to signaling server first</div>';
+                return;
+            }
+
+            const configuration = {
+                iceServers: [{ urls: stunServer }]
+            };
+
+            try {
+                peerConnection = new RTCPeerConnection(configuration);
+                
+                peerConnection.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        logWebRTC(`Sending ICE candidate`);
+                        ws.send(JSON.stringify({
+                            type: 'ice-candidate',
+                            candidate: event.candidate,
+                            roomId: roomId
+                        }));
+                    }
+                };
+
+                peerConnection.ontrack = (event) => {
+                    logWebRTC('Remote track received');
+                    document.getElementById('remoteVideo').srcObject = event.streams[0];
+                };
+
+                peerConnection.onconnectionstatechange = () => {
+                    logWebRTC(`Connection state: ${peerConnection.connectionState}`);
+                    if (peerConnection.connectionState === 'connected') {
+                        statusDiv.innerHTML = '<div class="status success">✓ WebRTC connection established</div>';
+                    }
+                };
+
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                });
+
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+
+                logWebRTC('Sending offer to signaling server');
+                ws.send(JSON.stringify({
+                    type: 'offer',
+                    sdp: offer.sdp,
+                    roomId: roomId
+                }));
+
+                statusDiv.innerHTML = '<div class="status warning">Offer sent, waiting for answer...</div>';
+
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">✗ Failed to create offer: ${error.message}</div>`;
+                logWebRTC(`ERROR: ${error.message}`);
+            }
+        }
+
+        async function handleOffer(message) {
+            logWebRTC('Handling incoming offer');
+            // Implementation for handling offers from other peers
+        }
+
+        async function handleAnswer(message) {
+            if (peerConnection && message.sdp) {
+                logWebRTC('Handling answer');
+                await peerConnection.setRemoteDescription(new RTCSessionDescription({
+                    type: 'answer',
+                    sdp: message.sdp
+                }));
+            }
+        }
+
+        async function handleIceCandidate(message) {
+            if (peerConnection && message.candidate) {
+                logWebRTC('Adding ICE candidate');
+                await peerConnection.addIceCandidate(new RTCIceCandidate(message.candidate));
+            }
+        }
+
+        function stopStreams() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            document.getElementById('localVideo').srcObject = null;
+            document.getElementById('remoteVideo').srcObject = null;
+            logWebRTC('All streams stopped');
+        }
+    </script>
+</body>
+</html>

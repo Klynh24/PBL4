@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -19,7 +22,7 @@ func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMs
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
 
-	// Lấy config từ Biến Môi trường (Environment Variables)
+	// Get config from environment variables
 	listenAddr := getEnv("LISTEN_ADDR", ":50051")
 	stunURL := getEnv("STUN_URL", "stun:stun.l.google.com:19302")
 
@@ -28,15 +31,60 @@ func main() {
 		log.Fatal().Err(err).Msg("failed to listen")
 	}
 
-	s := grpc.NewServer()
-	sfuServer := grpc_sfu.NewServer(stunURL) // Khởi tạo SFU server
+	// Create gRPC server
+	s := grpc.NewServer(
+		grpc.MaxRecvMsgSize(10*1024*1024), // 10MB
+		grpc.MaxSendMsgSize(10*1024*1024),
+	)
 
-	proto.RegisterIonSFUServer(s, sfuServer) // Đăng ký service
-	reflection.Register(s)                   // Bật gRPC reflection (tốt cho debug)
+	sfuServer := grpc_sfu.NewServer(stunURL)
+	proto.RegisterIonSFUServer(s, sfuServer)
+	reflection.Register(s)
 
-	log.Info().Str("addr", listenAddr).Str("stun", stunURL).Msg("gRPC SFU server starting")
-	if err := s.Serve(lis); err != nil {
-		log.Fatal().Err(err).Msg("failed to serve")
+	// Channel to signal server shutdown
+	errChan := make(chan error, 1)
+
+	// Start server in goroutine
+	go func() {
+		log.Info().
+			Str("addr", listenAddr).
+			Str("stun", stunURL).
+			Msg("gRPC SFU server starting")
+
+		if err := s.Serve(lis); err != nil {
+			errChan <- err
+		}
+	}()
+
+	// Wait for interrupt signal
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+
+	select {
+	case err := <-errChan:
+		log.Fatal().Err(err).Msg("server error")
+	case sig := <-quit:
+		log.Info().Str("signal", sig.String()).Msg("shutting down server...")
+
+		sfuServer.Shutdown()
+
+		// Graceful shutdown
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		stopped := make(chan struct{})
+		go func() {
+			s.GracefulStop()
+			close(stopped)
+		}()
+
+		select {
+		case <-ctx.Done():
+			log.Warn().Msg("shutdown timeout, forcing stop")
+			s.Stop()
+		case <-stopped:
+			log.Info().Msg("server stopped gracefully")
+		}
 	}
 }
 

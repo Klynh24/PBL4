@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/pion/webrtc/v3"
 	"github.com/rs/zerolog/log"
@@ -14,73 +15,97 @@ import (
 // Server implement proto.IonSFUServer
 type Server struct {
 	proto.UnimplementedIonSFUServer
-	manager *core.Manager
-	stunURL string
+	manager   *core.Manager
+	stunURL   string
+	startTime time.Time
 }
 
 func NewServer(stunURL string) *Server {
 	return &Server{
-		manager: core.NewManager(),
-		stunURL: stunURL,
+		manager:   core.NewManager(),
+		stunURL:   stunURL,
+		startTime: time.Now(),
 	}
-};
+}
+
+// ✅ THÊM: Graceful shutdown
+func (s *Server) Shutdown() {
+	log.Info().Msg("Shutting down SFU server...")
+	s.manager.CloseAll()
+}
+
+func (s *Server) HealthCheck(ctx context.Context, req *proto.HealthCheckRequest) (*proto.HealthCheckResponse, error) {
+	peerCount, roomCount := s.manager.GetStats()
+
+	return &proto.HealthCheckResponse{
+		Status:        "healthy",
+		ActivePeers:   int32(peerCount),
+		ActiveRooms:   int32(roomCount),
+		UptimeSeconds: int64(time.Since(s.startTime).Seconds()),
+	}, nil
+}
 
 // 1. CreatePeer: Nhận offer từ client, tạo PeerConnection, và trả về answer
 func (s *Server) CreatePeer(ctx context.Context, req *proto.CreatePeerRequest) (*proto.CreatePeerResponse, error) {
-	if req.Room == "__health__" {
-		log.Info().Msg("Received health check ping")
-		// Trả về OK ngay lập tức mà không tạo PeerConnection
-		return &proto.CreatePeerResponse{PeerId: "health-ok", AnswerSdp: "health-ok"}, nil
-	}
-	log.Info().Str("room", req.Room).Str("user", req.UserId).Msg("CreatePeer request received")
+	// Health check bypass
+	log.Info().
+		Str("room", req.Room).
+		Str("user", req.UserId).
+		Msg("CreatePeer request received")
 
-	// Cấu hình STUN server
+	// Configure WebRTC
 	config := webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{URLs: []string{s.stunURL}},
 		},
 	}
 
-	// Tạo PeerConnection mới
 	pc, err := webrtc.NewPeerConnection(config)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to create peer connection")
 		return nil, err
 	}
 
-	// Tạo Peer object để quản lý
 	peer := s.manager.CreatePeer(req.Room, req.UserId, pc)
 
-	// Xử lý khi có track từ client này
+	// Handle incoming tracks
 	pc.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
-		log.Info().Str("peerId", peer.ID).Str("kind", track.Kind().String()).Str("id", track.ID()).Msg("OnTrack received")
-		// Thêm track này vào tất cả các peer khác trong phòng
+		log.Info().
+			Str("peerId", peer.ID).
+			Str("kind", track.Kind().String()).
+			Str("id", track.ID()).
+			Msg("OnTrack received")
+
 		peer.Room.ForwardTrack(peer.ID, track)
 	})
 
-	// Xử lý khi kết nối ICE bị ngắt
+	// Handle ICE connection state changes
 	pc.OnICEConnectionStateChange(func(state webrtc.ICEConnectionState) {
-		log.Debug().Str("peerId", peer.ID).Str("state", state.String()).Msg("ICE connection state changed")
-		if state == webrtc.ICEConnectionStateFailed || state == webrtc.ICEConnectionStateDisconnected || state == webrtc.ICEConnectionStateClosed {
+		log.Debug().
+			Str("peerId", peer.ID).
+			Str("state", state.String()).
+			Msg("ICE connection state changed")
+
+		if state == webrtc.ICEConnectionStateFailed ||
+			state == webrtc.ICEConnectionStateDisconnected ||
+			state == webrtc.ICEConnectionStateClosed {
 			log.Warn().Str("peerId", peer.ID).Msg("Peer ICE connection closed/failed")
 			s.manager.RemovePeer(peer)
 		}
 	})
 
-	// === XỬ LÝ NO-TRICKLE-ICE (cho chiều SFU -> Client) ===
-	// Chúng ta phải đợi ICE gathering hoàn tất để gửi TẤT CẢ candidate
-	// trong một SDP answer duy nhất, vì proto không có cách để SFU gửi candidate.
+	// Wait for ICE gathering to complete
 	iceGatheringFinished := webrtc.GatheringCompletePromise(pc)
 
-	// Set remote offer
+	// Set remote description
 	offer := webrtc.SessionDescription{Type: webrtc.SDPTypeOffer, SDP: req.Sdp}
 	if err := pc.SetRemoteDescription(offer); err != nil {
 		log.Error().Err(err).Msg("failed to set remote description")
-		s.manager.RemovePeer(peer) // Dọn dẹp nếu thất bại
+		s.manager.RemovePeer(peer)
 		return nil, err
 	}
 
-	// Tạo answer
+	// Create answer
 	answer, err := pc.CreateAnswer(nil)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to create answer")
@@ -95,12 +120,15 @@ func (s *Server) CreatePeer(ctx context.Context, req *proto.CreatePeerRequest) (
 		return nil, err
 	}
 
-	// Đợi cho đến khi thu thập hết ICE candidate
+	// Wait for ICE gathering
 	<-iceGatheringFinished
 
-	// Lấy SDP cuối cùng (đã chứa tất cả candidate)
 	finalAnswer := pc.LocalDescription()
-	log.Info().Str("peerId", peer.ID).Msg("Peer created successfully, returning answer")
+	log.Info().
+		Str("peerId", peer.ID).
+		Str("room", req.Room).
+		Int("peerCount", s.manager.GetRoomPeerCount(req.Room)).
+		Msg("Peer created successfully")
 
 	return &proto.CreatePeerResponse{
 		PeerId:    peer.ID,
@@ -115,33 +143,35 @@ func (s *Server) AddICECandidate(ctx context.Context, req *proto.AddCandidateReq
 	peer := s.manager.GetPeer(req.PeerId)
 	if peer == nil {
 		log.Warn().Str("peerId", req.PeerId).Msg("peer not found for candidate")
-		return &proto.Ack{Ok: false}, nil
+		return &proto.Ack{Ok: false, Message: "peer not found"}, nil
 	}
 
-	// Client gửi candidate dưới dạng JSON string, cần unmarshal
 	var candidate webrtc.ICECandidateInit
 	if err := json.Unmarshal([]byte(req.Candidate), &candidate); err != nil {
-		log.Warn().Err(err).Msg("failed to unmarshal candidate string")
-		return nil, err
+		log.Warn().Err(err).Msg("failed to unmarshal candidate")
+		return &proto.Ack{Ok: false, Message: "invalid candidate format"}, err
 	}
 
 	if err := peer.PC.AddICECandidate(candidate); err != nil {
 		log.Warn().Err(err).Str("peerId", req.PeerId).Msg("failed to add ice candidate")
-		return nil, err
+		return &proto.Ack{Ok: false, Message: err.Error()}, err
 	}
 
-	return &proto.Ack{Ok: true}, nil
+	return &proto.Ack{Ok: true, Message: "candidate added"}, nil
 }
 
 // 3. ClosePeer: Xử lý khi client chủ động rời đi
-func (s *Server) ClosePeer(ctx context.Context, req *proto.AddCandidateRequest) (*proto.Ack, error) {
-	// Proto của bạn dùng AddCandidateRequest cho cả ClosePeer, nên ta lấy PeerId từ nó
-	log.Info().Str("peerId", req.PeerId).Msg("ClosePeer request received")
+func (s *Server) ClosePeer(ctx context.Context, req *proto.ClosePeerRequest) (*proto.Ack, error) {
+	log.Info().
+		Str("peerId", req.PeerId).
+		Str("reason", req.Reason).
+		Msg("ClosePeer request received")
 
 	peer := s.manager.GetPeer(req.PeerId)
 	if peer != nil {
 		s.manager.RemovePeer(peer)
+		return &proto.Ack{Ok: true, Message: "peer removed"}, nil
 	}
 
-	return &proto.Ack{Ok: true}, nil
+	return &proto.Ack{Ok: false, Message: "peer not found"}, nil
 }

@@ -1,131 +1,206 @@
-package ws
+﻿package ws
 
 import (
-	"context"
-	"net/http"
 	"sync"
+	"sync/atomic"
 	"time"
 
-	"github.com/gorilla/websocket"
 	"github.com/rs/zerolog/log"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin:     func(r *http.Request) bool { return true },
-	//Chỉ cho phép từ domain
-	// CheckOrigin: func(r *http.Request) bool {
-	// 	origin := r.Header.Get("Origin")
-	// 	if origin == "" {return true}
-	// 	return strigns.Contains(origin, "yourdomain.com")
-	// },
-}
-
-type Handler interface {
-	Handle(conn *Connection, raw []byte)
-}
-
-type Connection struct {
-	Conn   *websocket.Conn
-	Send   chan []byte
-	UserID string
-	RoomID string
-	PeerID string
-	Mu     sync.Mutex
-	hub    *Hub
-}
 type Hub struct {
-	Conns   map[*Connection]bool
-	Mu      sync.Mutex
-	Handler Handler
+	rooms         sync.Map // map[string]*Room - concurrent safe, no lock needed
+	clients       sync.Map // map[*Client]bool - concurrent safe
+	clientCount   atomic.Int64
+	Register      chan *Client
+	Unregister    chan *Client
+	broadcast     chan []byte
+	roomBroadcast chan *RoomMessage
+}
+
+type Room struct {
+	ID          string
+	clients     sync.Map // map[*Client]bool - concurrent safe
+	clientCount atomic.Int32
+}
+
+type RoomMessage struct {
+	RoomID  string
+	Message []byte
+	Exclude *Client
 }
 
 func NewHub() *Hub {
 	return &Hub{
-		Conns: make(map[*Connection]bool),
+		Register:      make(chan *Client, 512), // Tăng buffer
+		Unregister:    make(chan *Client, 512),
+		broadcast:     make(chan []byte, 2048), // Tăng buffer
+		roomBroadcast: make(chan *RoomMessage, 2048),
 	}
 }
-func (h *Hub) SetHandler(hdl Handler) {
-	h.Handler = hdl
-}
-func (h *Hub) Run() {
-	//placeholder for future broadcast worker
-	for {
-		time.Sleep(5 * time.Minute)
-	}
-}
-func (h *Hub) ServeWS(ctx context.Context, w http.ResponseWriter, r *http.Request, token, room, userId string) (*Connection, error) {
-	wsConn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Error().Err(err).Msg("upgrade failed")
-		return nil, err
-	}
-	c := &Connection{
-		Conn:   wsConn,
-		Send:   make(chan []byte, 256),
-		UserID: userId,
-		RoomID: room,
-		hub:    h,
-	}
-	h.Mu.Lock()
-	h.Conns[c] = true
-	h.Mu.Unlock()
 
-	go c.writePump()
-	go c.readPump(h)
-	return c, nil
-}
-func (c *Connection) readPump(h *Hub) {
-	defer h.RemoveConnection(c)
-	c.Conn.SetReadLimit(65536)
-	c.Conn.SetReadDeadline(time.Now().Add(60 * time.Second))
-	c.Conn.SetPongHandler(func(string) error {
-		c.Conn.SetReadDeadline(time.Now().Add(60 * time.Second))
-		return nil
-	})
-	for {
-		_, message, err := c.Conn.ReadMessage()
-		if err != nil {
-			log.Debug().Err(err).Msg("read ws")
-			break
-		}
-		if c.hub != nil && c.hub.Handler != nil {
-			//dispatch to handler (router)
-			c.hub.Handler.Handle(c, message)
-		} else {
-			log.Debug().Msgf("no handler registered to process message")
-		}
+func (h *Hub) Run() {
+	// Sử dụng worker pool để xử lý parallel
+	numWorkers := 4
+
+	for i := 0; i < numWorkers; i++ {
+		go h.broadcastWorker()
 	}
-}
-func (c *Connection) writePump() {
-	ticker := time.NewTicker(54 * time.Second)
-	defer ticker.Stop()
+
 	for {
 		select {
-		case message, ok := <-c.Send:
-			if !ok {
-				_ = c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
-				c.Conn.Close()
-				return
-			}
-			c.Conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
-			if err := c.Conn.WriteMessage(websocket.TextMessage, message); err != nil {
-				return
-			}
-		case <-ticker.C:
-			c.Conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
-			if err := c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				return
-			}
+		case client := <-h.Register:
+			h.registerClient(client)
+		case client := <-h.Unregister:
+			h.unregisterClient(client)
+		case message := <-h.broadcast:
+			h.broadcastToAll(message)
+		case roomMsg := <-h.roomBroadcast:
+			h.broadcastToRoomOptimized(roomMsg)
 		}
 	}
 }
-func (h *Hub) RemoveConnection(c *Connection) {
-	h.Mu.Lock()
-	defer h.Mu.Unlock()
-	if _, ok := h.Conns[c]; ok {
-		delete(h.Conns, c)
-		close(c.Send)
+
+func (h *Hub) broadcastWorker() {
+	// Worker để xử lý broadcast song song
+	for msg := range h.roomBroadcast {
+		h.broadcastToRoomOptimized(msg)
 	}
+}
+
+func (h *Hub) registerClient(client *Client) {
+	h.clients.Store(client, true)
+	h.clientCount.Add(1)
+
+	if client.RoomID != "" {
+		h.joinRoom(client)
+	}
+
+	log.Info().
+		Str("clientID", client.ID).
+		Str("roomID", client.RoomID).
+		Int64("totalClients", h.clientCount.Load()).
+		Msg("Client registered")
+}
+
+func (h *Hub) unregisterClient(client *Client) {
+	if _, loaded := h.clients.LoadAndDelete(client); loaded {
+		h.clientCount.Add(-1)
+		close(client.Send)
+	}
+
+	if client.RoomID != "" {
+		h.leaveRoom(client)
+	}
+
+	log.Info().
+		Str("clientID", client.ID).
+		Str("roomID", client.RoomID).
+		Msg("Client unregistered")
+}
+
+func (h *Hub) broadcastToRoomOptimized(msg *RoomMessage) {
+	val, ok := h.rooms.Load(msg.RoomID)
+	if !ok {
+		return
+	}
+
+	room := val.(*Room)
+
+	// Batch send để giảm lock contention
+	var wg sync.WaitGroup
+	room.clients.Range(func(key, value interface{}) bool {
+		client := key.(*Client)
+		if client != msg.Exclude {
+			wg.Add(1)
+			go func(c *Client) {
+				defer wg.Done()
+				select {
+				case c.Send <- msg.Message:
+				case <-time.After(100 * time.Millisecond): // Timeout
+					log.Warn().Str("clientID", c.ID).Msg("Send timeout, disconnecting")
+					h.Unregister <- c
+				}
+			}(client)
+		}
+		return true
+	})
+	wg.Wait()
+}
+
+func (h *Hub) broadcastToAll(message []byte) {
+	var wg sync.WaitGroup
+	h.clients.Range(func(key, value interface{}) bool {
+		client := key.(*Client)
+		wg.Add(1)
+		go func(c *Client) {
+			defer wg.Done()
+			select {
+			case c.Send <- message:
+			case <-time.After(100 * time.Millisecond):
+				h.Unregister <- c
+			}
+		}(client)
+		return true
+	})
+	wg.Wait()
+}
+
+func (h *Hub) joinRoom(client *Client) {
+	val, _ := h.rooms.LoadOrStore(client.RoomID, &Room{
+		ID: client.RoomID,
+	})
+	room := val.(*Room)
+
+	room.clients.Store(client, true)
+	count := room.clientCount.Add(1)
+
+	log.Info().
+		Str("clientID", client.ID).
+		Str("roomID", client.RoomID).
+		Int32("roomSize", count).
+		Msg("Client joined room")
+}
+
+func (h *Hub) leaveRoom(client *Client) {
+	val, ok := h.rooms.Load(client.RoomID)
+	if !ok {
+		return
+	}
+
+	room := val.(*Room)
+	room.clients.Delete(client)
+	count := room.clientCount.Add(-1)
+
+	if count == 0 {
+		h.rooms.Delete(client.RoomID)
+		log.Info().Str("roomID", client.RoomID).Msg("Room deleted (empty)")
+	}
+
+	log.Info().
+		Str("clientID", client.ID).
+		Str("roomID", client.RoomID).
+		Msg("Client left room")
+}
+
+func (h *Hub) BroadcastToRoom(roomID string, message []byte, exclude *Client) {
+	select {
+	case h.roomBroadcast <- &RoomMessage{
+		RoomID:  roomID,
+		Message: message,
+		Exclude: exclude,
+	}:
+	case <-time.After(50 * time.Millisecond):
+		log.Warn().Str("roomID", roomID).Msg("Broadcast channel full, dropping message")
+	}
+}
+
+func (h *Hub) GetRoomStats(roomID string) (clientCount int32, exists bool) {
+	val, ok := h.rooms.Load(roomID)
+	if !ok {
+		return 0, false
+	}
+
+	room := val.(*Room)
+	return room.clientCount.Load(), true
 }

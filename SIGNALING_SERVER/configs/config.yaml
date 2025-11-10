@@ -1,7 +1,9 @@
 server:
-  addr: ":8082"
+  addr: ":8080"
   ws_path: "/ws"
   jwt_pubkey_path: "configs/jwt_pub.pem"
-  max_message_size: 65536
+  max_message_size: 524288
+
 sfu:
-  targets: "127.0.0.1:50051"
+  addr: "localhost:50051"
+  pool_size: 10

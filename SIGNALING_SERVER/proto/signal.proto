@@ -1,24 +1,47 @@
 syntax = "proto3";
+
 package proto;
+
 option go_package = "tangthetoan.com/signaling-server/proto";
-message CreatePeerRequest {
-    string room = 1;
-    string userId = 2;
-    string sdp = 3;
-}
-message CreatePeerResponse {
-    string peerId = 1;
-    string answerSdp = 2;
-}
-message AddCandidateRequest {
-    string peerId = 1;
-    string candidate = 2;
-}
-message Ack {
-    bool ok = 1;
-}
+
 service IonSFU {
-    rpc CreatePeer(CreatePeerRequest) returns (CreatePeerResponse);
-    rpc AddICECandidate(AddCandidateRequest) returns (Ack);
-    rpc ClosePeer(AddCandidateRequest) returns (Ack);
+  rpc CreatePeer(CreatePeerRequest) returns (CreatePeerResponse);
+  rpc AddICECandidate(AddCandidateRequest) returns (Ack);
+  rpc ClosePeer(ClosePeerRequest) returns (Ack);
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+message CreatePeerRequest {
+  string room = 1;
+  string user_id = 2;
+  string sdp = 3;
+}
+
+message CreatePeerResponse {
+  string peer_id = 1;
+  string answer_sdp = 2;
+}
+
+message AddCandidateRequest {
+  string peer_id = 1;
+  string candidate = 2;
+}
+
+message ClosePeerRequest {
+  string peer_id = 1;
+  string reason = 2;
+}
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+  string status = 1;
+  int32 active_peers = 2;
+  int32 active_rooms = 3;
+  int64 uptime_seconds = 4;
+}
+
+message Ack {
+  bool ok = 1;
+  string message = 2;
 }

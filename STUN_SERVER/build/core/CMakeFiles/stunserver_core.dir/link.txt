@@ -1,2 +1,0 @@
-/usr/bin/ar qc libstunserver_core.a CMakeFiles/stunserver_core.dir/buffer.cpp.o CMakeFiles/stunserver_core.dir/datastream.cpp.o CMakeFiles/stunserver_core.dir/messagehandler.cpp.o CMakeFiles/stunserver_core.dir/socketaddress.cpp.o CMakeFiles/stunserver_core.dir/stunbuilder.cpp.o CMakeFiles/stunserver_core.dir/stunclientlogic.cpp.o CMakeFiles/stunserver_core.dir/stunclienttests.cpp.o CMakeFiles/stunserver_core.dir/stunreader.cpp.o CMakeFiles/stunserver_core.dir/stunutils.cpp.o
-/usr/bin/ranlib libstunserver_core.a
