@@ -16,6 +16,7 @@ public interface UserServiceInterface {
     User create(StoreUserRequest request);
     User update(Long id, UpdateUserRequest request);
     Page<User> paginate(Map<String, String[]> parameters );
+    Boolean delete(Long id);
 
 
 }

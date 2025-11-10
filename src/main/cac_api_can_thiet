@@ -24,10 +24,10 @@ POST
 { "token": "xxx", "user": <User Object> }
 Register
 POST
-/api/auth/register
+/api/auth/register<roi>
 { "email": "...", "password": "...", "role": "..." }
 <User Object>
-Logout
+Logout<roi>
 POST
 /api/auth/logout(lamroi)
 -
@@ -55,7 +55,7 @@ PUT<roi>
 { "name": "...", "dob": "...", "gender": "..." }
 <User Object>
 Xóa User (Admin)
-DELETE
+DELETE<roi>
 /api/users/{id}
 -
 { "message": "User deleted" }
@@ -134,7 +134,7 @@ Endpoint
 Request
 Response
 Lấy thông báo
-GET
+GET<roi>
 /api/notifications
 -
 [ { "id": 1, "message": "...", "read": false } ]

@@ -49,6 +49,17 @@ public class UserService extends BaseService implements UserServiceInterface  {
 
     @Override
     @Transactional
+    public Boolean delete(Long id) {
+        userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Thành viên không tồn tại"));
+        userRepository.deleteById(id);
+        return true;
+
+    }
+
+
+    @Override
+    @Transactional
     public User create(StoreUserRequest request) {
         try {
 

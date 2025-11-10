@@ -10,17 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pbl.backend.kchi.modules.users.entities.User;
-import pbl.backend.kchi.modules.users.entities.UserCatalogue;
 import pbl.backend.kchi.modules.users.requests.StoreUserRequest;
 import pbl.backend.kchi.modules.users.requests.UpdateUserRequest;
-import pbl.backend.kchi.modules.users.requests.UserCatalogue.StoreRequest;
-import pbl.backend.kchi.modules.users.requests.UserCatalogue.UpdateRequest;
-import pbl.backend.kchi.modules.users.resources.UserCatalogueResource;
+
 import pbl.backend.kchi.modules.users.resources.UserResource;
 import pbl.backend.kchi.modules.users.repositories.UserRepository;
-import pbl.backend.kchi.modules.users.services.impl.UserService;
+
 import org.springframework.security.core.context.SecurityContextHolder;
-import pbl.backend.kchi.modules.users.services.interfaces.UserCatalogueServiceInterface;
+
 import pbl.backend.kchi.modules.users.services.interfaces.UserServiceInterface;
 import pbl.backend.kchi.resources.ApiResource;
 
@@ -142,6 +139,27 @@ public class UserController {
 
         logger.info("Method getUserCatalogues Running....");
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            userService.delete(id);
+            return ResponseEntity.ok(ApiResource.message("Xóa bản ghi thành công", HttpStatus.OK));
+
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    ApiResource.error("NOT_FOUND",e.getMessage(),HttpStatus.BAD_REQUEST)
+            );
+
+        } catch (Exception e) {
+            String message = "Có lỗi xảy ra trong quá trình xử lí" + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ApiResource.error("INTERNAL_SERVER_ERROR", message,
+                            HttpStatus.INTERNAL_SERVER_ERROR)
+
+            );
+        }
     }
 
 }
