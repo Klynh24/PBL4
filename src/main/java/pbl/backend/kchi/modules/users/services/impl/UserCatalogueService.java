@@ -1,20 +1,19 @@
 package pbl.backend.kchi.modules.users.services.impl;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pbl.backend.kchi.modules.users.entities.UserCatalogue;
-import pbl.backend.kchi.modules.users.requests.LoginRequest;
 import pbl.backend.kchi.modules.users.requests.UserCatalogue.StoreRequest;
 import pbl.backend.kchi.modules.users.requests.UserCatalogue.UpdateRequest;
 import pbl.backend.kchi.modules.users.services.interfaces.UserCatalogueServiceInterface;
-import pbl.backend.kchi.resources.ApiResource;
 import pbl.backend.kchi.services.BaseService;
 import pbl.backend.kchi.modules.users.repositories.UserCataloguesRespository;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +34,14 @@ public class UserCatalogueService extends BaseService implements UserCatalogueSe
         return userCataloguesRespository.findAll(pageable);
 
     }
+
+//    @Override
+//    public List<UserCatalogue> getAll(Map<String, String[]> parameters ) {
+//        String sortParam = parameters.containsKey("sort") ? parameters.get("sort")[0] : null;
+//        Sort sort = createSort(sortParam);
+//
+//
+//    }
 
     @Override
     @Transactional
@@ -62,5 +69,27 @@ public class UserCatalogueService extends BaseService implements UserCatalogueSe
                .publish(request.getPublish())
                .build();
        return userCataloguesRespository.save(payload);
+    }
+
+    @Override
+    @Transactional
+    public Boolean delete(Long id) {
+        userCataloguesRespository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Nhóm thành viên không tồn tại"));
+        userCataloguesRespository.deleteById(id);
+        return true;
+
+    }
+
+    @Override
+    @Transactional
+    public Boolean deleteMultipleEntity(List<Long> ids) {
+        List<UserCatalogue> userCatalogues = userCataloguesRespository.findAllById(ids);
+        if(userCatalogues.size() != ids.size()) {
+            throw new RuntimeException("Số lượng bản ghi cần xóa không khớp");
+        }
+
+        userCataloguesRespository.deleteAll(userCatalogues);
+        return true;
     }
 }
