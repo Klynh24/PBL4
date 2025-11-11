@@ -12,9 +12,6 @@ public class StoreNotificationRequest {
     @NotBlank(message = "Loại thông báo không được để trống")
     private String type;
 
-    @NotNull(message = "Trạng thái không được để trống")
-    private Boolean readStatus;
-
     @NotNull(message = "Người nhận không được bỏ trống")
     private Long userId;
 

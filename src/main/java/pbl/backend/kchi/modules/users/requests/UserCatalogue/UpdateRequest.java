@@ -3,15 +3,23 @@ import jakarta.validation.constraints.*;
 
 import lombok.*;
 
+import java.util.List;
+
 @Data
 public class UpdateRequest {
     @NotBlank(message = "Tên nhóm thành viên không được để trống")
     private String name;
 
+
     @NotNull(message = "Trạng thái không được để trống")
-    @Min(value = 0, message = "Giá trị trạng thái phải lớn hơn hoặc bằng 0")
-    @Max(value = 2, message = "Giá trị trạng thái phải nhỏ hơn hoặc bằng 2")
+    @Min(value = 0, message="Giá trị trạng thái phải lớn hơn hoặc bằng 0")
+    @Max(value = 2, message= "Giá trị trạng thái phải nhỏ hơn hoặc bằng 2")
     private Integer publish;
 
+    // @NotNull(message = "Chưa cấp quyền cho nhóm thành viên")
+    private List<Long> permissions;
+
+    // @NotNull(message = "Chưa cấp quyền cho nhóm thành viên")
+    private List<Long> users;
 
 }

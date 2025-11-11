@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pbl.backend.kchi.modules.refresh_tokens.repositories.RefreshtokensRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import pbl.backend.kchi.modules.users.services.impl.UserService;
+
 import org.springframework.scheduling.annotation.Scheduled;
 import java.time.LocalDateTime;
 
@@ -15,7 +15,7 @@ public class RefreshTokenClean {
     @Autowired
     private RefreshtokensRepository refreshtokensRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(RefreshTokenClean.class);
 
     @Transactional
     @Scheduled(cron = "0 0 0 * * ?")

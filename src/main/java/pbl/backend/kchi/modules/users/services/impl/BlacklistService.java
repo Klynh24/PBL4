@@ -27,7 +27,7 @@ public class BlacklistService {
     @Autowired
     private JwtService jwtService;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(BlacklistService.class);
     public Object create(BlacklistedTokenRequest request) {
         try {
             if(blacklistedTokenRespository.existsByToken(request.getToken())) {

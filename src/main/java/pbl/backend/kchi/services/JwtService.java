@@ -6,8 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.stereotype.Service;
 import pbl.backend.kchi.config.JwtConfig;
 
@@ -16,12 +15,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Objects;
+
 import java.util.Optional;
 
 import io.jsonwebtoken.security.Keys;
-import pbl.backend.kchi.modules.users.services.impl.UserService;
-import java.util.function.Function;
+
+
 import java.util.UUID;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -36,7 +35,7 @@ public class JwtService {
 
     private final JwtConfig jwtConfig;
     private final Key key;
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     @Autowired
     private BlacklistedTokenRespository blacklistedTokenRespository;

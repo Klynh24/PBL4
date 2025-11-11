@@ -3,35 +3,32 @@ package pbl.backend.kchi.modules.users.services.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import pbl.backend.kchi.modules.users.entities.User;
-import pbl.backend.kchi.modules.users.entities.UserCatalogue;
+import pbl.backend.kchi.modules.users.mappers.UserMapper;
 import pbl.backend.kchi.modules.users.repositories.UserRepository;
 import pbl.backend.kchi.modules.users.requests.StoreUserRequest;
 import pbl.backend.kchi.modules.users.requests.UpdateUserRequest;
-import pbl.backend.kchi.resources.ApiResource;
-import pbl.backend.kchi.modules.users.resources.UserResource;
 import pbl.backend.kchi.modules.users.services.interfaces.UserServiceInterface;
-
+import pbl.backend.kchi.resources.ApiResource;
 import pbl.backend.kchi.services.BaseService;
-import pbl.backend.kchi.modules.users.resources.LoginResources;
-import pbl.backend.kchi.modules.users.requests.LoginRequest;
 import pbl.backend.kchi.services.JwtService;
-import org.springframework.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Value;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.Map;
+import pbl.backend.kchi.modules.users.requests.LoginRequest;
+import pbl.backend.kchi.modules.users.resources.UserResource;
+import pbl.backend.kchi.modules.users.resources.LoginResources;
 
 @Service
-public class UserService extends BaseService implements UserServiceInterface  {
+public class UserService extends BaseService<
+        User,
+        UserMapper,
+        StoreUserRequest,
+        UpdateUserRequest,
+        UserRepository
+        > implements UserServiceInterface {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -47,93 +44,71 @@ public class UserService extends BaseService implements UserServiceInterface  {
     @Value("${jwt.defaultExpiration}")
     private long defaultExpiration;
 
-    @Override
-    @Transactional
-    public Boolean delete(Long id) {
-        userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Thành viên không tồn tại"));
-        userRepository.deleteById(id);
-        return true;
-
-    }
+    private final UserMapper userMapper;
 
 
-    @Override
-    @Transactional
-    public User create(StoreUserRequest request) {
-        try {
-
-            User payload = User.builder()
-                    .name(request.getName())
-                    .email(request.getEmail())
-                    .password(passwordEncoder.encode(request.getPassword()))
-                    .phone(request.getPhone())
-                    .address(request.getAddress())
-                    .image(request.getImage())
-                    .userCatalogueid(request.getUserCatalogueId())
-                    .build();
-            return userRepository.save(payload);
-        } catch (Exception e) {
-            throw new RuntimeException("Transaction failed" + e.getMessage());
-        }
+    public UserService(
+            UserMapper userMapper
+    ){
+        this.userMapper = userMapper;
     }
 
     @Override
-    @Transactional
-    public User update(Long id, UpdateUserRequest request) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Nhóm thành viên không tồn tại"));
-            User payload = user.toBuilder()
-                    .name(request.getName())
-                    .email(request.getEmail())
-                    .password(passwordEncoder.encode(request.getPassword()))
-                    .phone(request.getPhone())
-                    .address(request.getAddress())
-                    .image(request.getImage())
-                    .userCatalogueid(request.getUserCatalogueId())
-                    .build();
-            return userRepository.save(payload);
-
+    protected String[] getSearchFields(){
+        return new String[]{"name", "phone", "email"};
     }
 
     @Override
-    public Page<User> paginate(Map<String, String[]> parameters) {
-        int page = parameters.containsKey("page") ? Integer.parseInt(parameters.get("page")[0]) : 1;
-        int perpage = parameters.containsKey("perpage") ? Integer.parseInt(parameters.get("perpage")[0]) : 20;
-        String sortParam = parameters.containsKey("sort") ? parameters.get("sort")[0] : null;
-        Sort sort = createSort(sortParam);
-        Pageable pageable = PageRequest.of(page - 1, perpage, sort);
-        return userRepository.findAll(pageable);
+    protected String[] getRelations(){
+        return new String[]{"userCatalogues"};
+    }
 
+    @Override
+    protected UserRepository getRepository(){
+        return userRepository;
+    }
+
+    @Override
+    protected UserMapper getMapper(){
+        return userMapper;
     }
 
 
+
     @Override
-    public Object authenticate(LoginRequest request) {
+    public Object authenticate(LoginRequest request){
         try {
 
             User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new BadCredentialsException("Email hoặc mật khẩu không chính xác"));
-
-            if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
                 throw new BadCredentialsException("Email hoặc mật khẩu không chính xác");
             }
+            UserResource userResource = UserResource.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .phone(user.getPhone())
+                    .build();
 
 
-            UserResource userResource = new UserResource(user.getId(), user.getEmail(), user.getName(), user.getPhone(), user.getPhone(), user.getAddress(), user.getImage(), user.getUserCatalogueid());
             String token = jwtService.generateToken(user.getId(), user.getEmail(), defaultExpiration);
-
             String refreshToken = jwtService.generateRefreshToken(user.getId(), user.getEmail());
 
-            return new LoginResources(token,refreshToken, userResource);
 
-
-
+            return new LoginResources(token, refreshToken, userResource);
         } catch (BadCredentialsException e) {
+            logger.error("Lỗi xác thực : {}", e.getMessage());
 
-            logger.error("Lỗi xác thực {}" , e.getMessage());
-
-            return ApiResource.error("AUTH_ERROR",e.getMessage(), HttpStatus.UNAUTHORIZED);
+            return ApiResource.error("AUTH_ERROR", e.getMessage(), HttpStatus.UNAUTHORIZED);
 
         }
     }
+
+    @Override
+    protected void preProcessRequest(StoreUserRequest request){
+        if(request.getPassword() != null){
+            request.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+    }
+
 }

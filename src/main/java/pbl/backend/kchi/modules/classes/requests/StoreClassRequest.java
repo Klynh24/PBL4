@@ -3,6 +3,8 @@ package pbl.backend.kchi.modules.classes.requests;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 public class StoreClassRequest {
     @NotBlank(message = "Tên không được để trống")
@@ -11,5 +13,6 @@ public class StoreClassRequest {
     private String description;
 
     private Long userId;
+    private List<Long> members;
 
 }

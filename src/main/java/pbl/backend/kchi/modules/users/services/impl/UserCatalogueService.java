@@ -1,95 +1,56 @@
 package pbl.backend.kchi.modules.users.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 import pbl.backend.kchi.modules.users.entities.UserCatalogue;
+import pbl.backend.kchi.modules.users.mappers.UserCatalogueMapper;
+import pbl.backend.kchi.modules.users.repositories.UserCataloguesRespository;
 import pbl.backend.kchi.modules.users.requests.UserCatalogue.StoreRequest;
 import pbl.backend.kchi.modules.users.requests.UserCatalogue.UpdateRequest;
 import pbl.backend.kchi.modules.users.services.interfaces.UserCatalogueServiceInterface;
 import pbl.backend.kchi.services.BaseService;
-import pbl.backend.kchi.modules.users.repositories.UserCataloguesRespository;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
-import java.util.Map;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
 
 @Service
-public class UserCatalogueService extends BaseService implements UserCatalogueServiceInterface {
+public class UserCatalogueService extends BaseService<
+        UserCatalogue,
+        UserCatalogueMapper,
+        StoreRequest,
+        UpdateRequest,
+        UserCataloguesRespository
+        > implements  UserCatalogueServiceInterface {
+
+    private final UserCatalogueMapper userCatalogueMapper;
+
     @Autowired
-    private UserCataloguesRespository userCataloguesRespository;
+    private UserCataloguesRespository userCatalogueRepository;
 
-    //http://localhost:8080/user_catalogues?keyword=abc&publish=1&prepre=40&sort=name, asc | id, desc | ....
-    @Override
-    public Page<UserCatalogue> paginate(Map<String, String[]> parameters) {
-        int page = parameters.containsKey("page") ? Integer.parseInt(parameters.get("page")[0]) : 1;
-        int perpage = parameters.containsKey("perpage") ? Integer.parseInt(parameters.get("perpage")[0]) : 20;
-        String sortParam = parameters.containsKey("sort") ? parameters.get("sort")[0] : null;
-        Sort sort = createSort(sortParam);
-        Pageable pageable = PageRequest.of(page - 1, perpage, sort);
-        return userCataloguesRespository.findAll(pageable);
-
-    }
-
-//    @Override
-//    public List<UserCatalogue> getAll(Map<String, String[]> parameters ) {
-//        String sortParam = parameters.containsKey("sort") ? parameters.get("sort")[0] : null;
-//        Sort sort = createSort(sortParam);
-//
-//
-//    }
-
-    @Override
-    @Transactional
-    public UserCatalogue create(StoreRequest request) {
-        try {
-            UserCatalogue payload = UserCatalogue.builder()
-                    .name(request.getName())
-                    .publish(request.getPublish())
-                    .build();
-            return userCataloguesRespository.save(payload);
-        } catch (Exception e) {
-            throw new RuntimeException("Transaction failed" + e.getMessage());
-        }
-
+    public UserCatalogueService(
+            UserCatalogueMapper userCatalogueMapper
+    ){
+        this.userCatalogueMapper = userCatalogueMapper;
     }
 
     @Override
-    @Transactional
-    public UserCatalogue update(Long id, UpdateRequest request) {
-       UserCatalogue userCatalogue = userCataloguesRespository.findById(id)
-               .orElseThrow(() -> new EntityNotFoundException("Nhóm thành viên không tồn tại"));
-
-       UserCatalogue payload = userCatalogue.toBuilder()
-               .name(request.getName())
-               .publish(request.getPublish())
-               .build();
-       return userCataloguesRespository.save(payload);
+    protected String[] getSearchFields(){
+        return new String[]{"name"};
     }
 
     @Override
-    @Transactional
-    public Boolean delete(Long id) {
-        userCataloguesRespository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Nhóm thành viên không tồn tại"));
-        userCataloguesRespository.deleteById(id);
-        return true;
-
+    protected String[] getRelations(){
+        return new String[]{"permissions"};
     }
 
     @Override
-    @Transactional
-    public Boolean deleteMultipleEntity(List<Long> ids) {
-        List<UserCatalogue> userCatalogues = userCataloguesRespository.findAllById(ids);
-        if(userCatalogues.size() != ids.size()) {
-            throw new RuntimeException("Số lượng bản ghi cần xóa không khớp");
-        }
-
-        userCataloguesRespository.deleteAll(userCatalogues);
-        return true;
+    protected UserCataloguesRespository getRepository(){
+        return userCatalogueRepository;
     }
+
+    @Override
+    protected UserCatalogueMapper getMapper(){
+        return userCatalogueMapper;
+    }
+
+
 }

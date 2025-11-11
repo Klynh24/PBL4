@@ -1,13 +1,17 @@
 package pbl.backend.kchi.modules.users.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.HashSet;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Builder(toBuilder = true)
 @NoArgsConstructor
@@ -17,53 +21,57 @@ import java.time.LocalDateTime;
 @Table(name = "users")
 public class User {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="user_catalogue_id", updatable = false)
-    private Long userCatalogueid;
+
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_catalogue_user",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_catalogue_id")
+    )
+    @JsonManagedReference
+    private Set<UserCatalogue> userCatalogues = new HashSet<>();
+
     private String name;
     private String email;
+    private String password;
     private String phone;
     private String image;
     private String address;
 
-    @JsonIgnore
-    private String password;
-
-    @Column(name="create_at", updatable = false)
+    @Column(name="created_at", updatable=false)
     private LocalDateTime createdAt;
 
-    @Column(name ="update_at")
+    @Column(name="updated_at")
     private LocalDateTime updatedAt;
 
+
     @PrePersist
-    protected void onCreated() {
+    protected void onCreated(){
         createdAt = LocalDateTime.now();
     }
 
     @PreUpdate
-    protected void onUpdated() {
+    protected void onUpdated(){
         updatedAt = LocalDateTime.now();
     }
 
-
-    public User(
-            String name,
-            String email,
-            String password,
-            Long userCatalogueid,
-            String phone
-
-    ){
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.userCatalogueid = userCatalogueid;
-        this.phone = phone;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User that = (User) o;
+        return Objects.equals(id, that.id);
     }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
 }
