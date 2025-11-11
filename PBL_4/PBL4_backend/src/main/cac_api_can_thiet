@@ -1,0 +1,201 @@
+1. Đối tượng dữ liệu chung (Data Objects)
+User Object
+Đối tượng User hoàn chỉnh, được sử dụng ở nhiều nơi trong API.
+{
+  "id": 1,
+  "email": "student@gmail.com",
+  "role": "student",
+  "name": "Nguyễn Thị Bích",
+  "dob": "2005-08-20",
+  "gender": "Nữ"
+}
+
+2. REST API CONTRACT
+🔐 Auth (Xác thực)
+Action
+Method
+Endpoint
+Request
+Response
+Login
+POST
+/api/auth/login(lam roi)
+{ "email": "...", "password": "..." }
+{ "token": "xxx", "user": <User Object> }
+Register
+POST
+/api/auth/register<roi>
+{ "email": "...", "password": "...", "role": "..." }
+<User Object>
+Logout<roi>
+POST
+/api/auth/logout(lamroi)
+-
+{ "message": "Logged out" }
+
+👥 Users (Người dùng)
+Action
+Method
+Endpoint
+Request
+Response
+Lấy DS User
+GET<roi>
+/api/users
+-
+[ <User Object> ]
+Tạo User (Admin)
+POST<roi>
+/api/users
+{ "email": "...", "password": "...", "role": "..." }
+<User Object>
+Cập nhật User
+PUT<roi>
+/api/users/{id}
+{ "name": "...", "dob": "...", "gender": "..." }
+<User Object>
+Xóa User (Admin)
+DELETE<roi>
+/api/users/{id}
+-
+{ "message": "User deleted" }
+
+🏫 Classes (Lớp học)
+Action
+Method
+Endpoint
+Request
+Response
+Lấy DS lớp
+GET<roi>
+/api/classes
+-
+[ { "id": 1, "name": "...", "teacher": "..." } ]
+Tạo lớp (Teacher)
+POST<roi>
+/api/classes
+{ "name": "..." }
+{ "id": 2, "name": "...", "teacher": "..." }
+Xem chi tiết
+GET<roi>
+/api/classes/{id}
+-
+{ "id": 1, "name": "...", "teacher": "...", "teacherId": 2, "students": [ <User Object> ] }
+Tham gia lớp (Student)
+POST
+/api/classes/{id}/join
+{ "code": "XYZ123" } (nếu có mã)
+{ "message": "Joined successfully" }
+
+📚 Assignments (Bài tập)
+Action
+Method
+Endpoint
+Request
+Response
+Lấy DS bài tập
+GET<roi>
+/api/assignments?classId=1
+-
+[ { "id": 101, "title": "...", "dueDate": "..." } ]
+Tạo bài tập (Teacher)
+POST <roi>
+/api/assignments
+{ "classId": 1, "title": "...", "description": "...", "dueDate": "..." }
+{ "id": 101, "title": "..." }
+Nộp bài (Student)
+POST <roi>
+/api/assignments/{id}/submit
+{ "fileUrl": "..." }
+{ "message": "Submitted" }
+
+
+💬 Chat (Trò chuyện)
+Action
+Method
+Endpoint
+Request
+Response
+Lấy lịch sử chat
+GET<lam roi>
+/api/chat/{otherUserId}
+-
+[ { "id": 1, "from": 1, "to": 2, "message": "Hello", "timestamp": "..." } ]
+Gửi tin nhắn
+POST<lam roi>
+/api/chat/{otherUserId}
+{ "message": "Hi there!" }
+{ "id": 2, "from": 2, "to": 1, "message": "Hi there!", "timestamp": "..." }
+
+🔔 Notifications (Thông báo)
+Action
+Method
+Endpoint
+Request
+Response
+Lấy thông báo
+GET<roi>
+/api/notifications
+-
+[ { "id": 1, "message": "...", "read": false } ]
+Tạo thông báo (Admin)
+POST<roi>
+/api/notifications
+{ "message": "...", "targetRole": "..." }
+{ "id": 2, "message": "..." }
+Đánh dấu đã đọc
+PUT<roi>
+/api/notifications/{id}
+{ "read": true }
+{ "id": 2, "read": true }
+
+3. REALTIME CONTRACT (WebSocket)
+🔴 Room & Meeting Events
+Event Name
+Direction
+Payload
+Description
+join-room
+Client → Server
+{ "roomId": "class_1", "userId": 10 }
+Báo cho server biết user đã vào một lớp.
+user-joined
+Server → Clients
+{ "userId": 10, "name": "Student A" }
+Báo cho các user khác biết có người mới vào.
+leave-room
+Client → Server
+{ "roomId": "class_1" }
+Báo cho server biết user đã rời lớp.
+user-left
+Server → Clients
+{ "userId": 10 }
+Báo cho các user khác biết có người đã rời.
+meeting-start
+Server → Clients
+{ "roomId": "class_1" }
+Báo cho các user trong lớp biết cuộc họp đã bắt đầu.
+meeting-end
+Server → Clients
+{ "roomId": "class_1" }
+Báo cho các user trong lớp biết cuộc họp đã kết thúc.
+
+💬 Chat & Interaction Events
+Event Name
+Direction
+Payload
+Description
+chat-message
+Client ↔ Server
+{ "roomId": "class_1", "userId": 10, "message": "..." }
+Gửi/nhận tin nhắn trong kênh chung của lớp.
+private-message
+Client ↔ Server
+{ "to": 12, "from": 10, "message": "..." }
+Gửi/nhận tin nhắn riêng.
+
+🎥 WebRTC Signaling
+Các sự kiện này giữ nguyên để phục vụ cho việc truyền video/âm thanh.
+offer → { "sdp": "...", "from": 10, "to": 12 }
+answer → { "sdp": "...", "from": 12, "to": 10 }
+ice-candidate → { "candidate": "..." }
