@@ -31,7 +31,7 @@ public interface SubmissionMapper extends BaseMapper<
     @Override
     @BaseMapperAnnotation
     @Mapping(target = "assignment", ignore = true)
-    @Mapping(target = "user", ignore = true)       
+    @Mapping(target = "user", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromRequest(UpdateSubmittedRequest updateRequest, @MappingTarget AssignmentSubmission entity);
 }

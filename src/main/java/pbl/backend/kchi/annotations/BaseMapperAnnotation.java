@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Mapping(target = "id", ignore = true)
 @Mapping(target = "createdAt", ignore= true)
-@Mapping(target = "updatedAt", ignore= true)
+@Mapping(target = "updatedAt", ignore = true)
 public @interface BaseMapperAnnotation {
 
 }

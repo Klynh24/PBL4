@@ -14,7 +14,6 @@ public interface AssignmentMapper extends BaseMapper<Assignments, AssignmentReso
 
     @Override
     @BaseMapperAnnotation
-
     @Mapping(target = "classes", ignore = true)
     @Mapping(target = "submissions", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -22,7 +21,6 @@ public interface AssignmentMapper extends BaseMapper<Assignments, AssignmentReso
 
     @Override
     @BaseMapperAnnotation
-
     @Mapping(target = "classes", ignore = true)
     @Mapping(target = "submissions", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

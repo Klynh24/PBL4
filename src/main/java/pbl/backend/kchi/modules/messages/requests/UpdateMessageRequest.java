@@ -1,11 +1,10 @@
 package pbl.backend.kchi.modules.messages.requests;
-import jakarta.validation.constraints.*;
 
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 @Data
-public class StoreMessageRequest {
-
+public class UpdateMessageRequest {
     private String text;
 
     @NotNull(message = "Cuộc hội thoại không được bỏ trống")

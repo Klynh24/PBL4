@@ -39,6 +39,15 @@ public class Notifications {
     @Column(name="created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name="updated_at")
+    private LocalDateTime updatedAt;
+
+
+    @PreUpdate
+    protected void onUpdated(){
+        updatedAt = LocalDateTime.now();
+    }
+
 
     @PrePersist
     protected void onCreated() {

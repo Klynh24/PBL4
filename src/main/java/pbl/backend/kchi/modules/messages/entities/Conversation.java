@@ -29,6 +29,15 @@ public class Conversation {
     @Column(name="created_at", updatable = false) // Sửa tên cột "create_at"
     private LocalDateTime createdAt;
 
+    @Column(name="updated_at")
+    private LocalDateTime updatedAt;
+
+
+    @PreUpdate
+    protected void onUpdated(){
+        updatedAt = LocalDateTime.now();
+    }
+
     @PrePersist
     protected void onCreated() {
         createdAt = LocalDateTime.now();

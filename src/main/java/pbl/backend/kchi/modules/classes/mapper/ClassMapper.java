@@ -27,7 +27,6 @@ public interface ClassMapper extends BaseMapper<Classes, ClassResource, StoreCla
 
     @Override
     @BaseMapperAnnotation
-
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "members", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

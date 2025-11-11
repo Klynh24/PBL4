@@ -61,14 +61,15 @@ public class User {
     @Column(name="created_at", updatable=false)
     private LocalDateTime createdAt;
 
-    @Column(name="updated_at")
-    private LocalDateTime updatedAt;
-
 
     @PrePersist
     protected void onCreated(){
         createdAt = LocalDateTime.now();
     }
+
+    @Column(name="updated_at")
+    private LocalDateTime updatedAt;
+
 
     @PreUpdate
     protected void onUpdated(){

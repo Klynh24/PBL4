@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import pbl.backend.kchi.modules.classes.entities.Classes; // Thêm
 
 import java.time.LocalDateTime;
@@ -57,6 +58,15 @@ public class Assignments {
     @PrePersist
     protected void onCreated() {
         createdAt = LocalDateTime.now();
+    }
+
+    @Column(name="updated_at")
+    private LocalDateTime updatedAt;
+
+
+    @PreUpdate
+    protected void onUpdated(){
+        updatedAt = LocalDateTime.now();
     }
 
 

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import pbl.backend.kchi.modules.users.entities.User; // Thêm
 
 import java.time.LocalDateTime;

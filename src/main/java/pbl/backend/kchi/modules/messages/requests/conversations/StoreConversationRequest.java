@@ -6,7 +6,7 @@ import lombok.*;
 
 @Data
 public class StoreConversationRequest {
-    @NotBlank(message = "Không đuo")
+    @NotBlank(message = "Không được để trống tên cuộc trò chuyện")
     private String name;
 
 }

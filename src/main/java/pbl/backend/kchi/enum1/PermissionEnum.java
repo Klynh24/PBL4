@@ -8,6 +8,8 @@ public enum PermissionEnum {
     NOTIFICATIONS("notifications"),
     CLASSES_USER("classes"),
     ASSIGNMENT("assignments"),
+    CONVERSATIONS("conversations"),
+    MESSAGE("messages"),
     SUBMISSION("submissions");
 
     private final String prefix;

@@ -1,13 +1,13 @@
 package pbl.backend.kchi.modules.messages.services.interfaces;
 
-import org.springframework.data.domain.Page;
 import pbl.backend.kchi.modules.messages.entities.Messages;
 import pbl.backend.kchi.modules.messages.requests.StoreMessageRequest;
+import pbl.backend.kchi.modules.messages.requests.UpdateMessageRequest;
 
-import java.util.Map;
+import pbl.backend.kchi.services.interfaces.BaseServiceInterface;
 
-public interface MessageServiceInterface {
-    Messages create(Long userId, StoreMessageRequest request);
-    Page<Messages> paginate(Map<String, String[]> parameters );
+
+public interface MessageServiceInterface extends BaseServiceInterface<Messages, StoreMessageRequest, UpdateMessageRequest> {
 
 }
+
