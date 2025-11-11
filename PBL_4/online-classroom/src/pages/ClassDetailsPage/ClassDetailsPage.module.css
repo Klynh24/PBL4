@@ -1,0 +1,159 @@
+/* src/pages/ClassDetailsPage/ClassDetailsPage.module.css */
+.pageLayout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  height: calc(100vh - 64px - 64px);
+  gap: 24px;
+}
+
+.sidebar {
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+.classInfo {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+.className { font-size: 24px; margin: 0; }
+.teacherName { margin: 4px 0 0 0; color: var(--text-light); }
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.navLink {
+  display: flex; align-items: center; gap: 12px; padding: 12px;
+  border-radius: 8px; text-decoration: none; color: var(--text-dark);
+  font-weight: 500; transition: background-color 0.2s, color 0.2s;
+  border: none; background: none; cursor: pointer;
+  width: 100%; text-align: left; font-size: 16px;
+}
+.navLink:hover { background-color: var(--background-light); }
+.navLink.active { background-color: var(--primary-color); color: var(--white); }
+
+.mainContent {
+  display: flex; flex-direction: column; min-height: 0;
+}
+.contentHeader {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px;
+}
+.headerText { font-size: 20px; font-weight: 600; }
+.joinMeetingButton {
+    display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
+    border: none; border-radius: 8px; background-color: var(--primary-color);
+    color: var(--white); font-size: 16px; font-weight: bold; cursor: pointer;
+    text-decoration: none; transition: background-color 0.2s;
+}
+.joinMeetingButton:hover { background-color: var(--primary-hover-color); }
+
+.tabContent {
+  background-color: var(--white); padding: 24px; border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color); 
+  flex-grow: 1; overflow-y: auto;
+}
+
+.postsContainer { display: flex; flex-direction: column; height: 100%; }
+.postsList { flex-grow: 1; display: flex; flex-direction: column; gap: 24px; margin-bottom: 24px; }
+.postItem { display: flex; gap: 16px; }
+.postAvatar {
+    width: 40px; height: 40px; border-radius: 50%; background-color: var(--primary-color);
+    color: var(--white); display: flex; align-items: center; justify-content: center;
+    font-weight: bold; flex-shrink: 0;
+}
+.postContent p { margin: 4px 0 0 0; line-height: 1.5; }
+.postHeader { display: flex; align-items: baseline; gap: 8px; }
+.postAuthor { font-weight: 600; }
+.postTime { font-size: 12px; color: var(--text-light); }
+.newPostContainer { border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-top: auto; }
+.newPostInputWrapper textarea { width: 100%; border: none; resize: none; font-family: inherit; font-size: 16px; }
+.newPostInputWrapper textarea:focus { outline: none; }
+.newPostActions { display: flex; justify-content: flex-end; margin-top: 8px; }
+.sendButton { padding: 8px 16px; font-size: 14px; }
+.meetingPost {
+    background-image: linear-gradient(135deg, #fceef2, #fff5f7); border: 1px solid var(--border-color);
+    border-left: 4px solid var(--primary-color); border-radius: 8px; padding: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.meetingInfo { display: flex; align-items: center; gap: 16px; }
+.meetingInfo h4 { margin: 0 0 4px 0; font-size: 18px; }
+.meetingInfo p { margin: 0; color: var(--text-light); }
+.meetingIcon { font-size: 24px; color: var(--primary-color); animation: pulse 2s infinite; }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+.joinButton {
+    padding: 10px 20px; border: none; border-radius: 8px;
+    background-color: var(--primary-hover-color); color: var(--white); font-weight: 500; text-decoration: none;
+}
+
+.actionButton {
+  padding: 10px 20px; border: none; border-radius: 8px; background-color: var(--primary-color);
+  color: var(--white); font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 24px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.assignmentList { display: flex; flex-direction: column; gap: 16px; }
+.assignmentItem { display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid var(--border-color); border-radius: 8px; }
+.assignmentTitle { margin: 0 0 4px 0; font-size: 18px; }
+.assignmentDue { margin: 0; font-size: 14px; color: var(--text-light); }
+.submitButton { padding: 8px 16px; border: 1px solid var(--primary-color); color: var(--primary-color); background-color: var(--white); border-radius: 6px; cursor: pointer; }
+
+.memberList { padding: 0; margin: 0; list-style-type: none; }
+.memberItem { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-color); }
+.memberItem:last-child { border: none; }
+.memberAvatar {
+    width: 32px; height: 32px; border-radius: 50%; background-color: var(--background-light);
+    color: var(--primary-color); display: flex; align-items: center; justify-content: center;
+    font-weight: bold;
+}
+.memberName { font-weight: 500; }
+
+.fileList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.fileItem {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+.fileItem:hover {
+    background-color: var(--background-light);
+}
+.fileInfo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.fileIcon {
+    font-size: 24px;
+    color: var(--primary-color);
+}
+.fileName {
+    font-weight: 500;
+}
+.fileMeta {
+    display: grid;
+    grid-template-columns: 120px 100px 40px;
+    align-items: center;
+    gap: 16px;
+    color: var(--text-light);
+    font-size: 14px;
+}
+.fileActionButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-light);
+}
+
+.message { text-align: center; padding-top: 40px; color: var(--text-light); }
+

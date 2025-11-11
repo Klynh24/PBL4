@@ -1,0 +1,70 @@
+/* src/components/common/UploadModal/UploadModal.module.css */
+.overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); display: flex;
+  align-items: center; justify-content: center; z-index: 1000;
+}
+
+.modal {
+  background-color: var(--white); padding: 24px; border-radius: 12px;
+  width: 100%; max-width: 500px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.title { font-size: 22px; margin: 0 0 24px 0; color: var(--text-dark); }
+
+.dropzone {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.dropzone:hover {
+    background-color: var(--background-light);
+}
+.uploadIcon {
+    font-size: 40px;
+    color: var(--primary-color);
+    margin-bottom: 16px;
+}
+.dropzone p {
+    margin: 0;
+    color: var(--text-light);
+}
+
+.filePreview {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background-color: var(--background-light);
+    border-radius: 8px;
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 500;
+}
+.filePreview span {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.removeFileButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--error-color);
+}
+
+
+.actions {
+  display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;
+}
+.btn {
+  padding: 10px 20px; border-radius: 8px; border: none; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; font-size: 16px;
+}
+.btnPrimary { background-color: var(--primary-color); color: var(--white); }
+.btnPrimary:disabled { background-color: var(--border-color); cursor: not-allowed; }
+.btnSecondary { background-color: var(--background-light); color: var(--text-dark); }
