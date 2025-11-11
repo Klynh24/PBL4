@@ -1,58 +1,50 @@
 package pbl.backend.kchi.modules.assignments.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference; // Thêm
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pbl.backend.kchi.modules.classes.entities.Classes; // Thêm
+import pbl.backend.kchi.modules.users.entities.User; // Thêm
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Objects; // Thêm
-import java.util.Set;
 
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "assignments")
-public class Assignments {
+@Table(name = "assignment_submissions")
+
+public class AssignmentSubmission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assignment_id", updatable = false)
+    @JsonBackReference("assignment-submissions")
+    private Assignments assignment;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "class_id", updatable = false)
-    @JsonBackReference("class-assignments")
-    private Classes classes;
+    @JoinColumn(name = "user_id", updatable = false)
+    @JsonBackReference("user-submissions")
+    private User user;
 
 
-    @Builder.Default
-    @OneToMany(
-            mappedBy = "assignment_id",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
-    @JsonManagedReference("assignment-submissions")
-    private Set<AssignmentSubmission> submissions = new HashSet<>();
+    private String fileUrl;
 
-    private String title;
+    private String score;
 
-    private String description;
 
-    @Column(name="created_at", updatable = false)
+    @Column(name="submitted_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name="due_date", updatable = false)
-    private LocalDateTime dueDate;
-
-
-
+    @Column(name="updated_at") // Thêm từ mẫu
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreated() {
@@ -60,12 +52,16 @@ public class Assignments {
     }
 
 
+    @PreUpdate
+    protected void onUpdated() {
+        updatedAt = LocalDateTime.now();
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Assignments that = (Assignments) o;
+        AssignmentSubmission that = (AssignmentSubmission) o;
         return Objects.equals(id, that.id);
     }
 

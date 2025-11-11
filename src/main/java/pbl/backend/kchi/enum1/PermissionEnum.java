@@ -5,7 +5,10 @@ public enum PermissionEnum {
     USER_CATALOGUE("user_catalogue"),
     PERMISSION("permission"),
     USER("user"),
-    CLASSES_USER("classes");
+    NOTIFICATIONS("notifications"),
+    CLASSES_USER("classes"),
+    ASSIGNMENT("assignments"),
+    SUBMISSION("submissions");
 
     private final String prefix;
 

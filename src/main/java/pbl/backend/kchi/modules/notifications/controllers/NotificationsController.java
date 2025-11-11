@@ -33,7 +33,7 @@ public class NotificationsController extends BaseController<
             NotificationMapper mapper,
             NotificationResponsitory repo
     ){
-        super(service, mapper, repo, PermissionEnum.CLASSES_USER);
+        super(service, mapper, repo, PermissionEnum.NOTIFICATIONS);
     }
 
 
