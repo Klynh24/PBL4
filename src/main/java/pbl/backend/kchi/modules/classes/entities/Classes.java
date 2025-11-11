@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pbl.backend.kchi.modules.rooms.entities.Room;
 import pbl.backend.kchi.modules.users.entities.User; // QUAN TRỌNG
 
 import java.time.LocalDateTime;
@@ -41,6 +42,15 @@ public class Classes {
     )
     @JsonManagedReference("class-members")
     private Set<User> members = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(
+            mappedBy = "classes",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
+    @JsonManagedReference("class-rooms")
+    private Set<Room> rooms = new HashSet<>();
 
     private String name;
 

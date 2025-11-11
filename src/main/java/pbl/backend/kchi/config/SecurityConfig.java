@@ -33,7 +33,14 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/auth/login",
                                 "/api/v1/auth/refresh",
-                                "/api/v1/users"
+                                "/api/v1/users",
+                                "/swagger-ui",
+                                "/swagger-ui/**",
+                                "/v3/api-docs",
+                                "/api-docs",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/api-docs/swagger-config"
                         ).permitAll()
                         //2.Routes PUBLIC
 

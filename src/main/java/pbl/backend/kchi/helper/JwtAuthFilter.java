@@ -50,7 +50,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull HttpServletRequest request
     ) {
         String path = request.getRequestURI();
-        return path.startsWith("/api/v1/auth/login") || path.startsWith("/api/v1/auth/refresh") || path.startsWith("/api/v1/users") ;
+        return path.startsWith("/api/v1/auth/login") || path.startsWith("/api/v1/auth/refresh") || path.startsWith("/api/v1/users")||
+                path.startsWith("/swagger-ui") ||
+                path.startsWith("/swagger-ui/**") ||
+                path.startsWith("/v3/api-docs" ) ||
+                path.startsWith("/swagger-resources/**" ) ||
+                path.startsWith("/webjars/**") ||
+                path.startsWith("/api-docs/swagger-config") ||
+                path.startsWith("/api-docs");
     }
 
     @Override
@@ -67,17 +74,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if(authHeader == null || !authHeader.startsWith("Bearer")) {
 
-        logger.error("Test");
+                sendErrorResponse(response,
+                        request,
+                        HttpServletResponse.SC_UNAUTHORIZED,
+                        "Xác thực không thành công!",
+                        "Không tìm thấy token"
+                );
 
-            sendErrorResponse(response,
-                    request,
-                    HttpServletResponse.SC_UNAUTHORIZED,
-                    "Xác thực không thành công!",
-                    "Không tìm thấy token"
-            );
-               filterChain.doFilter(request, response);
-               return;
 
+                return;
             }
             jwt = authHeader.substring(7);
 

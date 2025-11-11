@@ -35,10 +35,11 @@ public class Assignments {
 
     @Builder.Default
     @OneToMany(
-            mappedBy = "assignment_id",
+            mappedBy = "assignment",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
+
     @JsonManagedReference("assignment-submissions")
     private Set<AssignmentSubmission> submissions = new HashSet<>();
 

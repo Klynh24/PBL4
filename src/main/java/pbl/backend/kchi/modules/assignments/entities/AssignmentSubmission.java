@@ -1,16 +1,16 @@
 package pbl.backend.kchi.modules.assignments.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference; // Thêm
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import pbl.backend.kchi.modules.users.entities.User; // Thêm
+
+import pbl.backend.kchi.modules.users.entities.User;
 
 import java.time.LocalDateTime;
-import java.util.Objects; // Thêm
+import java.util.Objects;
 
 @Builder(toBuilder = true)
 @NoArgsConstructor

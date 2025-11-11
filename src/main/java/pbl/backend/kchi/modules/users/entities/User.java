@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pbl.backend.kchi.modules.assignments.entities.AssignmentSubmission;
 import pbl.backend.kchi.modules.messages.entities.Conversation;
+import pbl.backend.kchi.modules.rooms.entities.Room;
 
 import java.util.HashSet;
 
@@ -44,12 +45,19 @@ public class User {
 
     @Builder.Default
     @OneToMany(
-            mappedBy = "user_id",
+            mappedBy = "user",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
-    @JsonManagedReference("user-submissions") // Khớp tên
+    @JsonManagedReference("user-submissions")
     private Set<AssignmentSubmission> submissions = new HashSet<>();
+
+
+
+    @Builder.Default
+    @ManyToMany(mappedBy = "participants", fetch = FetchType.LAZY)
+    @JsonBackReference("room-participants")
+    private Set<Room> joinedRooms = new HashSet<>();
 
     private String name;
     private String email;
