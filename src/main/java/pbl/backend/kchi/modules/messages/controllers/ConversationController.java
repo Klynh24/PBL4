@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pbl.backend.kchi.modules.messages.entities.Conversations;
+import pbl.backend.kchi.modules.messages.entities.Conversation;
 import pbl.backend.kchi.modules.messages.requests.conversations.StoreConversationRequest;
 import pbl.backend.kchi.modules.messages.resources.ConversationsResource;
 import pbl.backend.kchi.modules.messages.services.interfaces.ConversationServiceInterface;
@@ -35,10 +35,10 @@ public class ConversationController {
 
     @PostMapping("/conversations")
     public ResponseEntity<?> store(@Valid @RequestBody StoreConversationRequest request) {
-        Conversations conversations = conversationService.create(request);
+        Conversation conversation = conversationService.create(request);
         ConversationsResource conversationsResource = ConversationsResource.builder()
-                .id(conversations.getId())
-                .name(conversations.getName())
+                .id(conversation.getId())
+                .name(conversation.getName())
                 .build();
         ApiResource<ConversationsResource> response = ApiResource.ok(conversationsResource, "Thêm mới bản ghi thành công");
         logger.info("Method Store Running....");
@@ -47,7 +47,7 @@ public class ConversationController {
     @GetMapping("conversations")
     public ResponseEntity<?> index(HttpServletRequest request) {
         Map<String, String[]> parameters = request.getParameterMap();
-        Page<Conversations> conversations = conversationService.paginate(parameters);
+        Page<Conversation> conversations = conversationService.paginate(parameters);
         Page<ConversationsResource> conversationsResource = conversations.map(conversation ->
                 ConversationsResource.builder()
                         .id(conversation.getId())

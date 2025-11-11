@@ -8,8 +8,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
-import pbl.backend.kchi.modules.messages.entities.Conversations;
-import pbl.backend.kchi.modules.messages.repositories.ConversationsRepositories;
+import pbl.backend.kchi.modules.messages.entities.Conversation;
+import pbl.backend.kchi.modules.messages.repositories.ConversationsRepository;
 import pbl.backend.kchi.modules.messages.requests.conversations.StoreConversationRequest;
 import pbl.backend.kchi.modules.messages.services.interfaces.ConversationServiceInterface;
 
@@ -21,16 +21,16 @@ import java.util.Map;
 public class ConversationService extends BaseService implements ConversationServiceInterface {
 
     @Autowired
-    private ConversationsRepositories conversationsRepositories;
+    private ConversationsRepository conversationsRepository;
 
     @Override
     @Transactional
-    public Conversations create(StoreConversationRequest request) {
+    public Conversation create(StoreConversationRequest request) {
         try {
-            Conversations payload = Conversations.builder()
+            Conversation payload = Conversation.builder()
                     .name(request.getName())
                     .build();
-            return conversationsRepositories.save(payload);
+            return conversationsRepository.save(payload);
         } catch (Exception e) {
             throw new RuntimeException("Transaction failed" + e.getMessage());
         }
@@ -39,13 +39,13 @@ public class ConversationService extends BaseService implements ConversationServ
     }
 
     @Override
-    public Page<Conversations> paginate(Map<String, String[]> parameters) {
+    public Page<Conversation> paginate(Map<String, String[]> parameters) {
         int page = parameters.containsKey("page") ? Integer.parseInt(parameters.get("page")[0]) : 1;
         int perpage = parameters.containsKey("perpage") ? Integer.parseInt(parameters.get("perpage")[0]) : 20;
         String sortParam = parameters.containsKey("sort") ? parameters.get("sort")[0] : null;
         Sort sort = createSort(sortParam);
         Pageable pageable = PageRequest.of(page - 1, perpage, sort);
-        return conversationsRepositories.findAll(pageable);
+        return conversationsRepository.findAll(pageable);
     }
 
 }

@@ -1,6 +1,5 @@
 package pbl.backend.kchi.modules.messages.services.impl;
 
-import org.aspectj.bridge.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pbl.backend.kchi.modules.messages.entities.Conversations;
 import pbl.backend.kchi.modules.messages.entities.Messages;
-import pbl.backend.kchi.modules.messages.repositories.MessagesRepositories;
+import pbl.backend.kchi.modules.messages.repositories.MessagesRepository;
 import pbl.backend.kchi.modules.messages.requests.StoreMessageRequest;
 import pbl.backend.kchi.modules.messages.services.interfaces.MessageServiceInterface;
 import pbl.backend.kchi.modules.users.entities.User;
@@ -28,7 +26,7 @@ public class MessageService extends BaseService implements MessageServiceInterfa
     private static final Logger logger = LoggerFactory.getLogger(MessageService.class);
 
     @Autowired
-    private MessagesRepositories messagesRepository;
+    private MessagesRepository messagesRepository;
 
     @Autowired
     private UserRepository userRepository;

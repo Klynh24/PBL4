@@ -9,10 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import pbl.backend.kchi.modules.messages.entities.Conversations;
 import pbl.backend.kchi.modules.messages.entities.Messages;
 import pbl.backend.kchi.modules.messages.requests.StoreMessageRequest;
-import pbl.backend.kchi.modules.messages.resources.ConversationsResource;
 import pbl.backend.kchi.modules.messages.resources.MessagesResource;
 import pbl.backend.kchi.modules.messages.services.interfaces.MessageServiceInterface;
 

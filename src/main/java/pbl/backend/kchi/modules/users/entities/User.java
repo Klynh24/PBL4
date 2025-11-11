@@ -2,6 +2,7 @@ package pbl.backend.kchi.modules.users.entities;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pbl.backend.kchi.modules.assignments.entities.AssignmentSubmission;
+import pbl.backend.kchi.modules.messages.entities.Conversation;
 
 import java.util.HashSet;
 
@@ -72,6 +74,11 @@ public class User {
     protected void onUpdated(){
         updatedAt = LocalDateTime.now();
     }
+
+    @Builder.Default
+    @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
+    @JsonBackReference("conversation-members")
+    private Set<Conversation> conversations = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
