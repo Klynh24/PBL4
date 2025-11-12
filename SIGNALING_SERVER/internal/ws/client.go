@@ -58,6 +58,11 @@ func NewClient(id, userID, roomID string, hub *Hub, conn *websocket.Conn) *Clien
 
 func (c *Client) ReadPump(router MessageRouter) {
 	defer func() {
+		// ✅ THÊM: Thông báo router về disconnect TRƯỚC KHI unregister
+		if r, ok := router.(interface{ HandleClientDisconnect(*Client) }); ok {
+			r.HandleClientDisconnect(c)
+		}
+
 		c.hub.Unregister <- c
 		c.conn.Close()
 	}()

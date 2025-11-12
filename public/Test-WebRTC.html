@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebRTC Video Call - Professional</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+
+      .header {
+        background: white;
+        padding: 20px 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        animation: fadeInDown 0.5s ease-out;
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .header h1 {
+        font-size: 28px;
+        color: #2d3748;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .status-bar {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+        flex-wrap: wrap;
+      }
+
+      .status-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #4a5568;
+      }
+
+      .status-badge {
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .badge-success {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .badge-danger {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .badge-info {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+
+      .main-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr 320px;
+        gap: 20px;
+      }
+
+      .panel {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .panel-header {
+        font-size: 16px;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e2e8f0;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 6px;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 10px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-danger {
+        background: #e53e3e;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c53030;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+      }
+
+      .btn-success {
+        background: #48bb78;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #38a169;
+      }
+
+      .btn-warning {
+        background: #ed8936;
+        color: white;
+      }
+
+      .btn-warning:hover {
+        background: #dd6b20;
+      }
+
+      .btn-secondary {
+        background: #718096;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #4a5568;
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .camera-status {
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        background: #f7fafc;
+        color: #4a5568;
+      }
+
+      .video-section {
+        display: grid;
+        gap: 20px;
+      }
+
+      .video-container {
+        position: relative;
+        background: #1a202c;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .video-container video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .local-video-container {
+        aspect-ratio: 16 / 9;
+      }
+
+      .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+      }
+
+      .video-grid .video-container {
+        aspect-ratio: 4 / 3;
+      }
+
+      .video-label {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .participants-section {
+        display: none;
+      }
+
+      .participants-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .participants-count {
+        background: #667eea;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .participants-list {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .participant-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        transition: background 0.2s;
+      }
+
+      .participant-item:hover {
+        background: #f7fafc;
+      }
+
+      .participant-you {
+        background: #e6fffa;
+      }
+
+      .participant-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .participant-info {
+        flex: 1;
+      }
+
+      .participant-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      .participant-status {
+        font-size: 12px;
+        color: #48bb78;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #a0aec0;
+      }
+
+      .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+      }
+
+      .empty-state-text {
+        font-size: 14px;
+      }
+
+      .logs-container {
+        height: 300px;
+        overflow-y: auto;
+        font-family: "Monaco", "Courier New", monospace;
+        font-size: 12px;
+        background: #f7fafc;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+
+      .logs-container::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .logs-container::-webkit-scrollbar-track {
+        background: #e2e8f0;
+        border-radius: 4px;
+      }
+
+      .logs-container::-webkit-scrollbar-thumb {
+        background: #cbd5e0;
+        border-radius: 4px;
+      }
+
+      .log-entry {
+        margin-bottom: 5px;
+        padding: 5px;
+        border-radius: 4px;
+      }
+
+      .log-info {
+        color: #2d3748;
+      }
+
+      .log-success {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .log-warning {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .log-error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .notification-toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        max-width: 350px;
+        z-index: 1000;
+        animation: slideInRight 0.3s ease-out;
+      }
+
+      @keyframes slideInRight {
+        from {
+          transform: translateX(400px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .notification-toast.hidden {
+        display: none;
+      }
+
+      .notification-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+
+      .notification-icon {
+        font-size: 24px;
+      }
+
+      .notification-title {
+        font-weight: 700;
+        font-size: 14px;
+        color: #2d3748;
+      }
+
+      .notification-message {
+        font-size: 13px;
+        color: #4a5568;
+      }
+
+      @media (max-width: 1200px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 20px;
+        }
+
+        .status-bar {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .video-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>📹 WebRTC Video Conference</h1>
+        <div class="status-bar">
+          <div class="status-item">
+            <strong>WebSocket:</strong>
+            <span id="wsStatus" class="status-badge badge-danger"
+              >Disconnected</span
+            >
+          </div>
+          <div class="status-item">
+            <strong>Room:</strong>
+            <span id="currentRoom" class="status-badge badge-info">-</span>
+          </div>
+          <div class="status-item">
+            <strong>Protocol:</strong>
+            <span id="protocol" class="status-badge badge-info">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Grid -->
+      <div class="main-grid">
+        <!-- Left Panel: Room Controls -->
+        <div class="panel">
+          <div class="panel-header">🚪 Room Controls</div>
+
+          <div class="form-group">
+            <label for="roomId">Room ID</label>
+            <input
+              type="text"
+              id="roomId"
+              placeholder="Enter room ID"
+              value="room-001"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="userId">Your Name</label>
+            <input type="text" id="userId" placeholder="Enter your name" />
+          </div>
+
+          <button id="joinRoomBtn" class="btn btn-primary">🚀 Join Room</button>
+          <button
+            id="leaveRoomBtn"
+            class="btn btn-danger"
+            style="display: none"
+          >
+            🚪 Leave Room
+          </button>
+
+          <div style="margin-top: 20px">
+            <div class="panel-header">📹 Camera Controls</div>
+
+            <div id="cameraStatus" class="camera-status">
+              📷 Camera not started
+            </div>
+
+            <div class="form-group">
+              <label for="videoQuality">Video Quality</label>
+              <select id="videoQuality">
+                <option value="low">Low (640x480)</option>
+                <option value="medium" selected>Medium (1280x720)</option>
+                <option value="high">High (1920x1080)</option>
+              </select>
+            </div>
+
+            <button id="startCameraBtn" class="btn btn-success">
+              📹 Start Camera
+            </button>
+            <button
+              id="stopCameraBtn"
+              class="btn btn-danger"
+              style="display: none"
+            >
+              🛑 Stop Camera
+            </button>
+            <button
+              id="toggleMuteBtn"
+              class="btn btn-warning"
+              style="display: none"
+            >
+              🎤 Mute Audio
+            </button>
+            <button
+              id="toggleVideoBtn"
+              class="btn btn-warning"
+              style="display: none"
+            >
+              📹 Disable Video
+            </button>
+          </div>
+        </div>
+
+        <!-- Center Panel: Video Section -->
+        <div class="panel">
+          <div class="video-section">
+            <div>
+              <div class="panel-header">📹 Your Camera</div>
+              <div class="video-container local-video-container">
+                <video id="localVideo" autoplay muted playsinline></video>
+                <div class="video-label">You</div>
+              </div>
+            </div>
+
+            <div>
+              <div class="panel-header">👥 Participants</div>
+              <div id="videoGrid" class="video-grid">
+                <div class="empty-state">
+                  <div class="empty-state-icon">📹</div>
+                  <div class="empty-state-text">No other participants yet</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Participants & Logs -->
+        <div class="panel">
+          <div id="participantsSection" class="participants-section">
+            <div class="participants-header">
+              <div class="panel-header" style="margin: 0">👥 Participants</div>
+              <span id="participantsCount" class="participants-count">0</span>
+            </div>
+
+            <div id="participantsList" class="participants-list">
+              <div class="empty-state">
+                <div class="empty-state-icon">👥</div>
+                <div class="empty-state-text">No participants yet</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 20px">
+            <div class="panel-header">📋 Activity Logs</div>
+            <div id="logsContainer" class="logs-container"></div>
+            <button id="clearLogsBtn" class="btn btn-secondary">
+              🗑️ Clear Logs
+            </button>
+            <button id="exportLogsBtn" class="btn btn-secondary">
+              💾 Export Logs
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Toast (Hidden by default) -->
+    <div id="notificationToast" class="notification-toast hidden">
+      <div class="notification-header">
+        <span class="notification-icon" id="notificationIcon">ℹ️</span>
+        <span class="notification-title" id="notificationTitle"
+          >Notification</span
+        >
+      </div>
+      <div class="notification-message" id="notificationMessage"></div>
+    </div>
+
+    <script>
+      // ===== Global Variables =====
+      let localStream = null;
+      let peerConnections = {};
+      let negotiationQueues = {}; // ✅ THÊM: Queue cho mỗi peer
+      let myUserId = null;
+      let currentRoomId = null;
+      let ws = null;
+      let isAudioMuted = false;
+      let isVideoDisabled = false;
+      let participants = new Map();
+
+      const iceServers = {
+        iceServers: [
+          { urls: "stun:192.168.98.51:3478" },
+          { urls: "stun:stun.l.google.com:19302" },
+        ],
+      };
+
+      const elements = {
+        roomId: document.getElementById("roomId"),
+        userId: document.getElementById("userId"),
+        joinRoomBtn: document.getElementById("joinRoomBtn"),
+        leaveRoomBtn: document.getElementById("leaveRoomBtn"),
+        startCameraBtn: document.getElementById("startCameraBtn"),
+        stopCameraBtn: document.getElementById("stopCameraBtn"),
+        toggleMuteBtn: document.getElementById("toggleMuteBtn"),
+        toggleVideoBtn: document.getElementById("toggleVideoBtn"),
+        localVideo: document.getElementById("localVideo"),
+        videoGrid: document.getElementById("videoGrid"),
+        wsStatus: document.getElementById("wsStatus"),
+        currentRoom: document.getElementById("currentRoom"),
+        protocol: document.getElementById("protocol"),
+        cameraStatus: document.getElementById("cameraStatus"),
+        videoQuality: document.getElementById("videoQuality"),
+        participantsSection: document.getElementById("participantsSection"),
+        participantsList: document.getElementById("participantsList"),
+        participantsCount: document.getElementById("participantsCount"),
+        logsContainer: document.getElementById("logsContainer"),
+        clearLogsBtn: document.getElementById("clearLogsBtn"),
+        exportLogsBtn: document.getElementById("exportLogsBtn"),
+      };
+
+      function init() {
+        const protocol =
+          window.location.protocol === "https:" ? "HTTPS/WSS" : "HTTP/WS";
+        elements.protocol.textContent = protocol;
+        const randomUserId = `user-${Math.random().toString(36).substr(2, 9)}`;
+        elements.userId.value = randomUserId;
+        logActivity(
+          `[${new Date().toLocaleTimeString()}] Application loaded | Protocol: ${protocol}`,
+          "info"
+        );
+      }
+
+      elements.joinRoomBtn.addEventListener("click", joinRoom);
+      elements.leaveRoomBtn.addEventListener("click", leaveRoom);
+      elements.startCameraBtn.addEventListener("click", startCamera);
+      elements.stopCameraBtn.addEventListener("click", stopCamera);
+      elements.toggleMuteBtn.addEventListener("click", toggleMute);
+      elements.toggleVideoBtn.addEventListener("click", toggleVideo);
+      elements.clearLogsBtn.addEventListener("click", clearLogs);
+      elements.exportLogsBtn.addEventListener("click", exportLogs);
+
+      async function startCamera() {
+        try {
+          const quality = elements.videoQuality.value;
+          const constraints = getVideoConstraints(quality);
+          logActivity(`Starting camera with ${quality} quality...`, "info");
+
+          localStream = await navigator.mediaDevices.getUserMedia(constraints);
+          elements.localVideo.srcObject = localStream;
+
+          elements.startCameraBtn.style.display = "none";
+          elements.stopCameraBtn.style.display = "block";
+          elements.toggleMuteBtn.style.display = "block";
+          elements.toggleVideoBtn.style.display = "block";
+
+          elements.cameraStatus.innerHTML = "✅ Camera active";
+          elements.cameraStatus.style.background = "#d4edda";
+          elements.cameraStatus.style.color = "#155724";
+
+          logActivity("✅ Camera started successfully", "success");
+          showNotification(
+            "Camera Started",
+            "Your camera is now active",
+            "success"
+          );
+
+          await addTracksToAllConnections();
+          await renegotiateWithAllPeers();
+        } catch (error) {
+          logActivity(`❌ Camera error: ${error.message}`, "error");
+          showNotification("Camera Error", error.message, "error");
+          elements.cameraStatus.innerHTML = `❌ ${error.message}`;
+          elements.cameraStatus.style.background = "#f8d7da";
+          elements.cameraStatus.style.color = "#721c24";
+        }
+      }
+
+      function stopCamera() {
+        if (localStream) {
+          localStream.getTracks().forEach((track) => track.stop());
+          elements.localVideo.srcObject = null;
+          localStream = null;
+
+          elements.startCameraBtn.style.display = "block";
+          elements.stopCameraBtn.style.display = "none";
+          elements.toggleMuteBtn.style.display = "none";
+          elements.toggleVideoBtn.style.display = "none";
+
+          elements.cameraStatus.innerHTML = "📷 Camera stopped";
+          elements.cameraStatus.style.background = "#f8f9fa";
+          elements.cameraStatus.style.color = "#666";
+
+          logActivity("🛑 Camera stopped", "warning");
+          removeTracksFromAllConnections();
+          renegotiateWithAllPeers();
+        }
+      }
+
+      function toggleMute() {
+        if (!localStream) return;
+        const audioTrack = localStream.getAudioTracks()[0];
+        if (audioTrack) {
+          isAudioMuted = !isAudioMuted;
+          audioTrack.enabled = !isAudioMuted;
+          elements.toggleMuteBtn.textContent = isAudioMuted
+            ? "🔇 Unmute Audio"
+            : "🎤 Mute Audio";
+          elements.toggleMuteBtn.className = isAudioMuted
+            ? "btn btn-danger"
+            : "btn btn-warning";
+          logActivity(
+            isAudioMuted ? "🔇 Audio muted" : "🎤 Audio unmuted",
+            "info"
+          );
+        }
+      }
+
+      function toggleVideo() {
+        if (!localStream) return;
+        const videoTrack = localStream.getVideoTracks()[0];
+        if (videoTrack) {
+          isVideoDisabled = !isVideoDisabled;
+          videoTrack.enabled = !isVideoDisabled;
+          elements.toggleVideoBtn.textContent = isVideoDisabled
+            ? "📹 Enable Video"
+            : "📹 Disable Video";
+          elements.toggleVideoBtn.className = isVideoDisabled
+            ? "btn btn-danger"
+            : "btn btn-warning";
+          logActivity(
+            isVideoDisabled ? "📹 Video disabled" : "📹 Video enabled",
+            "info"
+          );
+        }
+      }
+
+      function getVideoConstraints(quality) {
+        const constraints = {
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+          },
+          video: { facingMode: "user" },
+        };
+        switch (quality) {
+          case "low":
+            constraints.video.width = { ideal: 640 };
+            constraints.video.height = { ideal: 480 };
+            break;
+          case "medium":
+            constraints.video.width = { ideal: 1280 };
+            constraints.video.height = { ideal: 720 };
+            break;
+          case "high":
+            constraints.video.width = { ideal: 1920 };
+            constraints.video.height = { ideal: 1080 };
+            break;
+        }
+        return constraints;
+      }
+
+      async function joinRoom() {
+        const roomId = elements.roomId.value.trim();
+        const userId = elements.userId.value.trim();
+        if (!roomId || !userId) {
+          showNotification(
+            "Validation Error",
+            "Please enter both Room ID and User Name",
+            "error"
+          );
+          return;
+        }
+        myUserId = userId;
+        currentRoomId = roomId;
+        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+        const wsUrl = `${protocol}//${window.location.host}/ws?room=${roomId}&userId=${userId}`;
+        logActivity(`Connecting to ${wsUrl}...`, "info");
+        try {
+          ws = new WebSocket(wsUrl);
+          ws.onopen = handleWebSocketOpen;
+          ws.onmessage = handleWebSocketMessage;
+          ws.onerror = handleWebSocketError;
+          ws.onclose = handleWebSocketClose;
+        } catch (error) {
+          logActivity(`❌ WebSocket error: ${error.message}`, "error");
+          showNotification("Connection Error", error.message, "error");
+        }
+      }
+
+      function leaveRoom() {
+        if (ws) ws.close();
+        Object.keys(peerConnections).forEach((userId) =>
+          closePeerConnection(userId)
+        );
+        participants.clear();
+        updateParticipantsList();
+        elements.joinRoomBtn.style.display = "block";
+        elements.leaveRoomBtn.style.display = "none";
+        elements.participantsSection.style.display = "none";
+        elements.wsStatus.textContent = "Disconnected";
+        elements.wsStatus.className = "status-badge badge-danger";
+        elements.currentRoom.textContent = "-";
+        logActivity("👋 Left the room", "warning");
+        showNotification("Disconnected", "You have left the room", "info");
+      }
+
+      function handleWebSocketOpen() {
+        logActivity("✅ WebSocket connected successfully", "success");
+        elements.wsStatus.textContent = "Connected";
+        elements.wsStatus.className = "status-badge badge-success";
+        elements.currentRoom.textContent = currentRoomId;
+        elements.joinRoomBtn.style.display = "none";
+        elements.leaveRoomBtn.style.display = "block";
+        elements.participantsSection.style.display = "block";
+        addParticipant(myUserId, true);
+        sendMessage({ type: "ready", userId: myUserId, room: currentRoomId });
+        showNotification(
+          "Connected",
+          `Joined room: ${currentRoomId}`,
+          "success"
+        );
+      }
+
+      async function handleWebSocketMessage(event) {
+        const message = JSON.parse(event.data);
+        logActivity(`📨 Received: ${message.type}`, "info");
+        switch (message.type) {
+          case "room-users":
+            await handleRoomUsers(message);
+            break;
+          case "user-joined":
+            await handleUserJoined(message);
+            break;
+          case "offer":
+            await handleOffer(message);
+            break;
+          case "answer":
+            await handleAnswer(message);
+            break;
+          case "ice-candidate":
+          case "candidate":
+            await handleIceCandidate(message);
+            break;
+          case "user-left":
+            handleUserLeft(message);
+            break;
+          case "error":
+            logActivity(`❌ Server error: ${message.error}`, "error");
+            showNotification("Server Error", message.error, "error");
+            break;
+          default:
+            logActivity(`Unknown message type: ${message.type}`, "warning");
+        }
+      }
+
+      function handleWebSocketError(error) {
+        logActivity(
+          `❌ WebSocket error: ${error.message || "Connection failed"}`,
+          "error"
+        );
+        showNotification(
+          "Connection Error",
+          "Failed to connect to server",
+          "error"
+        );
+      }
+
+      function handleWebSocketClose() {
+        logActivity("🔌 WebSocket disconnected", "warning");
+        elements.wsStatus.textContent = "Disconnected";
+        elements.wsStatus.className = "status-badge badge-danger";
+        elements.joinRoomBtn.style.display = "block";
+        elements.leaveRoomBtn.style.display = "none";
+      }
+
+      function sendMessage(message) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify(message));
+          logActivity(`📤 Sent: ${message.type}`, "info");
+        } else {
+          logActivity(
+            "❌ Cannot send message: WebSocket not connected",
+            "error"
+          );
+        }
+      }
+
+      async function handleRoomUsers(message) {
+        const users = message.users || [];
+        if (users.length === 0) {
+          logActivity("📋 You are the first person in the room", "info");
+          return;
+        }
+        logActivity(
+          `📋 Room has ${users.length} existing user(s): ${users.join(", ")}`,
+          "info"
+        );
+        showNotification(
+          "Room Info",
+          `${users.length} ${
+            users.length > 1 ? "people are" : "person is"
+          } already in the room`,
+          "info"
+        );
+        for (const userId of users) {
+          addParticipant(userId, false);
+          const shouldSendOffer = myUserId < userId;
+          if (shouldSendOffer) {
+            try {
+              await createPeerConnection(userId);
+              await createAndSendOffer(userId);
+              logActivity(`✅ Sent offer to ${userId}`, "success");
+            } catch (error) {
+              logActivity(
+                `❌ Failed to send offer to ${userId}: ${error.message}`,
+                "error"
+              );
+            }
+          } else {
+            await createPeerConnection(userId);
+            logActivity(`⏳ Waiting for offer from ${userId}`, "info");
+          }
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        logActivity(
+          `🎉 Finished processing ${users.length} existing user(s)`,
+          "success"
+        );
+      }
+
+      async function handleUserJoined(message) {
+        const newUserId = message.userId || message.from;
+        if (newUserId && newUserId !== myUserId) {
+          logActivity(`👤 ${newUserId} joined the room`, "success");
+          showNotification(
+            "New Participant",
+            `${newUserId} joined the room`,
+            "info"
+          );
+          addParticipant(newUserId, false);
+          const shouldSendOffer = myUserId < newUserId;
+          if (shouldSendOffer) {
+            try {
+              await createPeerConnection(newUserId);
+              await createAndSendOffer(newUserId);
+            } catch (error) {
+              logActivity(
+                `❌ Failed to connect to ${newUserId}: ${error.message}`,
+                "error"
+              );
+            }
+          } else {
+            await createPeerConnection(newUserId);
+            logActivity(`⏳ Waiting for offer from ${newUserId}`, "info");
+          }
+        }
+      }
+
+      // ✅ SỬA LẠI: createPeerConnection với Perfect Negotiation Pattern
+      async function createPeerConnection(userId) {
+        if (peerConnections[userId]) {
+          logActivity(
+            `♻️ Peer connection already exists for ${userId}`,
+            "info"
+          );
+          return peerConnections[userId].pc;
+        }
+        logActivity(`🔨 Creating peer connection for ${userId}`, "info");
+        const pc = new RTCPeerConnection(iceServers);
+
+        // ✅ Khởi tạo với các flags và queue
+        peerConnections[userId] = {
+          pc: pc,
+          iceCandidatesQueue: [],
+          isNegotiating: false,
+          makingOffer: false,
+        };
+        negotiationQueues[userId] = [];
+
+        if (localStream) {
+          localStream.getTracks().forEach((track) => {
+            pc.addTrack(track, localStream);
+            logActivity(`➕ Added ${track.kind} track to ${userId}`, "info");
+          });
+        } else {
+          logActivity(`⚠️ No local stream available for ${userId}`, "warning");
+        }
+
+        pc.onicecandidate = (event) => {
+          if (event.candidate) {
+            sendMessage({
+              type: "ice-candidate",
+              to: userId,
+              candidate: event.candidate.toJSON(),
+            });
+            logActivity(`🧊 Sent ICE candidate to ${userId}`, "info");
+          }
+        };
+
+        pc.ontrack = (event) => {
+          const trackType = event.track.kind;
+          logActivity(
+            `📺 Received ${trackType} track from ${userId}`,
+            "success"
+          );
+          if (event.streams && event.streams[0]) {
+            displayRemoteVideo(userId, event.streams[0]);
+            showNotification(
+              "Stream Received",
+              `Now viewing ${userId}'s ${trackType}`,
+              "success"
+            );
+          }
+        };
+
+        pc.onconnectionstatechange = () => {
+          const state = pc.connectionState;
+          logActivity(`🔗 Connection with ${userId}: ${state}`, "info");
+          switch (state) {
+            case "connected":
+              logActivity(`✅ Successfully connected to ${userId}`, "success");
+              showNotification(
+                "Peer Connected",
+                `Connected to ${userId}`,
+                "success"
+              );
+              break;
+            case "failed":
+              logActivity(`❌ Connection failed with ${userId}`, "error");
+              closePeerConnection(userId);
+              break;
+            case "closed":
+              logActivity(`🔌 Connection closed with ${userId}`, "warning");
+              closePeerConnection(userId);
+              break;
+          }
+        };
+
+        pc.oniceconnectionstatechange = () => {
+          const iceState = pc.iceConnectionState;
+          logActivity(`🧊 ICE state with ${userId}: ${iceState}`, "info");
+          if (iceState === "failed") {
+            logActivity(`❌ ICE connection failed with ${userId}`, "error");
+            showNotification(
+              "Connection Failed",
+              `Cannot connect to ${userId}`,
+              "error"
+            );
+          }
+        };
+
+        // ✅ SỬA LẠI: Perfect Negotiation Pattern
+        pc.onnegotiationneeded = async () => {
+          const connInfo = peerConnections[userId];
+          if (!connInfo) return;
+
+          try {
+            connInfo.makingOffer = true;
+
+            const shouldSendOffer = myUserId < userId;
+            if (!shouldSendOffer) {
+              logActivity(
+                `⏭️ Skipping negotiation with ${userId} (waiting for their offer)`,
+                "info"
+              );
+              connInfo.makingOffer = false;
+              return;
+            }
+
+            logActivity(`🔄 Negotiation needed with ${userId}`, "info");
+
+            // Thêm vào queue nếu đang negotiate
+            if (connInfo.isNegotiating) {
+              logActivity(`⏳ Queuing negotiation for ${userId}`, "info");
+              negotiationQueues[userId].push(() => createAndSendOffer(userId));
+              connInfo.makingOffer = false;
+              return;
+            }
+
+            connInfo.isNegotiating = true;
+            await createAndSendOffer(userId);
+            connInfo.isNegotiating = false;
+            connInfo.makingOffer = false;
+
+            // Xử lý queue nếu có
+            await processNegotiationQueue(userId);
+          } catch (error) {
+            logActivity(
+              `❌ Negotiation error with ${userId}: ${error.message}`,
+              "error"
+            );
+            connInfo.isNegotiating = false;
+            connInfo.makingOffer = false;
+          }
+        };
+
+        return pc;
+      }
+
+      // ✅ THÊM: Hàm xử lý queue
+      async function processNegotiationQueue(userId) {
+        const connInfo = peerConnections[userId];
+        if (!connInfo || negotiationQueues[userId].length === 0) return;
+
+        logActivity(
+          `📦 Processing ${negotiationQueues[userId].length} queued negotiations for ${userId}`,
+          "info"
+        );
+
+        while (negotiationQueues[userId].length > 0) {
+          const negotiateFn = negotiationQueues[userId].shift();
+
+          connInfo.isNegotiating = true;
+          try {
+            await negotiateFn();
+            // Đợi một chút để tránh race
+            await new Promise((resolve) => setTimeout(resolve, 200));
+          } catch (error) {
+            logActivity(
+              `❌ Error processing queued negotiation: ${error.message}`,
+              "error"
+            );
+          }
+          connInfo.isNegotiating = false;
+        }
+      }
+
+      async function addTracksToAllConnections() {
+        if (!localStream) {
+          logActivity("⚠️ No local stream to add", "warning");
+          return;
+        }
+        const userIds = Object.keys(peerConnections);
+        if (userIds.length === 0) {
+          logActivity("ℹ️ No peer connections to add tracks to", "info");
+          return;
+        }
+        logActivity(
+          `📤 Adding tracks to ${userIds.length} connection(s)...`,
+          "info"
+        );
+        for (const userId of userIds) {
+          const connInfo = peerConnections[userId];
+          if (!connInfo) continue;
+          const pc = connInfo.pc;
+          const existingSenders = pc.getSenders();
+          localStream.getTracks().forEach((track) => {
+            const senderExists = existingSenders.find((s) => s.track === track);
+            if (!senderExists) {
+              pc.addTrack(track, localStream);
+              logActivity(
+                `➕ Added ${track.kind} track to ${userId}`,
+                "success"
+              );
+            } else {
+              logActivity(
+                `ℹ️ Track ${track.kind} already exists for ${userId}`,
+                "info"
+              );
+            }
+          });
+        }
+        logActivity(`✅ Finished adding tracks to all connections`, "success");
+      }
+
+      function removeTracksFromAllConnections() {
+        const userIds = Object.keys(peerConnections);
+        if (userIds.length === 0) return;
+        logActivity(
+          `📤 Removing tracks from ${userIds.length} connection(s)...`,
+          "info"
+        );
+        for (const userId of userIds) {
+          const connInfo = peerConnections[userId];
+          if (!connInfo) continue;
+          const pc = connInfo.pc;
+          const senders = pc.getSenders();
+          senders.forEach((sender) => {
+            if (sender.track) {
+              pc.removeTrack(sender);
+              logActivity(
+                `➖ Removed ${sender.track.kind} track from ${userId}`,
+                "info"
+              );
+            }
+          });
+        }
+        logActivity(
+          `✅ Finished removing tracks from all connections`,
+          "success"
+        );
+      }
+
+      // ✅ SỬA LẠI: renegotiateWithAllPeers - xử lý tuần tự
+      async function renegotiateWithAllPeers() {
+        const userIds = Object.keys(peerConnections);
+        if (userIds.length === 0) {
+          logActivity("ℹ️ No peers to renegotiate with", "info");
+          return;
+        }
+        logActivity(
+          `🔄 Renegotiating with ${userIds.length} peer(s)...`,
+          "info"
+        );
+
+        // ✅ Xử lý tuần tự thay vì đồng thời
+        for (const userId of userIds) {
+          const connInfo = peerConnections[userId];
+          if (!connInfo) continue;
+
+          const shouldSendOffer = myUserId < userId;
+          if (shouldSendOffer) {
+            try {
+              // Đợi nếu đang negotiate
+              while (connInfo.isNegotiating || connInfo.makingOffer) {
+                logActivity(
+                  `⏳ Waiting for ongoing negotiation with ${userId}...`,
+                  "info"
+                );
+                await new Promise((resolve) => setTimeout(resolve, 100));
+              }
+
+              connInfo.isNegotiating = true;
+              logActivity(`🔄 Forcing renegotiation with ${userId}...`, "info");
+
+              await createAndSendOffer(userId);
+
+              connInfo.isNegotiating = false;
+              logActivity(
+                `✅ Sent renegotiation offer to ${userId}`,
+                "success"
+              );
+
+              // Đợi giữa các peer để tránh race
+              await new Promise((resolve) => setTimeout(resolve, 300));
+            } catch (error) {
+              logActivity(
+                `❌ Failed to renegotiate with ${userId}: ${error.message}`,
+                "error"
+              );
+              connInfo.isNegotiating = false;
+            }
+          } else {
+            logActivity(
+              `⏳ Waiting for ${userId} to send renegotiation offer`,
+              "info"
+            );
+          }
+        }
+
+        logActivity(`✅ Finished renegotiating with all peers`, "success");
+        showNotification(
+          "Camera Update",
+          "Your camera stream has been shared with all participants",
+          "success"
+        );
+      }
+
+      async function createAndSendOffer(userId) {
+        const connInfo = peerConnections[userId];
+        if (!connInfo) throw new Error("Peer connection not found");
+        const pc = connInfo.pc;
+        try {
+          const offer = await pc.createOffer({
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: true,
+          });
+          await pc.setLocalDescription(offer);
+          sendMessage({
+            type: "offer",
+            to: userId,
+            offer: { type: offer.type, sdp: offer.sdp },
+          });
+          logActivity(`📤 Created and sent offer to ${userId}`, "success");
+        } catch (error) {
+          logActivity(`❌ Error creating offer: ${error.message}`, "error");
+          throw error;
+        }
+      }
+
+      // ✅ SỬA LẠI: handleOffer với Perfect Negotiation Pattern
+      async function handleOffer(message) {
+        const fromUserId = message.from;
+        try {
+          let connInfo = peerConnections[fromUserId];
+          let pc;
+
+          if (connInfo) {
+            pc = connInfo.pc;
+
+            // ✅ Perfect Negotiation Pattern
+            const readyForOffer =
+              !connInfo.makingOffer &&
+              (pc.signalingState === "stable" ||
+                pc.signalingState === "have-remote-offer");
+
+            const offerCollision = !readyForOffer;
+            const ignoreOffer = offerCollision && myUserId < fromUserId;
+
+            if (ignoreOffer) {
+              logActivity(
+                `⏭️ Ignoring offer from ${fromUserId} (collision, we have priority)`,
+                "warning"
+              );
+              return;
+            }
+
+            // Đợi nếu đang negotiate
+            while (connInfo.isNegotiating) {
+              logActivity(
+                `⏳ Waiting for ongoing negotiation with ${fromUserId}...`,
+                "info"
+              );
+              await new Promise((resolve) => setTimeout(resolve, 100));
+            }
+
+            connInfo.isNegotiating = true;
+
+            if (offerCollision) {
+              logActivity(
+                `🔄 Collision detected, rolling back for ${fromUserId}`,
+                "warning"
+              );
+              await pc.setLocalDescription({ type: "rollback" });
+            }
+          } else {
+            pc = await createPeerConnection(fromUserId);
+            connInfo = peerConnections[fromUserId];
+            connInfo.isNegotiating = true;
+          }
+
+          await pc.setRemoteDescription(
+            new RTCSessionDescription(message.offer)
+          );
+          logActivity(
+            `✅ Set remote description from ${fromUserId}`,
+            "success"
+          );
+
+          if (connInfo.iceCandidatesQueue.length > 0) {
+            logActivity(
+              `📦 Processing ${connInfo.iceCandidatesQueue.length} queued ICE candidates`,
+              "info"
+            );
+            for (const candidate of connInfo.iceCandidatesQueue) {
+              try {
+                await pc.addIceCandidate(new RTCIceCandidate(candidate));
+              } catch (error) {
+                logActivity(
+                  `⚠️ Failed to add queued candidate: ${error.message}`,
+                  "warning"
+                );
+              }
+            }
+            connInfo.iceCandidatesQueue = [];
+            logActivity(`✅ Finished processing queued candidates`, "success");
+          }
+
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+          sendMessage({
+            type: "answer",
+            to: fromUserId,
+            answer: { type: answer.type, sdp: answer.sdp },
+          });
+
+          connInfo.isNegotiating = false;
+          logActivity(`📤 Sent answer to ${fromUserId}`, "success");
+
+          // Xử lý queue nếu có
+          await processNegotiationQueue(fromUserId);
+        } catch (error) {
+          logActivity(`❌ Error handling offer: ${error.message}`, "error");
+          if (connInfo) connInfo.isNegotiating = false;
+        }
+      }
+
+      async function handleAnswer(message) {
+        const fromUserId = message.from;
+        const connInfo = peerConnections[fromUserId];
+        if (!connInfo) {
+          logActivity(`❌ No peer connection for ${fromUserId}`, "error");
+          return;
+        }
+        const pc = connInfo.pc;
+        try {
+          if (pc.signalingState === "have-local-offer") {
+            await pc.setRemoteDescription(
+              new RTCSessionDescription(message.answer)
+            );
+            logActivity(
+              `✅ Set remote description (answer) from ${fromUserId}`,
+              "success"
+            );
+            if (connInfo.iceCandidatesQueue.length > 0) {
+              logActivity(
+                `📦 Processing ${connInfo.iceCandidatesQueue.length} queued ICE candidates`,
+                "info"
+              );
+              for (const candidate of connInfo.iceCandidatesQueue) {
+                try {
+                  await pc.addIceCandidate(new RTCIceCandidate(candidate));
+                } catch (error) {
+                  logActivity(
+                    `⚠️ Failed to add queued candidate: ${error.message}`,
+                    "warning"
+                  );
+                }
+              }
+              connInfo.iceCandidatesQueue = [];
+              logActivity(
+                `✅ Finished processing queued candidates`,
+                "success"
+              );
+            }
+          } else {
+            logActivity(
+              `⚠️ Ignoring answer from ${fromUserId} - wrong state: ${pc.signalingState}`,
+              "warning"
+            );
+          }
+        } catch (error) {
+          logActivity(`❌ Error handling answer: ${error.message}`, "error");
+        }
+      }
+
+      async function handleIceCandidate(message) {
+        const fromUserId = message.from;
+        const connInfo = peerConnections[fromUserId];
+        if (!connInfo) {
+          logActivity(`❌ No peer connection for ${fromUserId}`, "error");
+          return;
+        }
+        const pc = connInfo.pc;
+        try {
+          if (!pc.remoteDescription) {
+            connInfo.iceCandidatesQueue.push(message.candidate);
+            logActivity(
+              `📥 Queued ICE candidate from ${fromUserId} (waiting for remote description)`,
+              "info"
+            );
+            return;
+          }
+          await pc.addIceCandidate(new RTCIceCandidate(message.candidate));
+          logActivity(`✅ Added ICE candidate from ${fromUserId}`, "info");
+        } catch (error) {
+          logActivity(
+            `❌ Error adding ICE candidate: ${error.message}`,
+            "error"
+          );
+        }
+      }
+
+      function handleUserLeft(message) {
+        const userId = message.userId || message.from;
+        if (!userId || userId === myUserId) return;
+        logActivity(`👋 ${userId} left the room`, "warning");
+        showNotification("Participant Left", `${userId} left the room`, "info");
+        removeParticipant(userId);
+        closePeerConnection(userId);
+      }
+
+      function displayRemoteVideo(userId, stream) {
+        let videoContainer = document.getElementById(`remote-${userId}`);
+        if (!videoContainer) {
+          logActivity(`🖼️ Creating video element for ${userId}`, "info");
+          videoContainer = document.createElement("div");
+          videoContainer.id = `remote-${userId}`;
+          videoContainer.className = "video-container";
+          const video = document.createElement("video");
+          video.autoplay = true;
+          video.playsInline = true;
+          video.muted = false;
+          video.onloadedmetadata = () =>
+            logActivity(`✅ Video metadata loaded for ${userId}`, "success");
+          video.onplay = () =>
+            logActivity(`▶️ Video playing from ${userId}`, "success");
+          const label = document.createElement("div");
+          label.className = "video-label";
+          label.textContent = `📹 ${userId}`;
+          videoContainer.appendChild(video);
+          videoContainer.appendChild(label);
+          elements.videoGrid.appendChild(videoContainer);
+        }
+        const video = videoContainer.querySelector("video");
+        video.srcObject = stream;
+        video
+          .play()
+          .catch((error) =>
+            logActivity(
+              `⚠️ Video autoplay failed for ${userId}: ${error.message}`,
+              "warning"
+            )
+          );
+        logActivity(`✅ Displaying video from ${userId}`, "success");
+      }
+
+      // ✅ SỬA LẠI: closePeerConnection - xóa queue
+      function closePeerConnection(userId) {
+        const connInfo = peerConnections[userId];
+        if (connInfo) {
+          connInfo.pc.close();
+          delete peerConnections[userId];
+          delete negotiationQueues[userId]; // ✅ Xóa queue
+          const videoContainer = document.getElementById(`remote-${userId}`);
+          if (videoContainer) videoContainer.remove();
+          logActivity(`🔌 Closed connection with ${userId}`, "warning");
+        }
+      }
+
+      function addParticipant(userId, isYou) {
+        if (!participants.has(userId)) {
+          participants.set(userId, { userId, isYou, joinedAt: new Date() });
+          updateParticipantsList();
+          logActivity(
+            `➕ Added participant: ${userId}${isYou ? " (You)" : ""}`,
+            "info"
+          );
+        }
+      }
+
+      function removeParticipant(userId) {
+        if (participants.has(userId)) {
+          participants.delete(userId);
+          updateParticipantsList();
+          logActivity(`➖ Removed participant: ${userId}`, "info");
+        }
+      }
+
+      function updateParticipantsList() {
+        elements.participantsCount.textContent = participants.size;
+        elements.participantsList.innerHTML = "";
+        if (participants.size === 0) {
+          elements.participantsList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">👥</div>
+              <div class="empty-state-text">No participants yet</div>
+            </div>`;
+          return;
+        }
+        const sortedParticipants = Array.from(participants.values()).sort(
+          (a, b) => {
+            if (a.isYou) return -1;
+            if (b.isYou) return 1;
+            return 0;
+          }
+        );
+        sortedParticipants.forEach(({ userId, isYou }) => {
+          const item = document.createElement("div");
+          item.className = `participant-item ${isYou ? "participant-you" : ""}`;
+          const initials = userId.substring(0, 2).toUpperCase();
+          item.innerHTML = `
+            <div class="participant-avatar">${initials}</div>
+            <div class="participant-info">
+              <div class="participant-name">${userId}${
+            isYou ? " (You)" : ""
+          }</div>
+              <div class="participant-status">● Online</div>
+            </div>`;
+          elements.participantsList.appendChild(item);
+        });
+      }
+
+      function logActivity(message, type = "info") {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = document.createElement("div");
+        logEntry.className = `log-entry log-${type}`;
+        logEntry.textContent = `[${timestamp}] ${message}`;
+        elements.logsContainer.appendChild(logEntry);
+        elements.logsContainer.scrollTop = elements.logsContainer.scrollHeight;
+      }
+
+      function clearLogs() {
+        elements.logsContainer.innerHTML = "";
+        logActivity("🗑️ Logs cleared", "info");
+      }
+
+      function exportLogs() {
+        const logs = elements.logsContainer.innerText;
+        const blob = new Blob([logs], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `webrtc-logs-${new Date().getTime()}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+        logActivity("💾 Logs exported", "success");
+        showNotification(
+          "Logs Exported",
+          "Your logs have been downloaded",
+          "success"
+        );
+      }
+
+      function showNotification(title, message, type = "info") {
+        const toast = document.getElementById("notificationToast");
+        const icon = document.getElementById("notificationIcon");
+        const titleEl = document.getElementById("notificationTitle");
+        const messageEl = document.getElementById("notificationMessage");
+        const icons = { info: "ℹ️", success: "✅", error: "❌", warning: "⚠️" };
+        icon.textContent = icons[type] || icons.info;
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        toast.classList.remove("hidden");
+        setTimeout(() => toast.classList.add("hidden"), 3000);
+      }
+
+      init();
+    </script>
+  </body>
+</html>

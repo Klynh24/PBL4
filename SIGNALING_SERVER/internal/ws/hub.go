@@ -204,3 +204,27 @@ func (h *Hub) GetRoomStats(roomID string) (clientCount int32, exists bool) {
 	room := val.(*Room)
 	return room.clientCount.Load(), true
 }
+func (h *Hub) ForEachClientInRoom(roomID string, fn func(*Client) bool) {
+	val, ok := h.rooms.Load(roomID)
+	if !ok {
+		return
+	}
+
+	room := val.(*Room)
+	room.clients.Range(func(key, value interface{}) bool {
+		client := key.(*Client)
+		return fn(client) // Trả về true để continue, false để stop
+	})
+}
+
+// GetClientsInRoom - Lấy danh sách client trong room
+func (h *Hub) GetClientsInRoom(roomID string) []*Client {
+	clients := make([]*Client, 0, 10)
+
+	h.ForEachClientInRoom(roomID, func(client *Client) bool {
+		clients = append(clients, client)
+		return true
+	})
+
+	return clients
+}

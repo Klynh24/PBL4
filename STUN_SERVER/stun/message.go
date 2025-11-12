@@ -141,8 +141,22 @@ func (m *Message) IsBindingRequest() bool {
 	return m.Type == BindingRequest
 }
 
+// TypeString returns a human-readable string for the message type
+func (m *Message) TypeString() string {
+	switch m.Type {
+	case BindingRequest:
+		return "Binding Request"
+	case BindingResponse:
+		return "Binding Response"
+	case BindingErrorResponse:
+		return "Binding Error Response"
+	default:
+		return fmt.Sprintf("Unknown (0x%04x)", m.Type)
+	}
+}
+
 // String returns a string representation
 func (m *Message) String() string {
-	return fmt.Sprintf("STUN Message{Type: 0x%04x, Length: %d, TransactionID: %x, Attributes: %d}",
-		m.Type, m.Length, m.TransactionID, len(m.Attributes))
+	return fmt.Sprintf("STUN Message{Type: %s (0x%04x), Length: %d, TransactionID: %x, Attributes: %d}",
+		m.TypeString(), m.Type, m.Length, m.TransactionID, len(m.Attributes))
 }

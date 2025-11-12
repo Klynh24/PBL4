@@ -1,0 +1,1 @@
+{"type":"http-01","url":"https://acme.zerossl.com/v2/DV90/chall/4GKz9Nh-tUOgnAcCa_OwHw","status":"processing","token":"Sb12fHBYm0qI1kZhVH_2MyDfg61BCvcucSqY0u-cbGs","keyAuthorization":"Sb12fHBYm0qI1kZhVH_2MyDfg61BCvcucSqY0u-cbGs.tNKuQxbvOpOHR78Z-e4ddqEVoAOF6KmVyF8CNc2BohU","identifier":{"type":"dns","value":"toan-webrtc.ddns.net"}}

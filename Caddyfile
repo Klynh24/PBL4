@@ -1,0 +1,156 @@
+{
+    email fthetoan@gmail.com  
+    admin off
+    
+    storage file_system {
+        root D:\Ki1_Nam3\PBL4\Realtime\caddy_data
+    }
+}
+
+# ====================================
+# LAN Access (Local Network)
+# ====================================
+192.168.98.51:443 {
+    tls internal 
+    
+    # CORS headers
+    header {
+        Access-Control-Allow-Origin *
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+        Access-Control-Allow-Credentials true
+        X-Content-Type-Options nosniff
+        X-Frame-Options SAMEORIGIN
+        -Server
+    }
+
+    @websocket {
+        path /ws*
+    }
+    
+    handle @websocket {
+        reverse_proxy localhost:8082 {
+            # Forward all WebSocket headers
+            header_up Connection {http.request.header.Connection}
+            header_up Upgrade {http.request.header.Upgrade}
+            header_up Sec-WebSocket-Key {http.request.header.Sec-WebSocket-Key}
+            header_up Sec-WebSocket-Version {http.request.header.Sec-WebSocket-Version}
+            header_up Sec-WebSocket-Extensions {http.request.header.Sec-WebSocket-Extensions}
+            header_up Sec-WebSocket-Protocol {http.request.header.Sec-WebSocket-Protocol}
+            
+            # Standard headers
+            header_up Host {http.request.host}
+            header_up X-Real-IP {http.request.remote.host}
+            header_up X-Forwarded-For {http.request.remote.host}
+            header_up X-Forwarded-Proto {http.request.scheme}
+        }
+    }
+    
+    handle /health {
+        reverse_proxy localhost:8082
+    }
+    
+    handle /metrics {
+        reverse_proxy localhost:8082
+    }
+    
+    handle /api/* {
+        reverse_proxy localhost:8082
+    }
+    
+    handle {
+        root * D:\Ki1_Nam3\PBL4\Realtime\public
+        file_server
+        try_files {path} /Test-WebRTC.html
+    }
+    
+    # Logging
+    log {
+        output file D:\Ki1_Nam3\PBL4\Realtime\logs\lan-access.log {
+            roll_size 100mb
+            roll_keep 5
+        }
+        format json
+        level INFO
+    }
+    
+    encode gzip zstd
+}
+
+# ====================================
+# Internet Access (DDNS)
+# ====================================
+toan-webrtc.ddns.net {
+    
+    # CORS headers
+    header {
+        Access-Control-Allow-Origin *
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+        Access-Control-Allow-Credentials true
+        X-Content-Type-Options nosniff
+        X-Frame-Options SAMEORIGIN
+        -Server
+    }
+    
+    @websocket {
+        path /ws*
+    }
+    
+    handle @websocket {
+        reverse_proxy localhost:8082 {
+            # Forward all WebSocket headers
+            header_up Connection {http.request.header.Connection}
+            header_up Upgrade {http.request.header.Upgrade}
+            header_up Sec-WebSocket-Key {http.request.header.Sec-WebSocket-Key}
+            header_up Sec-WebSocket-Version {http.request.header.Sec-WebSocket-Version}
+            header_up Sec-WebSocket-Extensions {http.request.header.Sec-WebSocket-Extensions}
+            header_up Sec-WebSocket-Protocol {http.request.header.Sec-WebSocket-Protocol}
+            
+            # Standard headers
+            header_up Host {http.request.host}
+            header_up X-Real-IP {http.request.remote.host}
+            header_up X-Forwarded-For {http.request.remote.host}
+            header_up X-Forwarded-Proto {http.request.scheme}
+        }
+    }
+    
+    handle /health {
+        reverse_proxy localhost:8082
+    }
+    
+    handle /metrics {
+        reverse_proxy localhost:8082
+    }
+    
+    handle /api/* {
+        reverse_proxy localhost:8082
+    }
+    
+    handle {
+        root * D:\Ki1_Nam3\PBL4\Realtime\public
+        file_server
+        try_files {path} /Test-WebRTC.html
+    }
+    
+    # Logging
+    log {
+        output file D:\Ki1_Nam3\PBL4\Realtime\logs\access.log {
+            roll_size 100mb
+            roll_keep 5
+        }
+        format json
+        level INFO
+    }
+    
+    encode gzip zstd
+}
+
+# Redirects
+www.toan-webrtc.ddns.net {
+    redir https://toan-webrtc.ddns.net{uri} permanent
+}
+
+http://toan-webrtc.ddns.net {
+    redir https://toan-webrtc.ddns.net{uri} permanent
+}

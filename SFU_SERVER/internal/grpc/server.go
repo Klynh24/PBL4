@@ -12,75 +12,77 @@ import (
 	"tangthetoan.com/sfu/proto"
 )
 
-// Server implement proto.IonSFUServer
 type Server struct {
 	proto.UnimplementedIonSFUServer
 	manager   *core.Manager
-	stunURL   string
 	startTime time.Time
 }
 
-func NewServer(stunURL string) *Server {
+func NewServer(manager *core.Manager) *Server {
 	return &Server{
-		manager:   core.NewManager(),
-		stunURL:   stunURL,
+		manager:   manager,
 		startTime: time.Now(),
 	}
 }
 
-// ✅ THÊM: Graceful shutdown
 func (s *Server) Shutdown() {
 	log.Info().Msg("Shutting down SFU server...")
-	s.manager.CloseAll()
+	stats := s.manager.GetStats()
+	if rooms, ok := stats["rooms"].(map[string]interface{}); ok {
+		for roomID := range rooms {
+			s.manager.RemoveRoom(roomID)
+		}
+	}
 }
 
 func (s *Server) HealthCheck(ctx context.Context, req *proto.HealthCheckRequest) (*proto.HealthCheckResponse, error) {
-	peerCount, roomCount := s.manager.GetStats()
+	stats := s.manager.GetStats()
+	totalRooms := stats["totalRooms"].(int)
+
+	totalPeers := 0
+	if rooms, ok := stats["rooms"].(map[string]interface{}); ok {
+		for _, roomData := range rooms {
+			if roomStats, ok := roomData.(map[string]interface{}); ok {
+				if peerCount, ok := roomStats["totalPeers"].(int); ok {
+					totalPeers += peerCount
+				}
+			}
+		}
+	}
 
 	return &proto.HealthCheckResponse{
 		Status:        "healthy",
-		ActivePeers:   int32(peerCount),
-		ActiveRooms:   int32(roomCount),
+		ActivePeers:   int32(totalPeers),
+		ActiveRooms:   int32(totalRooms),
 		UptimeSeconds: int64(time.Since(s.startTime).Seconds()),
 	}, nil
 }
 
-// 1. CreatePeer: Nhận offer từ client, tạo PeerConnection, và trả về answer
 func (s *Server) CreatePeer(ctx context.Context, req *proto.CreatePeerRequest) (*proto.CreatePeerResponse, error) {
-	// Health check bypass
 	log.Info().
 		Str("room", req.Room).
-		Str("user", req.UserId).
+		Str("userId", req.UserId).
 		Msg("CreatePeer request received")
 
-	// Configure WebRTC
-	config := webrtc.Configuration{
-		ICEServers: []webrtc.ICEServer{
-			{URLs: []string{s.stunURL}},
-		},
-	}
+	room := s.manager.GetOrCreateRoom(req.Room)
 
-	pc, err := webrtc.NewPeerConnection(config)
+	peer, err := room.AddPeer(req.UserId)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to create peer connection")
+		log.Error().Err(err).Msg("Failed to create peer")
 		return nil, err
 	}
 
-	peer := s.manager.CreatePeer(req.Room, req.UserId, pc)
-
-	// Handle incoming tracks
-	pc.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
+	peer.PeerConnection.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
 		log.Info().
 			Str("peerId", peer.ID).
 			Str("kind", track.Kind().String()).
-			Str("id", track.ID()).
+			Str("trackId", track.ID()).
 			Msg("OnTrack received")
 
-		peer.Room.ForwardTrack(peer.ID, track)
+		room.BroadcastTrack(peer.ID, track)
 	})
 
-	// Handle ICE connection state changes
-	pc.OnICEConnectionStateChange(func(state webrtc.ICEConnectionState) {
+	peer.PeerConnection.OnICEConnectionStateChange(func(state webrtc.ICEConnectionState) {
 		log.Debug().
 			Str("peerId", peer.ID).
 			Str("state", state.String()).
@@ -89,89 +91,96 @@ func (s *Server) CreatePeer(ctx context.Context, req *proto.CreatePeerRequest) (
 		if state == webrtc.ICEConnectionStateFailed ||
 			state == webrtc.ICEConnectionStateDisconnected ||
 			state == webrtc.ICEConnectionStateClosed {
-			log.Warn().Str("peerId", peer.ID).Msg("Peer ICE connection closed/failed")
-			s.manager.RemovePeer(peer)
+			log.Warn().Str("peerId", peer.ID).Msg("Peer disconnected")
+			room.RemovePeer(peer.ID)
 		}
 	})
 
-	// Wait for ICE gathering to complete
-	iceGatheringFinished := webrtc.GatheringCompletePromise(pc)
-
-	// Set remote description
-	offer := webrtc.SessionDescription{Type: webrtc.SDPTypeOffer, SDP: req.Sdp}
-	if err := pc.SetRemoteDescription(offer); err != nil {
-		log.Error().Err(err).Msg("failed to set remote description")
-		s.manager.RemovePeer(peer)
+	offer := webrtc.SessionDescription{
+		Type: webrtc.SDPTypeOffer,
+		SDP:  req.Sdp,
+	}
+	if err := peer.SetRemoteDescription(offer); err != nil {
+		log.Error().Err(err).Msg("Failed to set remote description")
+		room.RemovePeer(peer.ID)
 		return nil, err
 	}
 
-	// Create answer
-	answer, err := pc.CreateAnswer(nil)
+	answerSDP, err := peer.CreateAnswer()
 	if err != nil {
-		log.Error().Err(err).Msg("failed to create answer")
-		s.manager.RemovePeer(peer)
+		log.Error().Err(err).Msg("Failed to create answer")
+		room.RemovePeer(peer.ID)
 		return nil, err
 	}
 
-	// Set local description
-	if err := pc.SetLocalDescription(answer); err != nil {
-		log.Error().Err(err).Msg("failed to set local description")
-		s.manager.RemovePeer(peer)
-		return nil, err
-	}
-
-	// Wait for ICE gathering
-	<-iceGatheringFinished
-
-	finalAnswer := pc.LocalDescription()
 	log.Info().
 		Str("peerId", peer.ID).
 		Str("room", req.Room).
-		Int("peerCount", s.manager.GetRoomPeerCount(req.Room)).
 		Msg("Peer created successfully")
 
 	return &proto.CreatePeerResponse{
 		PeerId:    peer.ID,
-		AnswerSdp: finalAnswer.SDP,
+		AnswerSdp: answerSDP,
 	}, nil
 }
 
-// 2. AddICECandidate: Nhận candidate từ client (Trickle ICE)
 func (s *Server) AddICECandidate(ctx context.Context, req *proto.AddCandidateRequest) (*proto.Ack, error) {
-	log.Debug().Str("peerId", req.PeerId).Msg("AddICECandidate request received")
+	log.Debug().
+		Str("peerId", req.PeerId).
+		Msg("AddICECandidate request received")
 
-	peer := s.manager.GetPeer(req.PeerId)
+	var peer *core.Peer
+	stats := s.manager.GetStats()
+	if rooms, ok := stats["rooms"].(map[string]interface{}); ok {
+		for roomID := range rooms {
+			if room, exists := s.manager.GetRoom(roomID); exists {
+				if p, found := room.GetPeer(req.PeerId); found {
+					peer = p
+					break
+				}
+			}
+		}
+	}
+
 	if peer == nil {
-		log.Warn().Str("peerId", req.PeerId).Msg("peer not found for candidate")
+		log.Warn().Str("peerId", req.PeerId).Msg("Peer not found")
 		return &proto.Ack{Ok: false, Message: "peer not found"}, nil
 	}
 
 	var candidate webrtc.ICECandidateInit
 	if err := json.Unmarshal([]byte(req.Candidate), &candidate); err != nil {
-		log.Warn().Err(err).Msg("failed to unmarshal candidate")
+		log.Error().Err(err).Msg("Failed to unmarshal candidate")
 		return &proto.Ack{Ok: false, Message: "invalid candidate format"}, err
 	}
 
-	if err := peer.PC.AddICECandidate(candidate); err != nil {
-		log.Warn().Err(err).Str("peerId", req.PeerId).Msg("failed to add ice candidate")
+	if err := peer.AddICECandidate(candidate); err != nil {
+		log.Error().Err(err).Str("peerId", req.PeerId).Msg("Failed to add ICE candidate")
 		return &proto.Ack{Ok: false, Message: err.Error()}, err
 	}
 
+	log.Debug().Str("peerId", req.PeerId).Msg("ICE candidate added successfully")
 	return &proto.Ack{Ok: true, Message: "candidate added"}, nil
 }
 
-// 3. ClosePeer: Xử lý khi client chủ động rời đi
 func (s *Server) ClosePeer(ctx context.Context, req *proto.ClosePeerRequest) (*proto.Ack, error) {
 	log.Info().
 		Str("peerId", req.PeerId).
 		Str("reason", req.Reason).
 		Msg("ClosePeer request received")
 
-	peer := s.manager.GetPeer(req.PeerId)
-	if peer != nil {
-		s.manager.RemovePeer(peer)
-		return &proto.Ack{Ok: true, Message: "peer removed"}, nil
+	stats := s.manager.GetStats()
+	if rooms, ok := stats["rooms"].(map[string]interface{}); ok {
+		for roomID := range rooms {
+			if room, exists := s.manager.GetRoom(roomID); exists {
+				if _, found := room.GetPeer(req.PeerId); found {
+					room.RemovePeer(req.PeerId)
+					log.Info().Str("peerId", req.PeerId).Msg("Peer removed successfully")
+					return &proto.Ack{Ok: true, Message: "peer removed"}, nil
+				}
+			}
+		}
 	}
 
+	log.Warn().Str("peerId", req.PeerId).Msg("Peer not found")
 	return &proto.Ack{Ok: false, Message: "peer not found"}, nil
 }

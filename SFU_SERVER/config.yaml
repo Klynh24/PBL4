@@ -1,0 +1,16 @@
+server:
+  grpc_addr: ":50051"
+  udp_port_min: 50000
+  udp_port_max: 50100
+
+ice_servers:
+  #- urls: "stun:localhost:3478"
+  - urls: "stun:192.168.98.51:3478"
+  #- urls: "stun:toan-webrtc.ddns.net:3478"
+  # - urls: "turn:your-turn-server:3478"       # TURN (optional)
+  #   username: "user"
+  #   credential: "pass"
+
+logging:
+  level: "debug" # debug, info, warn, error
+  format: "console" # console, json

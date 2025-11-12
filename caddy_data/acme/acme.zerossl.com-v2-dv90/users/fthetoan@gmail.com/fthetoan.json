@@ -1,0 +1,14 @@
+{
+	"status": "valid",
+	"contact": [
+		"mailto:fthetoan@gmail.com"
+	],
+	"termsOfServiceAgreed": true,
+	"externalAccountBinding": {
+		"protected": "eyJhbGciOiJIUzI1NiIsImtpZCI6IlphdHFzLUpwTFRhckd2QmpsaVI2bFEiLCJ1cmwiOiJodHRwczovL2FjbWUuemVyb3NzbC5jb20vdjIvRFY5MC9uZXdBY2NvdW50In0",
+		"payload": "eyJjcnYiOiJQLTI1NiIsImt0eSI6IkVDIiwieCI6IjFYUms4OHQ1LVA2TEVUMVBsNXgxekRURGZkMUhyYm15d2FWVi1DeVNBajAiLCJ5IjoidXJwWWYwdWUzZlVWc0FiQWRIODNudVpJd2RqT1BmZ0ZMbG1SX3MyUElBbyJ9",
+		"signature": "ImCPoqmhC4VwyUDlsY9d86SN1lFOppOeL22KB3RTJM4"
+	},
+	"orders": "https://acme.zerossl.com/v2/DV90/account/Zatqs-JpLTarGvBjliR6lQ/orders",
+	"location": "https://acme.zerossl.com/v2/DV90/account/Zatqs-JpLTarGvBjliR6lQ"
+}
