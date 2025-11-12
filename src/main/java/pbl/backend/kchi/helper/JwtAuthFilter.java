@@ -41,7 +41,7 @@ public class JwtAuthFilter extends OncePerRequestFilter{
                 path.startsWith("/api/v1/auth/refresh") ||
                 path.startsWith("/swagger-ui") ||
                 path.startsWith("/swagger-ui/**") ||
-                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/v3/api-docs" ) ||
                 path.startsWith("/swagger-resources/**" ) ||
                 path.startsWith("/webjars/**") ||
                 path.startsWith("/api-docs/swagger-config") ||
@@ -193,6 +193,5 @@ public class JwtAuthFilter extends OncePerRequestFilter{
 
         response.getWriter().write(jsonResponse);
     }
-
 
 }

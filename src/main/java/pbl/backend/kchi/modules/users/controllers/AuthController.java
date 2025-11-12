@@ -1,6 +1,7 @@
 package pbl.backend.kchi.modules.users.controllers;
 //đăng nhập
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import pbl.backend.kchi.resources.ApiResource;
 
 
+@Tag(name="Auth Api")
 @Validated
 @RestController
 @RequestMapping("api/v1/auth")
