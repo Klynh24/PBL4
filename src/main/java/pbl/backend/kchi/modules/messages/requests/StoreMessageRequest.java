@@ -7,6 +7,8 @@ import lombok.*;
 public class StoreMessageRequest {
 
     private String text;
+    private String fileUrl;
+    private String fileType;
 
     @NotNull(message = "Cuộc hội thoại không được bỏ trống")
     private Long conversationId;

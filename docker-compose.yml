@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kchi_backend
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    restart: always
+
+
+  frontend_proxy:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: kchi_frontend_proxy
+    ports:
+      - "8088:80"
+    depends_on:
+      - backend
+    restart: always

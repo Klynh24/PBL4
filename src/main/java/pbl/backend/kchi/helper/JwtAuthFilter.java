@@ -1,6 +1,8 @@
 package pbl.backend.kchi.helper;
 import java.io.IOException;
+import java.util.Arrays; // Thêm import này
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.lang.NonNull;
@@ -31,22 +33,34 @@ public class JwtAuthFilter extends OncePerRequestFilter{
     private final CustomUserDetailService CustomUserDetailsService;
     private final ObjectMapper objectMapper;
 
+    // Danh sách các đường dẫn công khai (Public URLs)
+    private static final List<String> PUBLIC_URLS = Arrays.asList(
+            "/",
+            "/index.html",
+            "/vite.svg",
+            "/api/v1/auth/login",
+            "/api/v1/auth/refresh",
+            // ⭐ Endpoint Đăng ký
+            "/api/v1/users",
+
+            // ⭐ Đường dẫn tài nguyên tĩnh và API Docs
+            "/assets/",
+            "/swagger-ui/",
+            "/v3/api-docs/",
+            "/swagger-resources/",
+            "/webjars/",
+            "/api-docs/"
+    );
+
 
     @Override
     protected boolean shouldNotFilter(
             @NonNull HttpServletRequest request
     ){
-        String path = request.getRequestURI();
-        return path.startsWith("/api/v1/auth/login") ||
-                path.startsWith("/api/v1/auth/refresh") ||
-                path.startsWith("/swagger-ui") ||
-                path.startsWith("/swagger-ui/**") ||
-                path.startsWith("/v3/api-docs" ) ||
-                path.startsWith("/swagger-resources/**" ) ||
-                path.startsWith("/webjars/**") ||
-                path.startsWith("/api-docs/swagger-config") ||
-                path.startsWith("/api-docs")
-                ;
+        final String path = request.getRequestURI();
+
+        // ⭐ Dùng Stream để kiểm tra xem đường dẫn có bắt đầu bằng bất kỳ URL công khai nào không
+        return PUBLIC_URLS.stream().anyMatch(publicPath -> path.startsWith(publicPath));
     }
 
 
@@ -63,20 +77,20 @@ public class JwtAuthFilter extends OncePerRequestFilter{
             final String jwt;
             final String userId;
 
+            // Nếu request không có Token, nó sẽ bị chặn ở đây (chỉ xảy ra nếu shouldNotFilter hoạt động sai)
             if(authHeader == null || !authHeader.startsWith("Bearer ")){
                 sendErrorResponse(response,
                         request,
-                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        HttpServletResponse.SC_UNAUTHORIZED,
                         "Xác thực không thành công",
                         "Không tìm thấy Token."
                 );
-                // filterChain.doFilter(request, response);
                 return;
             }
 
             jwt = authHeader.substring(7);
 
-
+            // ... (Phần kiểm tra JWT logic giữ nguyên)
 
             if(!jwtService.isTokenFormsValid(jwt)){
                 sendErrorResponse(response,

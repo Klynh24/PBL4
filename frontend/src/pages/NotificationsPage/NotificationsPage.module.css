@@ -1,0 +1,53 @@
+/* src/pages/NotificationsPage/NotificationsPage.module.css */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.title {
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+.list {
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  overflow: hidden;
+}
+.notificationItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.notificationItem:last-child {
+  border-bottom: none;
+}
+.notificationItem:hover {
+  background-color: var(--background-light);
+}
+.notificationItem.read {
+  opacity: 0.6;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.notificationItem.read .dot {
+  background-color: var(--border-color);
+}
+.messageText {
+  margin: 0;
+  font-weight: 500;
+}
+.time {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+.message { text-align: center; padding: 40px; }

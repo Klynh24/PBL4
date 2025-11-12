@@ -36,6 +36,10 @@ public class Messages {
 
     private String text;
 
+    private String fileUrl;
+
+    private String fileType;
+
     @Column(name="created_at", updatable = false)
     private LocalDateTime createdAt;
 

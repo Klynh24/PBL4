@@ -1,0 +1,3 @@
+ALTER TABLE messages
+ADD COLUMN file_url VARCHAR(255) NULL,
+ADD COLUMN file_type VARCHAR(50) NULL;
