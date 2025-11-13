@@ -3,7 +3,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pbl.backend.kchi.modules.users.repositories.BlacklistedTokenRespository;
+import pbl.backend.kchi.modules.users.repositories.BlacklistedTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import java.time.LocalDateTime;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Service
 public class BlacklistTokenClean {
     @Autowired
-    private BlacklistedTokenRespository blacklistedTokenRespository;
+    private BlacklistedTokenRepository blacklistedTokenRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(BlacklistTokenClean.class);
 
@@ -21,7 +21,7 @@ public class BlacklistTokenClean {
 
     public void cleanupExpiredTokens() {
         LocalDateTime currentDataTime = LocalDateTime.now();
-        int deleteCount = blacklistedTokenRespository.deleteByExpiryDateBefore(currentDataTime);
+        int deleteCount = blacklistedTokenRepository.deleteByExpiryDateBefore(currentDataTime);
         logger.info("Đã xóa" + deleteCount + "token");
 
     }

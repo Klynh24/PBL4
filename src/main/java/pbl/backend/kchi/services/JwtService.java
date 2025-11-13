@@ -24,7 +24,7 @@ import io.jsonwebtoken.security.Keys;
 import java.util.UUID;
 
 import io.jsonwebtoken.ExpiredJwtException;
-import pbl.backend.kchi.modules.users.repositories.BlacklistedTokenRespository;
+import pbl.backend.kchi.modules.users.repositories.BlacklistedTokenRepository;
 import pbl.backend.kchi.modules.refresh_tokens.entities.Refresh_tokens;
 import pbl.backend.kchi.modules.refresh_tokens.repositories.RefreshtokensRepository;
 
@@ -38,7 +38,7 @@ public class JwtService {
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     @Autowired
-    private BlacklistedTokenRespository blacklistedTokenRespository;
+    private BlacklistedTokenRepository blacklistedTokenRepository;
 
     @Autowired
     private RefreshtokensRepository refreshtokensRepository;
@@ -197,7 +197,7 @@ public class JwtService {
     }
 
     public boolean isBlacklistedToken(String token) {
-        return blacklistedTokenRespository.existsByToken(token);
+        return blacklistedTokenRepository.existsByToken(token);
     }
 
     public boolean isRefreshTokenValid(String token) {

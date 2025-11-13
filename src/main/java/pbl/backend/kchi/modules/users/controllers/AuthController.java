@@ -1,6 +1,7 @@
 package pbl.backend.kchi.modules.users.controllers;
 //đăng nhập
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import pbl.backend.kchi.modules.refresh_tokens.requests.RefreshTokenRequest;
 import pbl.backend.kchi.modules.users.requests.LoginRequest;
+import pbl.backend.kchi.modules.users.requests.StoreUserRequest;
 import pbl.backend.kchi.modules.users.resources.LoginResources;
 import pbl.backend.kchi.modules.users.services.interfaces.UserServiceInterface;
 import pbl.backend.kchi.modules.users.requests.BlacklistedTokenRequest;
@@ -105,6 +107,21 @@ public class AuthController {
             return ResponseEntity.internalServerError().body(errorResponse);
         }
 
+    }
+
+    @Operation(summary = "Đăng ký tài khoản mới (Public)")
+    @PostMapping("register")
+    public ResponseEntity<?> register(@Valid @RequestBody StoreUserRequest request) {
+        try {
+            Object createdUser = userService.create(request);
+
+            ApiResource<Object> response = ApiResource.ok(createdUser, "Đăng ký thành công!");
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (Exception e) {
+            logger.error("Lỗi đăng ký: {}", e.getMessage());
+            return ResponseEntity.unprocessableEntity().body(ApiResource.error("REGISTRATION_ERROR", e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY));
+        }
     }
 
     @PostMapping("refresh")

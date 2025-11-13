@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import pbl.backend.kchi.modules.notifications.entities.Notifications;
 
 import pbl.backend.kchi.modules.notifications.mapper.NotificationMapper;
-import pbl.backend.kchi.modules.notifications.repositories.NotificationResponsitory;
+import pbl.backend.kchi.modules.notifications.repositories.NotificationReponsitory;
 import pbl.backend.kchi.modules.notifications.requests.StoreNotificationRequest;
 import pbl.backend.kchi.modules.notifications.requests.UpdateNotificationRequest;
 import pbl.backend.kchi.modules.notifications.services.interfaces.NotificationServiceInterface;
@@ -22,13 +22,13 @@ public class NotificationService extends BaseService<
         NotificationMapper,
         StoreNotificationRequest,
         UpdateNotificationRequest,
-        NotificationResponsitory
+        NotificationReponsitory
         > implements NotificationServiceInterface {
 
     private final NotificationMapper notificationMapper;
 
     @Autowired
-    private NotificationResponsitory notificationRepository;
+    private NotificationReponsitory notificationRepository;
 
     public NotificationService(
             NotificationMapper notificationMapper
@@ -47,7 +47,7 @@ public class NotificationService extends BaseService<
     }
 
     @Override
-    protected NotificationResponsitory getRepository(){
+    protected NotificationReponsitory getRepository(){
         return notificationRepository;
     }
 

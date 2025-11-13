@@ -9,7 +9,7 @@ import pbl.backend.kchi.enum1.PermissionEnum;
 
 import pbl.backend.kchi.modules.notifications.entities.Notifications;
 import pbl.backend.kchi.modules.notifications.mapper.NotificationMapper;
-import pbl.backend.kchi.modules.notifications.repositories.NotificationResponsitory;
+import pbl.backend.kchi.modules.notifications.repositories.NotificationReponsitory;
 import pbl.backend.kchi.modules.notifications.requests.StoreNotificationRequest;
 import pbl.backend.kchi.modules.notifications.requests.UpdateNotificationRequest;
 import pbl.backend.kchi.modules.notifications.resources.NotificationResources;
@@ -26,12 +26,12 @@ public class NotificationsController extends BaseController<
         NotificationResources,
         StoreNotificationRequest,
         UpdateNotificationRequest,
-        NotificationResponsitory
+        NotificationReponsitory
         > {
     public NotificationsController(
             NotificationServiceInterface service,
             NotificationMapper mapper,
-            NotificationResponsitory repo
+            NotificationReponsitory repo
     ){
         super(service, mapper, repo, PermissionEnum.NOTIFICATIONS);
     }

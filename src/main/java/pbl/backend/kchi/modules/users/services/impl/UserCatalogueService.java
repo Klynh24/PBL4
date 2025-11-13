@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import pbl.backend.kchi.modules.users.entities.UserCatalogue;
 import pbl.backend.kchi.modules.users.mappers.UserCatalogueMapper;
-import pbl.backend.kchi.modules.users.repositories.UserCataloguesRespository;
+import pbl.backend.kchi.modules.users.repositories.UserCatalogueRepository;
 import pbl.backend.kchi.modules.users.requests.UserCatalogue.StoreRequest;
 import pbl.backend.kchi.modules.users.requests.UserCatalogue.UpdateRequest;
 import pbl.backend.kchi.modules.users.services.interfaces.UserCatalogueServiceInterface;
@@ -18,13 +18,13 @@ public class UserCatalogueService extends BaseService<
         UserCatalogueMapper,
         StoreRequest,
         UpdateRequest,
-        UserCataloguesRespository
+        UserCatalogueRepository
         > implements  UserCatalogueServiceInterface {
 
     private final UserCatalogueMapper userCatalogueMapper;
 
     @Autowired
-    private UserCataloguesRespository userCatalogueRepository;
+    private UserCatalogueRepository userCatalogueRepository;
 
     public UserCatalogueService(
             UserCatalogueMapper userCatalogueMapper
@@ -43,7 +43,7 @@ public class UserCatalogueService extends BaseService<
     }
 
     @Override
-    protected UserCataloguesRespository getRepository(){
+    protected UserCatalogueRepository getRepository(){
         return userCatalogueRepository;
     }
 

@@ -66,7 +66,7 @@ public class User {
     private String image;
     private String address;
 
-    @Column(name="created_at", updatable=false)
+    @Column(name="create_at", updatable=false)
     private LocalDateTime createdAt;
 
 
@@ -75,7 +75,7 @@ public class User {
         createdAt = LocalDateTime.now();
     }
 
-    @Column(name="updated_at")
+    @Column(name="update_at")
     private LocalDateTime updatedAt;
 
 

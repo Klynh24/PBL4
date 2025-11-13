@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
-import pbl.backend.kchi.modules.users.repositories.BlacklistedTokenRespository;
+import pbl.backend.kchi.modules.users.repositories.BlacklistedTokenRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
@@ -22,7 +22,7 @@ import pbl.backend.kchi.resources.MessageResource;
 public class BlacklistService {
 
     @Autowired
-    private BlacklistedTokenRespository blacklistedTokenRespository;
+    private BlacklistedTokenRepository blacklistedTokenRepository;
 
     @Autowired
     private JwtService jwtService;
@@ -30,7 +30,7 @@ public class BlacklistService {
     private static final Logger logger = LoggerFactory.getLogger(BlacklistService.class);
     public Object create(BlacklistedTokenRequest request) {
         try {
-            if(blacklistedTokenRespository.existsByToken(request.getToken())) {
+            if(blacklistedTokenRepository.existsByToken(request.getToken())) {
                 return ApiResource.error("TOKEN-ERROR","Token đã tồn tại trong database", HttpStatus.BAD_REQUEST);
             }
             logger.info(request.getToken());
@@ -45,7 +45,7 @@ public class BlacklistService {
             blacklistedToken.setToken(request.getToken());
             blacklistedToken.setUserId(userId);
             blacklistedToken.setExpiryDate(expiryDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-            blacklistedTokenRespository.save(blacklistedToken);
+            blacklistedTokenRepository.save(blacklistedToken);
 
             logger.info("Thêm token vào danh sách blacklist thành công");
             return new MessageResource("Thêm token vào blacklist thành công");

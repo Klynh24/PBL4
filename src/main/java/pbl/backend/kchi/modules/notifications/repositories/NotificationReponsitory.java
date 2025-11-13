@@ -7,6 +7,6 @@ import pbl.backend.kchi.modules.notifications.entities.Notifications;
 
 
 @Repository
-public interface NotificationResponsitory extends JpaRepository<Notifications, Long>, JpaSpecificationExecutor<Notifications> {
+public interface NotificationReponsitory extends JpaRepository<Notifications, Long>, JpaSpecificationExecutor<Notifications> {
 
 }

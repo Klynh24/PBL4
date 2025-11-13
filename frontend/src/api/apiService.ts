@@ -80,8 +80,8 @@ export const getErrorMessage = (error: unknown): string => {
 export const login = async (credentials: LoginCredentials) => {
     return await api.post<ApiResponse<LoginResponseData>>('/api/v1/auth/login', credentials);
 };
-export const register = async (userData: RegisterData) => { // <-- Dùng RegisterData đã cập nhật
-    return await api.post<ApiResponse<User>>('/api/v1/users', userData);
+export const register = async (userData: RegisterData) => {
+    return await api.post<ApiResponse<User>>('/api/v1/auth/register', userData);
 };
 export const requestPasswordReset = async (data: PasswordResetRequestData) => {
     return await api.post<ApiResponse<any>>('/api/v1/auth/forgot-password', data);

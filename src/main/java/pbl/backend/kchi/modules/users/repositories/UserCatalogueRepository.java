@@ -10,6 +10,6 @@ import pbl.backend.kchi.modules.users.entities.UserCatalogue;
 
 
 @Repository
-public interface UserCataloguesRespository extends JpaRepository<UserCatalogue, Long>, JpaSpecificationExecutor<UserCatalogue> {
+public interface UserCatalogueRepository extends JpaRepository<UserCatalogue, Long>, JpaSpecificationExecutor<UserCatalogue> {
 
 }
