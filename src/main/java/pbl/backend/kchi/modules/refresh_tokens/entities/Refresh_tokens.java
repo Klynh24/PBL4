@@ -19,8 +19,6 @@ public class Refresh_tokens {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
 
     @Column(name="refresh_token",nullable = false, unique = true)
     private String refreshToken;
@@ -32,12 +30,11 @@ public class Refresh_tokens {
     @Column(name="created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
     @Column(name ="revoked_at")
     private LocalDateTime revokedAt;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
 }

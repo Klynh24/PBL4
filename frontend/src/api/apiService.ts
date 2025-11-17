@@ -28,7 +28,7 @@ import {
 } from '../types';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8088',
+    baseURL: 'http://localhost:8080',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -42,7 +42,6 @@ api.interceptors.request.use(
         const publicEndpoints = [
             '/api/v1/auth/login',
             '/api/v1/auth/register',
-            '/api/v1/users',
             '/api/v1/auth/forgot-password',
             '/api/v1/auth/reset-password',
             '/api-docs',
@@ -93,7 +92,7 @@ export const logout = async () => {
     return await api.post<ApiResponse<any>>('/api/v1/auth/logout');
 };
 export const getMe = async () => {
-    return await api.get<ApiResponse<User>>('/api/v1/me');
+    return await api.get<ApiResponse<User>>('/api/v1/users/me');
 };
 
 

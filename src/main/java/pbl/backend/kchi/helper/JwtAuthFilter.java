@@ -1,4 +1,5 @@
 package pbl.backend.kchi.helper;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+// === CÁC IMPORT CẦN THIẾT CHO LỖI JWT ===
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
+// =====================================
 
 import pbl.backend.kchi.modules.users.services.impl.CustomUserDetailService;
 import pbl.backend.kchi.services.JwtService;
@@ -58,91 +65,38 @@ public class JwtAuthFilter extends OncePerRequestFilter{
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
+        final String authHeader = request.getHeader("Authorization");
+        final String jwt;
+        final String userId;
+
+        // Nếu header rỗng, hãy để nó đi tiếp.
+        // Controller (với hàm me() đã sửa) sẽ xử lý và trả về 401.
+        if(authHeader == null || !authHeader.startsWith("Bearer ")){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        jwt = authHeader.substring(7);
 
         try {
-            final String authHeader = request.getHeader("Authorization");
-            final String jwt;
-            final String userId;
+            // === LOGIC XÁC THỰC MỚI ===
 
-            if(authHeader == null || !authHeader.startsWith("Bearer ")){
-                sendErrorResponse(response,
-                        request,
-                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                        "Xác thực không thành công",
-                        "Không tìm thấy Token."
-                );
-                // filterChain.doFilter(request, response);
-                return;
-            }
-
-            jwt = authHeader.substring(7);
-
-
-
-            if(!jwtService.isTokenFormsValid(jwt)){
-                sendErrorResponse(response,
-                        request,
-                        HttpServletResponse.SC_UNAUTHORIZED,
-                        "Xác thực không thành công",
-                        "Token không đúng định dạng."
-                );
-                return;
-            }
-
-            if(jwtService.isTokenExpired(jwt)){
-                sendErrorResponse(response,
-                        request,
-                        HttpServletResponse.SC_UNAUTHORIZED,
-                        "Xác thực không thành công",
-                        "Token đã hết hạn."
-                );
-                return;
-            }
-
-            if(!jwtService.isSignatureValid(jwt)){
-                sendErrorResponse(response,
-                        request,
-                        HttpServletResponse.SC_UNAUTHORIZED,
-                        "Xác thực không thành công",
-                        "Chữ ký không hợp lệ."
-                );
-                return;
-            }
-
-            if(!jwtService.isIssuerToken(jwt)){
-                sendErrorResponse(response,
-                        request,
-                        HttpServletResponse.SC_UNAUTHORIZED,
-                        "Xác thực không thành công",
-                        "Nguồn Token không hợp lệ."
-                );
-                return;
-            }
-
-            if(jwtService.isBlacklistedToken(jwt)){
-                sendErrorResponse(response,
-                        request,
-                        HttpServletResponse.SC_UNAUTHORIZED,
-                        "Xác thực không thành công",
-                        "Token bị khóa."
-                );
-                return;
-            }
-
+            // 1. Lấy User ID (Hàm này sẽ parse token, nếu lỗi sẽ ném Exception)
             userId = jwtService.getUserIdFromJwt(jwt);
+
+            // 2. Kiểm tra Issuer (Nguồn phát hành)
+            if (!jwtService.isIssuerToken(jwt)) {
+                throw new MalformedJwtException("Nguồn Token không hợp lệ.");
+            }
+
+            // 3. Kiểm tra Token có bị khóa (blacklist) không
+            if (jwtService.isBlacklistedToken(jwt)) {
+                throw new MalformedJwtException("Token bị khóa.");
+            }
+
+            // 4. Nếu mọi thứ OK và user chưa được xác thực, hãy set Authentication
             if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null){
                 UserDetails userDetails = CustomUserDetailsService.loadUserByUsername(userId);
-
-                final String emailFromToken = jwtService.getEmailFromJwt(jwt);
-                if(!emailFromToken.equals(userDetails.getUsername())){
-                    sendErrorResponse(response,
-                            request,
-                            HttpServletResponse.SC_UNAUTHORIZED,
-                            "Xác thực không thành công",
-                            "User Token không chính xác."
-                    );
-                    return;
-                }
 
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
@@ -158,18 +112,27 @@ public class JwtAuthFilter extends OncePerRequestFilter{
                 logger.info("Xác thực tài khoản thành công: " + userDetails.getUsername());
             }
 
+            // Cho request đi tiếp
             filterChain.doFilter(request, response);
 
-        } catch (ServletException | IOException e) {
-            sendErrorResponse(response,
-                    request,
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "Network Error!",
-                    e.getMessage()
-            );
         }
-
+        // === KHỐI CATCH MỚI, SẼ BẮT LỖI CỤ THỂ ===
+        catch (ExpiredJwtException e) {
+            logger.warn("JWT Token đã hết hạn: {}", e);
+            sendErrorResponse(response, request, HttpServletResponse.SC_UNAUTHORIZED, "Xác thực không thành công", "Token đã hết hạn.");
+        } catch (SignatureException e) {
+            logger.warn("JWT Chữ ký không hợp lệ: {}", e);
+            sendErrorResponse(response, request, HttpServletResponse.SC_UNAUTHORIZED, "Xác thực không thành công", "Chữ ký không hợp lệ.");
+        } catch (MalformedJwtException e) {
+            logger.warn("JWT Token không đúng định dạng/Issuer/Blacklist: {}", e);
+            sendErrorResponse(response, request, HttpServletResponse.SC_UNAUTHORIZED, "Xác thực không thành công", e.getMessage());
+        } catch (Exception e) {
+            logger.error("!!! Lỗi filter không xác định: {}", e);
+            e.printStackTrace(); // In ra lỗi để debug
+            sendErrorResponse(response, request, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi máy chủ", "Lỗi không xác định trong quá trình xác thực.");
+        }
     }
+
 
     private void sendErrorResponse(
             @NotNull HttpServletResponse response,
@@ -194,6 +157,4 @@ public class JwtAuthFilter extends OncePerRequestFilter{
 
         response.getWriter().write(jsonResponse);
     }
-
-
 }

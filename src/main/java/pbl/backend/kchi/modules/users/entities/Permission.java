@@ -33,10 +33,6 @@ public class Permission {
 
     private String name;
 
-
-    @Column(name="user_id", nullable=true)
-    private Long userId;
-
     @Column(name="publish", nullable=false, columnDefinition="TINYINT")
     private Integer publish;
 

@@ -1,7 +1,10 @@
 package pbl.backend.kchi.modules.users.services.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pbl.backend.kchi.modules.users.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,30 +12,48 @@ import pbl.backend.kchi.modules.users.entities.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.GrantedAuthority; // Import cần thiết
 import org.springframework.security.core.authority.SimpleGrantedAuthority; // Import cần thiết
-import java.util.Collection;
+import pbl.backend.kchi.modules.users.resources.CustomUserDetail;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 @RequiredArgsConstructor
-public class CustomUserDetailService  implements UserDetailsService{
+@Service
+public class CustomUserDetailService implements  UserDetailsService {
 
     private final UserRepository userRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailService.class);
+
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    @Transactional
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException{
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Người dùng không tồn tại!"));
+        User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(() -> new UsernameNotFoundException("User không tồn tại"));
 
-        Collection<? extends GrantedAuthority> authorities = user.getUserCatalogues().stream()
-                .map(catalogue -> new SimpleGrantedAuthority(catalogue.getName()))
+
+
+        List<GrantedAuthority> authorities = user.getUserCatalogues().stream()
+                .flatMap(catalogue -> catalogue.getPermissions().stream())
+                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
                 .collect(Collectors.toList());
 
 
-        return new org.springframework.security.core.userdetails.User(
+        logger.info("authorities: {}", authorities.size());
+
+        return new CustomUserDetail(
+                user.getId(),
                 user.getEmail(),
                 user.getPassword(),
                 authorities
         );
+
+        // return new org.springframework.security.core.userdetails.User(
+        //     user.getEmail(),
+        //     user.getPassword(),
+        //     authorities
+        // );
     }
+
+
 }

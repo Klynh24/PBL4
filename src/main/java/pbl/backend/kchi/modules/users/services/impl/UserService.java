@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pbl.backend.kchi.modules.refresh_tokens.entities.Refresh_tokens;
+import pbl.backend.kchi.modules.refresh_tokens.repositories.RefreshtokensRepository;
 import pbl.backend.kchi.modules.users.entities.User;
 import pbl.backend.kchi.modules.users.mappers.UserMapper;
 import pbl.backend.kchi.modules.users.repositories.UserRepository;
@@ -40,6 +42,9 @@ public class UserService extends BaseService<
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RefreshtokensRepository refreshTokenRepository;
 
     @Value("${jwt.defaultExpiration}")
     private long defaultExpiration;
@@ -92,7 +97,7 @@ public class UserService extends BaseService<
 
 
             String token = jwtService.generateToken(user.getId(), user.getEmail(), defaultExpiration);
-            String refreshToken = jwtService.generateRefreshToken(user.getId(), user.getEmail());
+            String refreshToken = jwtService.generateRefreshToken(user, user.getEmail());
 
 
             return new LoginResources(token, refreshToken, userResource);
@@ -110,5 +115,6 @@ public class UserService extends BaseService<
             request.setPassword(passwordEncoder.encode(request.getPassword()));
         }
     }
+
 
 }

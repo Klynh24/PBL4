@@ -4,6 +4,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +24,6 @@ public interface RefreshtokensRepository  extends JpaRepository<Refresh_tokens, 
     boolean existsByRefreshToken(String refreshToken);
     Optional<Refresh_tokens> findByRefreshToken(String refreshToken);
     Optional<Refresh_tokens> findByUserId(Long userId);
-    int deleteByExpiryDateBefore(LocalDateTime currentDataTime);
-
+    int deleteByExpiryDateBefore(LocalDateTime currentDateTime);
 
 }

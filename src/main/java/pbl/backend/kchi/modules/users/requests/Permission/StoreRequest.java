@@ -20,7 +20,4 @@ public class StoreRequest {
     private Integer publish;
 
 
-    @NotNull(message = "Trạng thái không được để trống")
-    private Integer userId;
-
 }
