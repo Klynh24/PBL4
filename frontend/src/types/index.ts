@@ -14,18 +14,23 @@ export interface UserCatalogue {
   publish: number;
 }
 
-// 🛑 SỬA LỖI: Cập nhật User để khớp với các trường mới
+export type PrimaryRole = 'student' | 'teacher' | 'admin';
+
+// Sửa: Không khai báo trùng 'role'. Giữ roles (mảng) và role (vai trò chính) dạng optional.
 export interface User {
   id: number;
   email: string;
-  role: 'student' | 'teacher' | 'admin';
   name: string;
-  phone?: string;    // <-- ĐÃ THÊM
-  image?: string;
-  address?: string;  // <-- ĐÃ THÊM
-  // dob?: string;      <-- ĐÃ XÓA
-  // gender?: string;   <-- ĐÃ XÓA
-  userCatalogues: UserCatalogue[];
+  phone?: string | null;
+  image?: string | null;
+  address?: string | null;
+
+  // BE trả về mảng tên vai trò
+  roles?: string[];
+
+  // Vai trò chính đã chuẩn hoá (tính ở FE)
+  role?: PrimaryRole;
+
   isBanned?: boolean;
 }
 
@@ -49,73 +54,75 @@ export interface ClassDetails {
 // --- Các kiểu dữ liệu cho API ---
 
 export interface LoginCredentials {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 export interface LoginResponseData {
-    token: string;
-    refreshToken: string;
-    user: any;
+  token: string;
+  refreshToken: string;
+  user: any; // hoặc User nếu BE trả về
 }
 
-// 🛑 SỬA LỖI: Cập nhật RegisterData để khớp 100% với ảnh
 export interface RegisterData {
-    email: string;
-    password: string;
-    userCatalogues: number[];
-    name: string;
-    address: string;
-    phone: string;
-    // dob: string;      <-- ĐÃ XÓA
-    // gender: string;   <-- ĐÃ XÓA
+  email: string;
+  password: string;
+  userCatalogues: number[];
+  name: string;
+  address: string;
+  phone: string;
 }
 
-// 🛑 SỬA LỖI: Cập nhật UpdateUserData
 export type UpdateUserData = Partial<Pick<User, 'name' | 'address' | 'phone' | 'image'>>;
 
 export interface CreateClassData {
-    name: string;
+  name: string;
 }
+
 export interface JoinClassData {
-    code?: string;
+  code?: string;
 }
 
 export interface AssignmentData {
-    classId: number;
-    title: string;
-    description: string;
-    dueDate: string;
+  classId: number;
+  title: string;
+  description: string;
+  dueDate: string;
 }
-export interface Assignment { 
-  id: number; 
-  title: string; 
-  dueDate: string; 
+
+export interface Assignment {
+  id: number;
+  title: string;
+  dueDate: string;
 }
 
 export interface SubmissionData {
-    fileUrl: string;
+  fileUrl: string;
 }
+
 export interface GradeData {
-    studentId: number;
-    score: number;
+  studentId: number;
+  score: number;
 }
+
 export interface ChatMessageData {
-    message: string;
+  message: string;
 }
 
 export interface NotificationData {
-    message: string;
-    targetRole?: 'student' | 'teacher';
+  message: string;
+  targetRole?: 'student' | 'teacher' | 'admin';
 }
+
 export interface MarkReadData {
-    read: boolean;
+  read: boolean;
 }
 
 export interface CreateUserCatalogueData {
-    name: string;
-    publish: string | number;
+  name: string;
+  publish: string | number;
 }
+
 export type UpdateUserCatalogueData = Partial<CreateUserCatalogueData>;
 
 export interface Notification {
@@ -125,21 +132,22 @@ export interface Notification {
 }
 
 export interface Post {
-    id: number;
-    authorName: string;
-    content: string;
-    timestamp: string;
-    authorRole: 'teacher' | 'student' | 'admin'; 
+  id: number;
+  authorName: string;
+  content: string;
+  timestamp: string;
+  authorRole: 'teacher' | 'student' | 'admin';
 }
 
 export interface CreatePostData {
-    content: string;
+  content: string;
 }
 
 export interface PasswordResetRequestData {
-    email: string; 
+  email: string;
 }
+
 export interface ResetPasswordData {
-    token: string; 
-    newPassword: string;
+  token: string;
+  newPassword: string;
 }

@@ -6,9 +6,14 @@ import styles from './RegisterPage.module.css';
 
 // Xác định ID cho các vai trò
 const ROLE_ID_MAP = {
+    // 1. CẬP NHẬT: Thêm ID cho Admin (Giả sử Admin là 1)
+    'admin': 1,
     'student': 3,
     'teacher': 2,
 };
+
+// Định nghĩa lại Type để bao gồm 'admin'
+type UserRole = 'student' | 'teacher' | 'admin';
 
 const RegisterPage: React.FC = () => {
     const [name, setName] = useState('');
@@ -18,7 +23,8 @@ const RegisterPage: React.FC = () => {
     const [address, setAddress] = useState('');
     const [phone, setPhone] = useState('');
 
-    const [role, setRole] = useState<'student' | 'teacher'>('student');
+    // 2. CẬP NHẬT: Thay đổi State Type thành UserRole
+    const [role, setRole] = useState<UserRole>('student');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -45,7 +51,8 @@ const RegisterPage: React.FC = () => {
             address: address.trim(),
             phone: phone.trim(),
 
-          userCatalogues: [ROLE_ID_MAP[role]],
+            // Role ID sẽ được lấy từ map
+            userCatalogues: [ROLE_ID_MAP[role]],
         };
 
         try {
@@ -102,7 +109,6 @@ const RegisterPage: React.FC = () => {
 
                         <input
                             type="password"
-                            // ⭐ CẬP NHẬT PLACEHOLDER
                             placeholder="Mật khẩu (Tối thiểu 8 ký tự)"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -119,6 +125,18 @@ const RegisterPage: React.FC = () => {
                         />
 
                         <div className={styles.roleSelector}>
+                            {/* 3. CẬP NHẬT: Thêm radio button cho Admin */}
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="role"
+                                    value="admin"
+                                    checked={role === 'admin'}
+                                    onChange={() => setRole('admin')}
+                                />
+                                **Tôi là Admin (Tạm thời)**
+                            </label>
+
                             <label>
                                 <input 
                                     type="radio" 

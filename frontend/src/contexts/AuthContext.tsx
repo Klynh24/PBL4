@@ -1,9 +1,50 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import * as api from '../api/apiService'; 
-import { User, UserCatalogue, LoginCredentials } from '../types'; 
-import axios from 'axios'; // ⭐ CẦN IMPORT AXIOS
+import * as api from '../api/apiService';
+import { User, LoginCredentials } from '../types';
 
-// --- Kiểu dữ liệu cho Context ---
+// ----------------- Helpers -----------------
+const removeDiacritics = (s?: string) =>
+  (s || '')
+    .normalize('NFD')
+    // dải dấu tiếng Việt
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+    .trim();
+
+const getPrimaryRole = (roles?: string[]): 'admin' | 'teacher' | 'student' => {
+  if (!roles || roles.length === 0) return 'student';
+  const normalized = roles.map(removeDiacritics);
+
+  if (normalized.some(r => r === 'ROLE_ADMIN' || r === 'ADMIN')) return 'admin';
+  if (normalized.some(r => r === 'ROLE_TEACHER' || r === 'TEACHER' || r === 'GIAO VIEN')) return 'teacher';
+  return 'student';
+};
+
+// Ưu tiên BE trả "roles: string[]"; fallback nếu một API khác vẫn trả "userCatalogues: {name}[]"
+const normalizeUserFromMeResponse = (meData: any): User | null => {
+  if (!meData) return null;
+
+  const roles: string[] = Array.isArray(meData.roles)
+    ? meData.roles
+    : Array.isArray(meData.userCatalogues)
+      ? meData.userCatalogues.map((c: any) => c?.name).filter(Boolean)
+      : [];
+
+  const user: User = {
+    id: meData.id,
+    email: meData.email,
+    name: meData.name,
+    phone: meData.phone ?? null,
+    image: meData.image ?? null,
+    address: meData.address ?? null,
+    roles,
+    role: getPrimaryRole(roles),
+  };
+
+  return user;
+};
+
+// ----------------- Context types -----------------
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -19,66 +60,23 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// ⭐ HÀM MỚI: Thiết lập Header Authorization mặc định cho Axios
-const setAuthHeaders = (token: string | null) => {
-    if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    } else {
-        delete axios.defaults.headers.common['Authorization'];
-    }
-};
-
-// --- (Giữ nguyên các hàm helper) ---
-
-const getRoleFromCatalogues = (catalogues: UserCatalogue[]): 'admin' | 'teacher' | 'student' => {
-  if (!catalogues || catalogues.length === 0) {
-    return 'student';
-  }
-  const roles = catalogues.map(c => c.name.toUpperCase());
-  if (roles.includes("ROLE_ADMIN")) return 'admin';
-  if (roles.includes("ROLE_TEACHER")) return 'teacher';
-  return 'student';
-};
-
-const normalizeUserFromMeResponse = (meData: any): User | null => {
-  if (!meData) return null;
-
-  const role = getRoleFromCatalogues(meData.userCatalogues);
-  return {
-    id: meData.id,
-    email: meData.email,
-    name: meData.name,
-    phone: meData.phone,
-    image: meData.image,
-    address: meData.address,
-
-    userCatalogues: meData.userCatalogues,
-    role: role,
-  };
-};
-
-
+// ----------------- Provider -----------------
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Kiểm tra token khi load trang, nếu có thì gọi /me
   const verifyTokenOnLoad = async () => {
-    // ⭐ FIX: Thiết lập header khi tải trang để request /me thành công
     const token = localStorage.getItem('token');
-
     if (token) {
-      setAuthHeaders(token);
       try {
-        const response = await api.getMe();
+        const response = await api.getMe(); // apiService interceptor sẽ tự gắn token từ localStorage
         const normalizedUser = normalizeUserFromMeResponse(response.data.data);
-        if (normalizedUser) {
-          setUser(normalizedUser);
-        }
+        if (normalizedUser) setUser(normalizedUser);
       } catch (error) {
         console.error('Failed to verify token on load:', api.getErrorMessage(error));
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
-        setAuthHeaders(null);
       }
     }
     setLoading(false);
@@ -91,22 +89,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const handleLogin = async (credentials: LoginCredentials): Promise<boolean> => {
     try {
       const loginResponse = await api.login(credentials);
-
       if (!loginResponse.data || !loginResponse.data.data) {
         console.error('Login response format invalid:', loginResponse);
         return false;
       }
 
       const { token, refreshToken } = loginResponse.data.data;
-
-      // ⭐ FIX 1: Lưu token vào Local Storage
+      // Lưu token trước, interceptor sẽ đọc từ localStorage cho request kế tiếp
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
 
-      // ⭐ FIX 2: Thiết lập Header Authorization ngay lập tức cho request /me
-      setAuthHeaders(token);
-
-      // Request /me sẽ hoạt động vì đã có header
+      // Gọi /me để lấy thông tin người dùng + roles
       const meResponse = await api.getMe();
       const normalizedUser = normalizeUserFromMeResponse(meResponse.data.data);
 
@@ -114,16 +107,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(normalizedUser);
         return true;
       } else {
-        // Nếu /me thất bại, xóa token
-        handleLogout();
+        await handleLogout();
         return false;
       }
-
     } catch (error) {
       console.error('Login failed:', api.getErrorMessage(error));
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
-      setAuthHeaders(null);
       return false;
     }
   };
@@ -134,27 +124,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       console.error('Logout API failed:', api.getErrorMessage(error));
     } finally {
-      // ⭐ FIX 3: Xóa header khi đăng xuất
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
-      setAuthHeaders(null);
       setUser(null);
     }
   };
 
   const updateUserContext = (updatedData: Partial<User>) => {
-    if (user) {
-      setUser({ ...user, ...updatedData });
-    }
+    setUser(prev => (prev ? { ...prev, ...updatedData } : prev));
   };
 
   const value: AuthContextType = {
     user,
-    login: handleLogin,
-    logout: handleLogout,
     isAuthenticated: !!user,
     loading,
-    updateUserContext
+    login: handleLogin,
+    logout: handleLogout,
+    updateUserContext,
   };
 
   return (

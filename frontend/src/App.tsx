@@ -34,7 +34,7 @@ const PublicLayout = () => {
     const location = useLocation();
 
     if (isAuthenticated && (location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/forgot-password')) {
-        const destination = user?.role === 'admin' ? '/admin/dashboard' : '/classes';
+        const destination = user && user.role === 'admin' ? '/admin/dashboard' : '/classes';
         return <Navigate to={destination} replace />;
     }
 
@@ -56,7 +56,8 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
 
     if (loading) return <div>Đang xác thực...</div>;
     if (!isAuthenticated) return <Navigate to="/login" replace />;
-    if (allowedRoles && (!user || !allowedRoles.includes(user.role))) {
+
+    if (allowedRoles && (!user || !user.role || !allowedRoles.includes(user.role))) {
         return <Navigate to="/classes" replace />;
     }
 

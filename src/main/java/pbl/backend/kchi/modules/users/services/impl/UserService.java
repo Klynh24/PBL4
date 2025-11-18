@@ -23,6 +23,9 @@ import pbl.backend.kchi.modules.users.requests.LoginRequest;
 import pbl.backend.kchi.modules.users.resources.UserResource;
 import pbl.backend.kchi.modules.users.resources.LoginResources;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserService extends BaseService<
         User,
@@ -88,11 +91,19 @@ public class UserService extends BaseService<
             if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
                 throw new BadCredentialsException("Email hoặc mật khẩu không chính xác");
             }
+
+            List<String> roles = user.getUserCatalogues()
+                    .stream()
+                    .map(catalogue -> catalogue.getName())
+                    .collect(Collectors.toList());
+
             UserResource userResource = UserResource.builder()
                     .id(user.getId())
                     .email(user.getEmail())
                     .name(user.getName())
                     .phone(user.getPhone())
+                    .address(user.getAddress())
+                    .roles(roles)
                     .build();
 
 

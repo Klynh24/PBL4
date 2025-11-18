@@ -49,8 +49,8 @@ const PostsTab: React.FC = () => {
             authorName: user.name || user.email,
             content: contentToSend,
             timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-            authorRole: user.role
-        };
+            authorRole: user.role || 'student'
+            };
         
         setPosts(prev => [tempPost, ...prev]);
 

@@ -20,6 +20,7 @@ import jakarta.transaction.Transactional;
 import pbl.backend.kchi.BaseController;
 import pbl.backend.kchi.enum1.PermissionEnum;
 import pbl.backend.kchi.modules.users.entities.User;
+import pbl.backend.kchi.modules.users.entities.UserCatalogue;
 import pbl.backend.kchi.modules.users.mappers.UserMapper;
 import pbl.backend.kchi.modules.users.repositories.UserRepository;
 import pbl.backend.kchi.modules.users.requests.StoreUserRequest;
@@ -27,6 +28,9 @@ import pbl.backend.kchi.modules.users.requests.UpdateUserRequest;
 import pbl.backend.kchi.modules.users.resources.UserResource;
 import pbl.backend.kchi.modules.users.services.interfaces.UserServiceInterface;
 import pbl.backend.kchi.resources.ApiResource;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name="API Thành viên")
 @RestController
@@ -76,13 +80,20 @@ public class UserController extends BaseController<
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User không tồn tại"));
 
+        List<String> roles = user.getUserCatalogues()
+                .stream()
+                .map(UserCatalogue::getName)
+                .collect(Collectors.toList());
+
+
 
         UserResource userResource = UserResource.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
                 .phone(user.getPhone())
-                // .users(user.getUserCatalogues())
+                .address(user.getAddress())
+                .roles(roles)
                 .build();
 
         ApiResource<UserResource> response = ApiResource.ok(userResource, "SUCCESS");
