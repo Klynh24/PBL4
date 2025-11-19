@@ -8,6 +8,7 @@ import com.tutoring.core.streaming.QualityEvaluationTask;
 
 import java.io.*;
 import java.net.*;
+import java.nio.channels.DatagramChannel;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -21,7 +22,7 @@ public class CoreServer {
     private static final int UDP_PORT = 9001;
 
     private ServerSocket tcpServerSocket;
-    private DatagramSocket udpSocket;
+    private DatagramChannel udpChannel; // ✅ PHASE 1: ZERO-COPY - Use DatagramChannel
 
     // Thread-safe state management
     private final RoomManager roomManager;
@@ -50,17 +51,18 @@ public class CoreServer {
         tcpServerSocket = new ServerSocket(TCP_PORT);
         System.out.println("[Core Server] TCP Server started on port " + TCP_PORT);
 
-        // Initialize UDP Socket for media
-        udpSocket = new DatagramSocket(UDP_PORT);
-        System.out.println("[Core Server] UDP Server started on port " + UDP_PORT);
+        // ✅ PHASE 1: ZERO-COPY - Initialize UDP Channel for media (instead of DatagramSocket)
+        udpChannel = DatagramChannel.open();
+        udpChannel.bind(new InetSocketAddress(UDP_PORT));
+        udpChannel.configureBlocking(true); // Blocking mode for simplicity (can be non-blocking for better performance)
+        System.out.println("[Core Server] UDP Channel started on port " + UDP_PORT);
+        System.out.println("[Core Server] ✅ ZERO-COPY: Using DatagramChannel with DirectByteBuffer");
         
         // ✅ CRITICAL FIX: Increase receive buffer to handle burst traffic from fragmented frames
-        // Default buffer (64-256 KB) insufficient for high-quality streaming
-        // With fragmentation: 100KB frame = ~70 packets arriving in <10ms burst
         try {
             int targetBuffer = 8 * 1024 * 1024; // 8 MB (can hold ~5,700 packets)
-            udpSocket.setReceiveBufferSize(targetBuffer);
-            int actualBuffer = udpSocket.getReceiveBufferSize();
+            udpChannel.socket().setReceiveBufferSize(targetBuffer);
+            int actualBuffer = udpChannel.socket().getReceiveBufferSize();
             
             System.out.println(String.format("[Core Server] UDP receive buffer: requested=%d KB, actual=%d KB",
                 targetBuffer / 1024, actualBuffer / 1024));
@@ -110,8 +112,8 @@ public class CoreServer {
         qualityThread.start();
         System.out.println("[Core Server] Quality evaluation thread started (ABR)");
 
-        // Start UDP listener thread for media broadcasting
-        Thread udpThread = new Thread(new UDPMediaHandler(udpSocket, roomManager, clientHandlers, networkMonitor));
+        // ✅ PHASE 1: ZERO-COPY - Start UDP listener thread with DatagramChannel
+        Thread udpThread = new Thread(new UDPMediaHandler(udpChannel, roomManager, clientHandlers, networkMonitor));
         udpThread.setDaemon(true);
         udpThread.start();
 
@@ -123,10 +125,9 @@ public class CoreServer {
                 System.out.println("[Core Server] New TCP connection from: " +
                         clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort());
 
-                // Create and start client handler thread with advanced screen sharing and ABR
-                // support
+                // ✅ PHASE 1: ZERO-COPY - Create client handler with DatagramChannel
                 ClientHandler handler = new ClientHandler(clientSocket, roomManager, userManager,
-                        clientHandlers, retransmissionBuffer, udpSocket, networkMonitor);
+                        clientHandlers, retransmissionBuffer, udpChannel, networkMonitor);
                 Thread handlerThread = new Thread(handler);
                 handlerThread.start();
             } catch (IOException e) {

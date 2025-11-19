@@ -22,46 +22,50 @@ public class RoomManager {
         this.chatHistory = new ConcurrentHashMap<>();
     }
     
-    public synchronized boolean createRoom(String roomName, String creatorId) {
-        if (rooms.containsKey(roomName)) {
-            return false;
-        }
-        
+    // ✅ OPTIMIZATION: Remove redundant synchronized (ConcurrentHashMap is already thread-safe)
+    // Only synchronize when modifying the Set/List contents
+    public boolean createRoom(String roomName, String creatorId) {
+        // Use putIfAbsent for atomic operation
         Set<String> members = Collections.synchronizedSet(new HashSet<>());
         members.add(creatorId);
-        rooms.put(roomName, members);
+        
+        Set<String> existing = rooms.putIfAbsent(roomName, members);
+        if (existing != null) {
+            return false; // Room already exists
+        }
         
         // Initialize empty chat history for new room
-        chatHistory.put(roomName, Collections.synchronizedList(new ArrayList<>()));
+        chatHistory.putIfAbsent(roomName, Collections.synchronizedList(new ArrayList<>()));
         
         return true;
     }
     
-    public synchronized boolean joinRoom(String roomName, String clientId) {
-        Set<String> members = rooms.get(roomName);
-        if (members == null) {
+    public boolean joinRoom(String roomName, String clientId) {
+        Set<String> members = rooms.computeIfAbsent(roomName, k -> {
             // Auto-create room if it doesn't exist
-            members = Collections.synchronizedSet(new HashSet<>());
-            rooms.put(roomName, members);
-            
-            // Initialize empty chat history for new room
-            chatHistory.put(roomName, Collections.synchronizedList(new ArrayList<>()));
-        }
+            chatHistory.putIfAbsent(k, Collections.synchronizedList(new ArrayList<>()));
+            return Collections.synchronizedSet(new HashSet<>());
+        });
         
         members.add(clientId);
         return true;
     }
     
-    public synchronized void leaveRoom(String roomName, String clientId) {
+    public void leaveRoom(String roomName, String clientId) {
         Set<String> members = rooms.get(roomName);
         if (members != null) {
             members.remove(clientId);
             
-            // Remove empty rooms
+            // Remove empty rooms (check size atomically)
             if (members.isEmpty()) {
-                rooms.remove(roomName);
-                chatHistory.remove(roomName); // Also remove chat history
-                System.out.println("[RoomManager] Room " + roomName + " removed (empty)");
+                // Double-check pattern: verify still empty after acquiring lock
+                synchronized (members) {
+                    if (members.isEmpty()) {
+                        rooms.remove(roomName);
+                        chatHistory.remove(roomName);
+                        System.out.println("[RoomManager] Room " + roomName + " removed (empty)");
+                    }
+                }
             }
         }
     }

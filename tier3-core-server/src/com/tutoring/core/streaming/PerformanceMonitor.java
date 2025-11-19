@@ -200,6 +200,8 @@ public class PerformanceMonitor {
     
     /**
      * Inner class to track metrics for a specific stage
+     * 
+     * ✅ OPTIMIZATION: Lock-free implementation using atomic operations
      */
     public static class Metric {
         private final AtomicLong totalMs = new AtomicLong(0);
@@ -207,21 +209,24 @@ public class PerformanceMonitor {
         private final AtomicLong minMs = new AtomicLong(Long.MAX_VALUE);
         private final AtomicInteger count = new AtomicInteger(0);
         
-        public synchronized void record(long ms) {
+        // ✅ OPTIMIZATION: Lock-free record using CAS operations
+        public void record(long ms) {
             totalMs.addAndGet(ms);
             count.incrementAndGet();
             
-            // Update max
-            long currentMax = maxMs.get();
-            if (ms > currentMax) {
-                maxMs.set(ms);
-            }
+            // ✅ OPTIMIZATION: Lock-free max update using compare-and-swap
+            long currentMax;
+            do {
+                currentMax = maxMs.get();
+                if (ms <= currentMax) break;
+            } while (!maxMs.compareAndSet(currentMax, ms));
             
-            // Update min
-            long currentMin = minMs.get();
-            if (ms < currentMin) {
-                minMs.set(ms);
-            }
+            // ✅ OPTIMIZATION: Lock-free min update using compare-and-swap
+            long currentMin;
+            do {
+                currentMin = minMs.get();
+                if (ms >= currentMin) break;
+            } while (!minMs.compareAndSet(currentMin, ms));
         }
         
         public double getAverage() {

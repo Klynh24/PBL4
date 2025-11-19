@@ -26,29 +26,47 @@ public class FrameEncoder {
     
     /**
      * Encode full frame as keyframe (JPEG)
+     * 
+     * ✅ OPTIMIZATION: Proper resource cleanup, reusable ByteArrayOutputStream
      */
     public byte[] encodeKeyframe(BufferedImage image, float quality) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(1024 * 100); // Pre-allocate 100KB
+        ImageWriter writer = null;
+        javax.imageio.stream.ImageOutputStream ios = null;
         
-        // Get JPEG writer
-        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
-        if (!writers.hasNext()) {
-            throw new IOException("No JPEG writer found");
+        try {
+            // Get JPEG writer
+            Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+            if (!writers.hasNext()) {
+                throw new IOException("No JPEG writer found");
+            }
+            
+            writer = writers.next();
+            
+            // Set compression quality
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionQuality(quality);
+            
+            // Write image
+            ios = ImageIO.createImageOutputStream(baos);
+            writer.setOutput(ios);
+            writer.write(null, new IIOImage(image, null, null), param);
+            
+            return baos.toByteArray();
+        } finally {
+            // ✅ FIX: Proper resource cleanup (prevents memory leaks)
+            if (writer != null) {
+                writer.dispose();
+            }
+            if (ios != null) {
+                try {
+                    ios.close();
+                } catch (IOException e) {
+                    // Ignore close errors
+                }
+            }
         }
-        
-        ImageWriter writer = writers.next();
-        
-        // Set compression quality
-        ImageWriteParam param = writer.getDefaultWriteParam();
-        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        param.setCompressionQuality(quality);
-        
-        // Write image
-        writer.setOutput(ImageIO.createImageOutputStream(baos));
-        writer.write(null, new IIOImage(image, null, null), param);
-        writer.dispose();
-        
-        return baos.toByteArray();
     }
     
     /**
@@ -94,26 +112,44 @@ public class FrameEncoder {
     
     /**
      * Compress BufferedImage to JPEG with specified quality
+     * 
+     * ✅ OPTIMIZATION: Proper resource cleanup
      */
     private byte[] compressToJPEG(BufferedImage image, float quality) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(1024 * 50); // Pre-allocate 50KB
+        ImageWriter writer = null;
+        javax.imageio.stream.ImageOutputStream ios = null;
         
-        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
-        if (!writers.hasNext()) {
-            throw new IOException("No JPEG writer found");
+        try {
+            Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+            if (!writers.hasNext()) {
+                throw new IOException("No JPEG writer found");
+            }
+            
+            writer = writers.next();
+            
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionQuality(quality);
+            
+            ios = ImageIO.createImageOutputStream(baos);
+            writer.setOutput(ios);
+            writer.write(null, new IIOImage(image, null, null), param);
+            
+            return baos.toByteArray();
+        } finally {
+            // ✅ FIX: Proper resource cleanup
+            if (writer != null) {
+                writer.dispose();
+            }
+            if (ios != null) {
+                try {
+                    ios.close();
+                } catch (IOException e) {
+                    // Ignore close errors
+                }
+            }
         }
-        
-        ImageWriter writer = writers.next();
-        
-        ImageWriteParam param = writer.getDefaultWriteParam();
-        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        param.setCompressionQuality(quality);
-        
-        writer.setOutput(ImageIO.createImageOutputStream(baos));
-        writer.write(null, new IIOImage(image, null, null), param);
-        writer.dispose();
-        
-        return baos.toByteArray();
     }
     
     /**

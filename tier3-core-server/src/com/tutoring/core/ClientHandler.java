@@ -19,42 +19,42 @@ public class ClientHandler implements Runnable {
     private final UserManager userManager;
     private final ConcurrentHashMap<String, ClientHandler> clientHandlers;
     private final RetransmissionBuffer retransmissionBuffer;
-    private final DatagramSocket udpSocket;
+    private final java.nio.channels.DatagramChannel udpChannel; // ✅ PHASE 1: ZERO-COPY - Use DatagramChannel
     private final NetworkQualityMonitor networkMonitor;
-    
+
     private BufferedReader in;
     private PrintWriter out;
-    
+
     private String clientId;
     private String username;
     private String currentRoom;
     private InetSocketAddress udpAddress;
     private ClientStreamState streamState;
-    
+
     public ClientHandler(Socket socket, RoomManager roomManager, UserManager userManager,
-                        ConcurrentHashMap<String, ClientHandler> clientHandlers,
-                        RetransmissionBuffer retransmissionBuffer,
-                        DatagramSocket udpSocket,
-                        NetworkQualityMonitor networkMonitor) {
+            ConcurrentHashMap<String, ClientHandler> clientHandlers,
+            RetransmissionBuffer retransmissionBuffer,
+            java.nio.channels.DatagramChannel udpChannel,
+            NetworkQualityMonitor networkMonitor) {
         this.socket = socket;
         this.roomManager = roomManager;
         this.userManager = userManager;
         this.clientHandlers = clientHandlers;
         this.retransmissionBuffer = retransmissionBuffer;
-        this.udpSocket = udpSocket;
+        this.udpChannel = udpChannel;
         this.networkMonitor = networkMonitor;
         this.clientId = UUID.randomUUID().toString();
     }
-    
+
     @Override
     public void run() {
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
-            
+
             // Add to client handlers
             clientHandlers.put(clientId, this);
-            
+
             String message;
             while ((message = in.readLine()) != null) {
                 handleMessage(message);
@@ -65,16 +65,31 @@ public class ClientHandler implements Runnable {
             cleanup();
         }
     }
-    
+
+    // ✅ FIX: Ensure streams are properly closed
+    private void closeStreams() {
+        try {
+            if (in != null) {
+                in.close();
+            }
+        } catch (IOException e) {
+            // Ignore
+        }
+        if (out != null) {
+            out.close();
+        }
+    }
+
     private void handleMessage(String message) {
         System.out.println("[ClientHandler " + clientId + "] Received: " + message);
-        
+
         String[] parts = message.split(":", 2);
-        if (parts.length < 1) return;
-        
+        if (parts.length < 1)
+            return;
+
         String command = parts[0];
         String data = parts.length > 1 ? parts[1] : "";
-        
+
         switch (command) {
             case "REGISTER_UDP":
                 handleRegisterUDP(data);
@@ -113,7 +128,7 @@ public class ClientHandler implements Runnable {
                 sendMessage("ERROR:Unknown command");
         }
     }
-    
+
     private void handleRegisterUDP(String portStr) {
         try {
             int port = Integer.parseInt(portStr);
@@ -125,17 +140,17 @@ public class ClientHandler implements Runnable {
             sendMessage("ERROR:Invalid UDP port");
         }
     }
-    
+
     private void handleRegister(String data) {
         String[] parts = data.split(":");
         if (parts.length < 2) {
             sendMessage("ERROR:Invalid register format");
             return;
         }
-        
+
         String username = parts[0];
         String password = parts[1];
-        
+
         if (userManager.registerUser(username, password)) {
             sendMessage("REGISTER_SUCCESS:" + username);
             System.out.println("[ClientHandler " + clientId + "] User registered: " + username);
@@ -143,17 +158,17 @@ public class ClientHandler implements Runnable {
             sendMessage("ERROR:Username already exists");
         }
     }
-    
+
     private void handleLogin(String data) {
         String[] parts = data.split(":");
         if (parts.length < 2) {
             sendMessage("ERROR:Invalid login format");
             return;
         }
-        
+
         String username = parts[0];
         String password = parts[1];
-        
+
         if (userManager.authenticateUser(username, password)) {
             this.username = username;
             sendMessage("LOGIN_SUCCESS:" + username);
@@ -162,13 +177,13 @@ public class ClientHandler implements Runnable {
             sendMessage("ERROR:Invalid credentials");
         }
     }
-    
+
     private void handleCreateRoom(String roomName) {
         if (username == null) {
             sendMessage("ERROR:Not logged in");
             return;
         }
-        
+
         if (roomManager.createRoom(roomName, clientId)) {
             currentRoom = roomName;
             sendMessage("ROOM_CREATED:" + roomName);
@@ -177,34 +192,34 @@ public class ClientHandler implements Runnable {
             sendMessage("ERROR:Room already exists");
         }
     }
-    
+
     private void handleJoinRoom(String roomName) {
         if (username == null) {
             sendMessage("ERROR:Not logged in");
             return;
         }
-        
+
         if (roomManager.joinRoom(roomName, clientId)) {
             currentRoom = roomName;
-            
+
             // Initialize stream state for advanced screen sharing
             if (streamState == null) {
                 initializeStreamState();
             }
-            
+
             sendMessage("ROOM_JOINED:" + roomName);
             System.out.println("[ClientHandler " + clientId + "] User joined room: " + roomName);
-            
+
             // Send chat history to the new user
             sendChatHistory(roomName);
-            
+
             // Notify others in the room
             broadcastToRoom(currentRoom, "USER_JOINED:" + username, true);
         } else {
             sendMessage("ERROR:Room does not exist");
         }
     }
-    
+
     private void handleLeaveRoom() {
         if (currentRoom != null) {
             roomManager.leaveRoom(currentRoom, clientId);
@@ -214,7 +229,7 @@ public class ClientHandler implements Runnable {
             currentRoom = null;
         }
     }
-    
+
     private void handleListRooms() {
         Set<String> rooms = roomManager.listRooms();
         StringBuilder sb = new StringBuilder("ROOM_LIST:");
@@ -224,97 +239,99 @@ public class ClientHandler implements Runnable {
         }
         sendMessage(sb.toString());
     }
-    
+
     private void handleChat(String data) {
         if (currentRoom == null) {
             sendMessage("ERROR:Not in a room");
             return;
         }
-        
+
         // Store message in room history
         roomManager.addChatMessage(currentRoom, username, data);
-        
+
         // Broadcast to all users in the room (excluding sender)
         String chatMessage = "CHAT:" + username + ":" + data;
         broadcastToRoom(currentRoom, chatMessage, true);
     }
-    
+
     private void broadcastToRoom(String roomName, String message, boolean excludeSelf) {
         Set<String> members = roomManager.getRoomMembers(roomName);
-        if (members == null) return;
-        
+        if (members == null)
+            return;
+
         for (String memberId : members) {
-            if (excludeSelf && memberId.equals(clientId)) continue;
-            
+            if (excludeSelf && memberId.equals(clientId))
+                continue;
+
             ClientHandler handler = clientHandlers.get(memberId);
             if (handler != null) {
                 handler.sendMessage(message);
             }
         }
     }
-    
+
     /**
      * Send chat history to this client
      */
     private void sendChatHistory(String roomName) {
         List<ChatMessage> history = roomManager.getChatHistory(roomName);
-        
+
         if (history.isEmpty()) {
             System.out.println("[ClientHandler " + clientId + "] No chat history for room: " + roomName);
             return;
         }
-        
-        System.out.println("[ClientHandler " + clientId + "] Sending " + history.size() + 
-            " chat messages to new user");
-        
+
+        System.out.println("[ClientHandler " + clientId + "] Sending " + history.size() +
+                " chat messages to new user");
+
         // Send a special message to indicate chat history start
         sendMessage("CHAT_HISTORY_START:" + history.size());
-        
+
         // Send each historical message
         for (ChatMessage msg : history) {
             sendMessage(msg.toProtocolString());
         }
-        
+
         // Send message to indicate chat history end
         sendMessage("CHAT_HISTORY_END");
     }
-    
+
     public synchronized void sendMessage(String message) {
         if (out != null) {
             out.println(message);
         }
     }
-    
+
     public InetSocketAddress getUdpAddress() {
         return udpAddress;
     }
-    
+
     public String getClientId() {
         return clientId;
     }
-    
+
     public String getUsername() {
         return username;
     }
-    
+
     public String getCurrentRoom() {
         return currentRoom;
     }
-    
+
     /**
      * Initialize stream state for advanced screen sharing
      */
     public void initializeStreamState() {
         this.streamState = new ClientStreamState(clientId);
     }
-    
+
     /**
      * Get stream state for this client
      */
     public ClientStreamState getStreamState() {
         return streamState;
     }
-    
+
     /**
      * Handle NACK (Negative Acknowledgement) for packet retransmission
      * Format: "frameId:seqNum1,seqNum2,seqNum3"
@@ -326,51 +343,51 @@ public class ClientHandler implements Runnable {
                 System.err.println("[NACK] Invalid format: " + data);
                 return;
             }
-            
+
             int frameId = Integer.parseInt(parts[0]);
             String[] seqNumStrs = parts[1].split(",");
-            
+
             // ABR: Record NACK for quality monitoring
             networkMonitor.recordNACK(clientId, seqNumStrs.length);
-            
-            System.out.println("[NACK] Client " + clientId + " requesting " + 
-                seqNumStrs.length + " packets for frame " + frameId);
-            
+
+            System.out.println("[NACK] Client " + clientId + " requesting " +
+                    seqNumStrs.length + " packets for frame " + frameId);
+
             int retransmitted = 0;
             for (String seqStr : seqNumStrs) {
                 try {
                     int seqNum = Integer.parseInt(seqStr.trim());
-                    
+
                     // Retrieve packet from buffer
                     byte[] packet = retransmissionBuffer.getPacket(seqNum);
-                    
+
                     if (packet != null) {
                         // Resend via UDP
                         sendUDPPacket(packet);
                         retransmitted++;
                     } else {
-                        System.out.println("[NACK] Packet " + seqNum + 
-                            " not in buffer (too old)");
+                        System.out.println("[NACK] Packet " + seqNum +
+                                " not in buffer (too old)");
                     }
                 } catch (NumberFormatException e) {
                     System.err.println("[NACK] Invalid sequence number: " + seqStr);
                 }
             }
-            
-            System.out.println("[NACK] Retransmitted " + retransmitted + "/" + 
-                seqNumStrs.length + " packets");
-            
+
+            System.out.println("[NACK] Retransmitted " + retransmitted + "/" +
+                    seqNumStrs.length + " packets");
+
             // Track packet loss for client state
             if (streamState != null) {
                 streamState.reportPacketLoss(seqNumStrs.length);
             }
-            
+
         } catch (Exception e) {
             System.err.println("[NACK] Error handling NACK: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Handle QUALITY_ACK from client
      * Format: "LEVEL"
@@ -379,45 +396,45 @@ public class ClientHandler implements Runnable {
         System.out.println("[QualityACK] Client " + clientId + " acknowledged quality change to " + data);
         // Could track acknowledgments here if needed
     }
-    
+
     /**
-     * Send UDP packet to this client
+     * ✅ PHASE 1: ZERO-COPY - Send UDP packet to this client via DatagramChannel
      */
     public void sendUDPPacket(byte[] packetData) {
         if (udpAddress == null) {
             System.err.println("[UDP] Cannot send, no UDP address for client " + clientId);
             return;
         }
-        
+
         try {
-            DatagramPacket packet = new DatagramPacket(
-                packetData,
-                packetData.length,
-                udpAddress
-            );
-            
-            udpSocket.send(packet);
-            
+            // ✅ PHASE 1: ZERO-COPY - Use ByteBuffer for sending (direct memory access)
+            java.nio.ByteBuffer buffer = java.nio.ByteBuffer.wrap(packetData);
+            udpChannel.send(buffer, udpAddress);
+
         } catch (Exception e) {
             System.err.println("[UDP] Error sending packet: " + e.getMessage());
         }
     }
-    
+
     private void cleanup() {
         try {
             if (currentRoom != null) {
                 handleLeaveRoom();
             }
             clientHandlers.remove(clientId);
-            
+
             // ABR: Remove from network monitoring
             networkMonitor.removeClient(clientId);
-            
-            if (socket != null) socket.close();
+
+            // ✅ FIX: Close streams before socket
+            closeStreams();
+
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
             System.out.println("[ClientHandler " + clientId + "] Cleaned up");
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("[ClientHandler] Error during cleanup: " + e.getMessage());
         }
     }
 }
-
