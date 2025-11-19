@@ -36,6 +36,7 @@ public class PermissionAspect {
             BaseController<?, ?, ?, ? , ?> controller = (BaseController<?, ?, ?, ? , ?>) target;
             String module = controller.getModule().getPrefix();
             String permission = module + ":" + requirePermission.action();
+            System.out.println(">>> ASPECT ĐANG CẦN QUYỀN: [" + permission + "]");
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if(!customPermissionEvaluator.hasPermission(authentication, permission)){
                 throw new AccessDeniedException("Access Denied");

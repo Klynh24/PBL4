@@ -29,7 +29,7 @@ public class UserCatalogue {
 
 
     @Builder.Default
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_catalogue_permission",
             joinColumns = @JoinColumn(name = "user_catalogue_id"),

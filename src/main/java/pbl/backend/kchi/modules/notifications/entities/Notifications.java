@@ -36,7 +36,7 @@ public class Notifications {
     private Boolean readStatus = false;
 
 
-    @Column(name="created_at", updatable = false)
+    @Column(name="create_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name="updated_at")

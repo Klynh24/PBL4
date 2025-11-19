@@ -1,0 +1,2 @@
+ALTER TABLE assignments
+  ADD COLUMN updated_at TIMESTAMP NULL;

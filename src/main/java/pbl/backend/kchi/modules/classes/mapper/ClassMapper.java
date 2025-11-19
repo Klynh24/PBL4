@@ -11,10 +11,10 @@ import pbl.backend.kchi.modules.classes.entities.Classes;
 import pbl.backend.kchi.modules.classes.requests.StoreClassRequest;
 import pbl.backend.kchi.modules.classes.requests.UpdateClassRequest;
 import pbl.backend.kchi.modules.classes.resources.ClassResource;
+import pbl.backend.kchi.modules.users.mappers.UserMapper;
 
 
-
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface ClassMapper extends BaseMapper<Classes, ClassResource, StoreClassRequest, UpdateClassRequest> {
 
     @Override

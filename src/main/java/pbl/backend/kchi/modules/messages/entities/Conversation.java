@@ -26,7 +26,7 @@ public class Conversation {
 
     private String name;
 
-    @Column(name="created_at", updatable = false) // Sửa tên cột "create_at"
+    @Column(name="create_at", updatable = false) // Sửa tên cột "create_at"
     private LocalDateTime createdAt;
 
     @Column(name="updated_at")

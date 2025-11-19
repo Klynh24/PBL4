@@ -27,16 +27,19 @@ public class Classes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "code", unique = true, length = 10)
+    private String code;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", updatable = false)
+    @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
 
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "classes_member",
+            name = "classes_members",
             joinColumns = @JoinColumn(name = "class_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
@@ -59,20 +62,24 @@ public class Classes {
     @Column(name="created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name="updated_at")
+
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-
-    @PreUpdate
-    protected void onUpdated(){
-        updatedAt = LocalDateTime.now();
-    }
-
 
 
     @PrePersist
     protected void onCreated() {
+
         createdAt = LocalDateTime.now();
+        if (this.code == null) {
+
+            this.code = java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
 

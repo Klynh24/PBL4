@@ -41,6 +41,24 @@ public class CustomUserDetailService implements  UserDetailsService {
 
         logger.info("authorities: {}", authorities.size());
 
+        System.out.println("---------- VẠCH TRẦN QUYỀN ----------");
+        System.out.println("User ID: " + user.getId());
+        System.out.println("Email: " + user.getEmail());
+        System.out.println("Số lượng nhóm quyền (UserCatalogues): " + user.getUserCatalogues().size());
+
+        if (user.getUserCatalogues().isEmpty()) {
+            System.out.println("!!! CẢNH BÁO: User này chưa thuộc Nhóm quyền (Role) nào cả!");
+        } else {
+            user.getUserCatalogues().forEach(cat -> {
+                System.out.println(" - Thuộc nhóm: " + cat.getName() + " (ID: " + cat.getId() + ")");
+                System.out.println("   -> Số quyền trong nhóm này: " + cat.getPermissions().size());
+            });
+        }
+
+        System.out.println("--- DANH SÁCH QUYỀN CUỐI CÙNG ---");
+        authorities.forEach(auth -> System.out.println(" [x] " + auth.getAuthority()));
+        System.out.println("-------------------------------------");
+
         return new CustomUserDetail(
                 user.getId(),
                 user.getEmail(),

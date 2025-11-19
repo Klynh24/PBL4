@@ -47,7 +47,7 @@ public class Assignments {
 
     private String description;
 
-    @Column(name="created_at", updatable = false)
+    @Column(name="create_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name="due_date", updatable = false)

@@ -30,7 +30,6 @@ import pbl.backend.kchi.mapper.BaseMapper;
 import pbl.backend.kchi.resources.ApiResource;
 import pbl.backend.kchi.services.interfaces.BaseServiceInterface;
 
-
 @SecurityRequirement(name="Bearer Authentication")
 public abstract class BaseController <
         E,
@@ -81,7 +80,6 @@ public abstract class BaseController <
     @GetMapping("/list")
     // @RequirePermission(action = "list", viewAll="view_all")
     public ResponseEntity<?> list(HttpServletRequest request) {
-
         try {
             Map<String, String[]> parameters = request.getParameterMap();
             List<E> entities = service.getAll(parameters, request);
@@ -94,10 +92,7 @@ public abstract class BaseController <
                     ApiResource.error("INTERNAL_SERVER_ERROR", message, HttpStatus.INTERNAL_SERVER_ERROR)
             );
         }
-
-
     }
-
 
     @GetMapping
     // @RequirePermission(action = "pagination", viewAll="view_all")
@@ -110,7 +105,7 @@ public abstract class BaseController <
     }
 
     @PostMapping
-    @RequirePermission(action = "store")
+    @RequirePermission(action = "store") // Lưu ý: Kiểm tra xem DB bạn đặt là 'classes:store' hay 'classes:create' nhé!
     public ResponseEntity<?> store(@Valid @RequestBody C request){
         try {
             E entity = service.create(request);
@@ -119,8 +114,9 @@ public abstract class BaseController <
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            String message = "Có lỗi xảy ra trong quá trình xử lý " + e.getMessage();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            e.printStackTrace(); // In lỗi ra console để debug dễ hơn
+            String message = "Có lỗi xảy ra: " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     ApiResource.error("INTERNAL_SERVER_ERROR", message, HttpStatus.INTERNAL_SERVER_ERROR)
             );
         }
@@ -129,7 +125,7 @@ public abstract class BaseController <
     @PutMapping("/{id}")
     @RequirePermission(action = "update")
     public ResponseEntity<?> update(
-            @PathVariable("id") Long id,
+            @PathVariable("id") Long id, // <--- Đã có ("id") -> OK
             @Valid @RequestBody U request
     ){
         try {
@@ -144,23 +140,25 @@ public abstract class BaseController <
             );
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    ApiResource.error("INTERNAL_SERVER_ERROR", "Có lỗi xảy ra trong quá trình cập nhật " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR)
+                    ApiResource.error("INTERNAL_SERVER_ERROR", "Có lỗi xảy ra: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR)
             );
         }
     }
 
+    // --- SỬA LỖI CHÍNH Ở ĐÂY ---
     @GetMapping("/{id}")
     @RequirePermission(action = "show")
-    public ResponseEntity<?> show( @PathVariable Long id) {
+    public ResponseEntity<?> show(@PathVariable("id") Long id) { // <--- THÊM ("id") VÀO ĐÂY
         E entity = repo.findById(id).orElseThrow(() ->new RuntimeException("Bản ghi không tồn tại"));
         R resource = mapper.tResource(entity);
         ApiResource<R> response = ApiResource.ok(resource, "SUCCESS");
         return ResponseEntity.ok(response);
     }
 
+    // --- SỬA LỖI CẢ Ở ĐÂY NỮA ---
     @DeleteMapping("/{id}")
     @RequirePermission(action = "delete")
-    public ResponseEntity<?> delete( @PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) { // <--- THÊM ("id") VÀO ĐÂY
         try {
             service.delete(id);
             return ResponseEntity.ok(ApiResource.message("Xóa bản ghi thành công", HttpStatus.OK));
@@ -194,6 +192,4 @@ public abstract class BaseController <
             );
         }
     }
-
-
 }
