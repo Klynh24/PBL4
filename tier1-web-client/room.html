@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Tutoring - Room</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="main-container">
+      <!-- Header -->
+      <header class="header">
+        <h1>Online Tutoring System</h1>
+        <div class="user-info">
+          <span class="quality-indicator quality-high" id="qualityIndicator">HIGH</span>
+          <span id="username-display">Loading...</span>
+          <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <div class="content-wrapper">
+        <!-- Left Sidebar - Room List -->
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <h2>Rooms</h2>
+            <button id="refreshRoomsBtn" class="btn btn-icon" title="Refresh">
+              🔄
+            </button>
+          </div>
+
+          <div class="room-controls">
+            <input
+              type="text"
+              id="roomNameInput"
+              placeholder="Enter room name"
+            />
+            <button id="createRoomBtn" class="btn btn-primary">
+              Create Room
+            </button>
+          </div>
+
+          <div id="roomList" class="room-list">
+            <p class="loading">Loading rooms...</p>
+          </div>
+        </aside>
+
+        <!-- Center - Screen Share Display -->
+        <main class="main-content">
+          <div id="notInRoom" class="not-in-room">
+            <h2>👈 Join or Create a Room</h2>
+            <p>Select a room from the sidebar to start tutoring session</p>
+          </div>
+
+          <div id="inRoom" class="in-room" style="display: none">
+            <div class="room-header">
+              <h2 id="currentRoomName">Room Name</h2>
+              <button id="leaveRoomBtn" class="btn btn-danger">
+                Leave Room
+              </button>
+            </div>
+
+            <!-- Screen Share Display -->
+            <div class="screen-share-container">
+              <canvas id="screenCanvas"></canvas>
+              <div id="sharedScreen" class="shared-screen">
+                <!-- Advanced screen sharing frames will be displayed here -->
+              </div>
+              <div id="noScreen" class="no-screen">
+                <p>📺 No screen sharing active</p>
+              </div>
+            </div>
+
+            <!-- Media Controls -->
+            <div class="media-controls">
+              <button
+                id="shareScreenBtn"
+                class="btn btn-media"
+                title="Share Screen"
+              >
+                🖥️ Share Screen
+              </button>
+              <button
+                id="stopScreenBtn"
+                class="btn btn-media btn-active"
+                style="display: none"
+                title="Stop Sharing"
+              >
+                🛑 Stop Sharing
+              </button>
+              <button
+                id="toggleVoiceBtn"
+                class="btn btn-media"
+                title="Toggle Voice"
+              >
+                🎤 Enable Voice
+              </button>
+              <div class="volume-indicator">
+                <span>Volume:</span>
+                <div id="volumeBar" class="volume-bar">
+                  <div id="volumeLevel" class="volume-level"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <!-- Right Sidebar - Chat -->
+        <aside class="chat-sidebar">
+          <div class="chat-header">
+            <h2>💬 Chat</h2>
+          </div>
+
+          <div id="chatMessages" class="chat-messages">
+            <p class="chat-info">Join a room to start chatting</p>
+          </div>
+
+          <div class="chat-input">
+            <input
+              type="text"
+              id="chatInput"
+              placeholder="Type a message..."
+              disabled
+            />
+            <button id="sendChatBtn" class="btn btn-primary" disabled>
+              Send
+            </button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Connection Status -->
+    <div id="connectionStatus" class="connection-status">
+      <span id="statusText">Connecting...</span>
+    </div>
+
+    <!-- Advanced Screen Sharing Scripts -->
+    <script src="js/frame-reassembler.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
