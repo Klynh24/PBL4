@@ -1,3 +1,7 @@
+/* src/pages/AssignmentModal.module.css */
+
+/* --- TỪ CODE GỐC --- */
+
 .overlay {
   position: fixed;
   top: 0;
@@ -67,6 +71,39 @@
     resize: vertical;
 }
 
+/* --- PHẦN THÊM MỚI VÀ SỬA ĐỔI ĐỂ HIỂN THỊ NGÀY/GIỜ CẠNH NHAU --- */
+
+/* 1. Container nhóm Ngày và Giờ */
+.dateTimeGroup {
+    display: flex;
+    gap: 15px; /* Khoảng cách giữa Ngày và Giờ */
+    /* Đây là .formGroup của toàn bộ nhóm, nên ta áp dụng margin-bottom */
+    margin-bottom: 16px;
+}
+
+/* 2. Đảm bảo mỗi formGroup con trong nhóm chiếm 50% */
+.dateInputWrapper,
+.timeInputWrapper {
+    /* Đảm bảo chúng hiển thị trên cùng một hàng */
+    flex: 1;
+    /* Loại bỏ margin-bottom mặc định của .formGroup ở đây,
+       vì nó đã được áp dụng ở .dateTimeGroup bên ngoài */
+    margin-bottom: 0;
+}
+
+/* 3. Style cho thông báo lỗi (Nếu có) */
+.errorMessage {
+    color: var(--danger-color, #d32f2f); /* Sử dụng màu đỏ */
+    text-align: center;
+    margin-top: 10px;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    background-color: #ffebee;
+}
+
+/* --- TỪ CODE GỐC --- */
 .actions {
   display: flex;
   justify-content: flex-end;

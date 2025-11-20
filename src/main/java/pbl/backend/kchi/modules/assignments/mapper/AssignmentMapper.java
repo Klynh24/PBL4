@@ -14,14 +14,14 @@ public interface AssignmentMapper extends BaseMapper<Assignments, AssignmentReso
 
     @Override
     @BaseMapperAnnotation
-    @Mapping(target = "classes", ignore = true)
+//    @Mapping(target = "classes", ignore = true)
     @Mapping(target = "submissions", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Assignments toEntity(StoreAssignmentRequest createRequest);
 
     @Override
     @BaseMapperAnnotation
-    @Mapping(target = "classes", ignore = true)
+//    @Mapping(target = "classes", ignore = true)
     @Mapping(target = "submissions", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromRequest(UpdateAssignmentRequest updateRequest, @MappingTarget Assignments entity);

@@ -1,5 +1,6 @@
 package pbl.backend.kchi.modules.assignments.services.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,6 +38,9 @@ public class AssignmentService extends BaseService<
     @Autowired
     private AssignmentRepository assignmentRepository;
 
+    @Autowired
+    private ClassRepository classRepository;
+
     public AssignmentService(
             AssignmentMapper assignmentMapper
     ){
@@ -50,7 +54,7 @@ public class AssignmentService extends BaseService<
 
     @Override
     protected String[] getRelations(){
-        return new String[]{"permissions"};
+        return new String[0];
     }
 
     @Override
@@ -63,5 +67,24 @@ public class AssignmentService extends BaseService<
         return assignmentMapper;
     }
 
+    @Override
+    @Transactional // Đảm bảo giao dịch
+    public Assignments create(StoreAssignmentRequest request){
+
+        // 1. TÌM KIẾM ĐỐI TƯỢNG CLASSES
+        Classes classesEntity = classRepository.findById(request.getClassId())
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy lớp học với ID: " + request.getClassId()));
+
+        Assignments payload = assignmentMapper.toEntity(request);
+
+        // 3. GÁN ĐỐI TƯỢNG CLASSES VÀO ENTITY
+        payload.setClasses(classesEntity);
+
+        // 4. LƯU ENTITY VÀO DB
+        Assignments entity = assignmentRepository.save(payload);
+
+
+        return entity;
+    }
 
 }

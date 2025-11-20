@@ -448,4 +448,26 @@
     text-decoration: underline;
 }
 
+.actionButton {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-bottom: 20px; /* Thêm khoảng cách với danh sách bài tập */
+    display: block; /* Đảm bảo nó chiếm đủ không gian nếu cần */
+    max-width: 200px; /* Giới hạn chiều rộng */
+}
+.actionButton:hover {
+    background-color: var(--primary-hover-color);
+}
+.actionButton:disabled {
+    background-color: var(--text-light);
+    cursor: not-allowed;
+}
+
 .message { text-align: center; padding-top: 40px; color: var(--text-light); }
