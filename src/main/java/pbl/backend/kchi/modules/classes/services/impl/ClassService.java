@@ -1,9 +1,11 @@
 package pbl.backend.kchi.modules.classes.services.impl;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -40,6 +42,7 @@ public class ClassService extends BaseService<
         > implements ClassServiceInterface {
 
     private final ClassMapper classMapper;
+
 
     @Autowired
     private UserMapper userMapper;
@@ -174,4 +177,42 @@ public class ClassService extends BaseService<
     protected ClassMapper getMapper(){
         return classMapper;
     }
+
+    @Transactional
+    @Override
+    public void addMembersByEmail(Long classId, List<String> userEmails) {
+        // 1. Lấy User hiện tại (Giáo viên)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetail userDetails = (CustomUserDetail) authentication.getPrincipal();
+        Long currentUserId = userDetails.getId();
+
+        // 2. Tìm lớp học
+        Classes classes = classRepository.findById(classId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lớp học với ID: " + classId));
+
+        // 3. Kiểm tra quyền sở hữu (Chỉ chủ lớp mới được thêm thành viên)
+        if (!classes.getUser().getId().equals(currentUserId)) {
+            throw new RuntimeException("Bạn không có quyền thêm thành viên vào lớp học này.");
+        }
+
+        // 4. Thêm từng thành viên
+        userEmails.forEach(email -> {
+            User memberToAdd = userRepository.findByEmail(email) // Giả định UserRepository có findByEmail
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với email: " + email));
+
+            // Kiểm tra trùng lặp
+            if (classes.getMembers().contains(memberToAdd) || classes.getUser().equals(memberToAdd)) {
+                logger.warn("User {} is already member or owner of class {}", email, classId);
+                return;
+            }
+
+            // Thêm vào Set
+            classes.getMembers().add(memberToAdd);
+        });
+
+        // 5. Lưu lại thay đổi
+        classRepository.save(classes);
+    }
+
+
 }

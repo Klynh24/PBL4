@@ -2,6 +2,7 @@ package pbl.backend.kchi.modules.classes.controllers;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,6 +15,7 @@ import pbl.backend.kchi.enum1.PermissionEnum;
 import pbl.backend.kchi.modules.classes.entities.Classes;
 import pbl.backend.kchi.modules.classes.mapper.ClassMapper;
 import pbl.backend.kchi.modules.classes.repositories.ClassRepository;
+import pbl.backend.kchi.modules.classes.requests.AddMembersRequest;
 import pbl.backend.kchi.modules.classes.requests.JoinClassRequest;
 import pbl.backend.kchi.modules.classes.requests.StoreClassRequest;
 import pbl.backend.kchi.modules.classes.requests.UpdateClassRequest;
@@ -53,6 +55,30 @@ public class ClassController extends BaseController<
         List<UserResource> members = ((ClassService) service).getClassMembers(id);
 
         return ResponseEntity.ok(ApiResource.ok(members, "SUCCESS"));
+    }
+
+    @PostMapping("/{id}/members")
+    @RequirePermission(action = "update") // Cần quyền cập nhật lớp để thêm thành viên
+    public ResponseEntity<?> addMembers(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody AddMembersRequest request
+    ) {
+        try {
+            // Gọi hàm addMembersByEmail trong ClassService
+            ((ClassService) service).addMembersByEmail(id, request.getUserEmails());
+
+            return ResponseEntity.ok(ApiResource.message("Thêm thành viên thành công!", HttpStatus.OK));
+
+        } catch (RuntimeException e) {
+            // Bắt các lỗi nghiệp vụ từ Service (ví dụ: Không tìm thấy email, không có quyền)
+            return ResponseEntity.badRequest().body(
+                    ApiResource.error("ERROR", "Lỗi khi thêm thành viên: " + e.getMessage(), HttpStatus.BAD_REQUEST)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    ApiResource.error("INTERNAL_ERROR", "Lỗi hệ thống", HttpStatus.INTERNAL_SERVER_ERROR)
+            );
+        }
     }
 
     @PostMapping("/join")

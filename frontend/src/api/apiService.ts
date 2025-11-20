@@ -25,15 +25,13 @@ import {
   ResetPasswordData
 } from '../types';
 
-// 1. Khởi tạo instance với tên là axiosInstance (thay vì api)
+// 1. Khởi tạo instance
 const axiosInstance = axios.create({
     baseURL: 'http://localhost:8080',
     headers: {
         'Content-Type': 'application/json',
     },
 });
-
-//
 
 // 2. Cấu hình Interceptor
 axiosInstance.interceptors.request.use(
@@ -148,10 +146,11 @@ export const createClass = async (classData: CreateClassData) => {
 export const getClassDetails = async (id: string) => {
     return await axiosInstance.get<ApiResponse<ClassDetails>>(`/api/v1/classes/${id}`);
 };
-// ⭐ HÀM JOIN CLASS ĐÃ ĐƯỢC SỬA LỖI
 export const joinClass = async (code: string) => {
     return await axiosInstance.post<ApiResponse<any>>('/api/v1/classes/join', { code });
 };
+// ⭐ XÓA HÀM getClassCode (vì đã có getClassDetails)
+// Export const getClassCode = async (id: string) => { ... }
 
 // --- ASSIGNMENTS ---
 export const getAssignments = async (classId: string) => {
@@ -193,8 +192,28 @@ export const createNotification = async (data: NotificationData) => {
 export const markNotificationAsRead = async (id: number) => {
     return await axiosInstance.put<ApiResponse<any>>(`/api/v1/notifications/${id}`, { read: true });
 };
-export const getClassMembers = (classId: string) => {
-    return axiosInstance.get<ApiResponse<User[]>>(`/api/v1/classes/${classId}/members`);
+
+export const getClassMembers = (id: string) => {
+    return axiosInstance.get<ApiResponse<User[]>>(`/api/v1/classes/${id}/members`);
+};
+
+// ⭐ HÀM THÊM HỌC SINH (SỬA LỖI PAYLOAD KHÔNG PHẢI LIST EMAIL)
+export const addStudentToClass = async (id: string, email: string) => {
+    const payload = {
+        userEmails: [email] // Payload phải là list<String> với tên trường 'userEmails'
+    };
+    return await axiosInstance.post<ApiResponse<any>>(`/api/v1/classes/${id}/members`, payload);
 };
 // Export mặc định để dùng ở nơi khác nếu cần
+export const uploadFile = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file); // 'file' phải khớp với @RequestParam("file") bên Backend
+
+    // Khi gửi FormData, axios tự động set Content-Type là multipart/form-data
+    return await axiosInstance.post<ApiResponse<string>>('/api/v1/upload', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+};
 export default axiosInstance;

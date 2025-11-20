@@ -14,5 +14,6 @@ import java.util.List;
 public interface ClassServiceInterface extends BaseServiceInterface<Classes, StoreClassRequest, UpdateClassRequest> {
     void joinClass(String code);
     List<UserResource> getClassMembers(Long classId);
+    void addMembersByEmail(Long classId, List<String> userEmails);
 }
 

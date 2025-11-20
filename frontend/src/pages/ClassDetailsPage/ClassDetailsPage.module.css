@@ -1,11 +1,38 @@
-/* src/pages/ClassDetailsPage/ClassDetailsPage.module.css */
+/* src/pages/ClassDetailsPage.module.css */
+
+/* --- 1. KHAI BÁO BIẾN MÀU SẮC (THEME) --- */
+:root {
+  --primary-color: #1976d2;       /* Xanh dương chủ đạo */
+  --primary-hover-color: #1565c0; /* Xanh đậm hơn khi hover */
+  --secondary-color: #e3f2fd;     /* Xanh nhạt nền */
+  --white: #ffffff;
+  --background-light: #f8f9fa;
+  --text-dark: #333333;
+  --text-light: #666666;
+  --border-color: #e0e0e0;
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  --success-color: #2e7d32;
+  --danger-color: #d32f2f;
+
+  /* TONE MÀU HỒNG CHO MÃ LỚP */
+  --pink-primary: #e91e63;
+  --pink-light: #fce4ec;
+  --pink-hover: #d81b60;
+}
+
+/* --- 2. LAYOUT CHÍNH (Grid Layout) --- */
 .pageLayout {
   display: grid;
   grid-template-columns: 300px 1fr;
-  height: calc(100vh - 64px - 64px);
+  /* Trừ đi header (nếu có) */
+  height: calc(100vh - 64px);
   gap: 24px;
+  padding: 24px;
+  background-color: #f0f2f5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* --- 3. SIDEBAR --- */
 .sidebar {
   background-color: var(--white);
   border-radius: 12px;
@@ -13,58 +40,151 @@
   padding: 24px;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 .classInfo {
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 16px;
   margin-bottom: 16px;
 }
-.className { font-size: 24px; margin: 0; }
-.teacherName { margin: 4px 0 0 0; color: var(--text-light); }
-.sidebarNav {
+.className { font-size: 22px; margin: 0; font-weight: 700; color: var(--text-dark); }
+.teacherName { margin: 4px 0 0 0; color: var(--text-light); font-size: 14px; }
+
+/* =========================================
+   --- STYLE MỚI CHO MÃ LỚP HỌC (TONE HỒNG) ---
+   ========================================= */
+
+.classCodeContainer {
+  margin-top: 20px;
+  background-color: #fff;
+  border: 1px solid var(--pink-light);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(233, 30, 99, 0.05);
+}
+
+.classCodeLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pink-primary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.codeInputWrapper {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 8px;
+}
+
+/* Input Readonly */
+.classCodeInput {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 16px;
+  font-family: 'Courier New', Courier, monospace; /* Font code */
+  font-weight: 700;
+  color: #333;
+  background-color: #f5f5f5; /* Nền xám nhẹ giống readonly */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s;
+  cursor: text; /* Con trỏ text để dễ bôi đen */
+}
+
+.classCodeInput:focus {
+  border-color: var(--pink-primary);
+  background-color: #fff;
+}
+
+/* Nút Copy màu hồng */
+.copyButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--pink-light); /* Nền hồng nhạt */
+  color: var(--pink-primary);          /* Icon hồng đậm */
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.copyButton:hover {
+  background-color: var(--pink-primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(233, 30, 99, 0.3);
+}
+
+.copyButton:active {
+  transform: translateY(0);
+}
+
+/* Trạng thái khi đã copy thành công (biến thành màu xanh) */
+.copyButton.copied {
+  background-color: var(--success-color);
+  color: white;
+  pointer-events: none;
+}
+
+/* ========================================= */
+
+.sidebarNav {
+  display: flex; flex-direction: column; gap: 8px;
 }
 .navLink {
   display: flex; align-items: center; gap: 12px; padding: 12px;
   border-radius: 8px; text-decoration: none; color: var(--text-dark);
   font-weight: 500; transition: background-color 0.2s, color 0.2s;
   border: none; background: none; cursor: pointer;
-  width: 100%; text-align: left; font-size: 16px;
+  width: 100%; text-align: left; font-size: 15px;
 }
 .navLink:hover { background-color: var(--background-light); }
-.navLink.active { background-color: var(--primary-color); color: var(--white); }
+.navLink.active { background-color: var(--secondary-color); color: var(--primary-color); font-weight: 600; }
 
+/* --- 4. MAIN CONTENT --- */
 .mainContent {
   display: flex; flex-direction: column; min-height: 0;
 }
 .contentHeader {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 16px;
+  background-color: var(--white);
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow-color);
 }
-.headerText { font-size: 20px; font-weight: 600; }
+.headerText { font-size: 20px; font-weight: 600; color: var(--text-dark); }
 .joinMeetingButton {
-    display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
-    border: none; border-radius: 8px; background-color: var(--primary-color);
-    color: var(--white); font-size: 16px; font-weight: bold; cursor: pointer;
-    text-decoration: none; transition: background-color 0.2s;
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
+  border: none; border-radius: 8px; background-color: var(--primary-color);
+  color: var(--white); font-size: 15px; font-weight: 600; cursor: pointer;
+  text-decoration: none; transition: background-color 0.2s;
 }
 .joinMeetingButton:hover { background-color: var(--primary-hover-color); }
 
 .tabContent {
   background-color: var(--white); padding: 24px; border-radius: 12px;
-  box-shadow: 0 4px 12px var(--shadow-color); 
+  box-shadow: 0 4px 12px var(--shadow-color);
   flex-grow: 1; overflow-y: auto;
+  margin-top: 10px;
 }
 
+/* --- 5. POSTS & FILES (Giữ nguyên) --- */
 .postsContainer { display: flex; flex-direction: column; height: 100%; }
 .postsList { flex-grow: 1; display: flex; flex-direction: column; gap: 24px; margin-bottom: 24px; }
 .postItem { display: flex; gap: 16px; }
 .postAvatar {
-    width: 40px; height: 40px; border-radius: 50%; background-color: var(--primary-color);
-    color: var(--white); display: flex; align-items: center; justify-content: center;
-    font-weight: bold; flex-shrink: 0;
+  width: 40px; height: 40px; border-radius: 50%; background-color: var(--secondary-color);
+  color: var(--primary-color); display: flex; align-items: center; justify-content: center;
+  font-weight: bold; flex-shrink: 0;
 }
 .postContent p { margin: 4px 0 0 0; line-height: 1.5; }
 .postHeader { display: flex; align-items: baseline; gap: 8px; }
@@ -74,86 +194,258 @@
 .newPostInputWrapper textarea { width: 100%; border: none; resize: none; font-family: inherit; font-size: 16px; }
 .newPostInputWrapper textarea:focus { outline: none; }
 .newPostActions { display: flex; justify-content: flex-end; margin-top: 8px; }
-.sendButton { padding: 8px 16px; font-size: 14px; }
-.meetingPost {
-    background-image: linear-gradient(135deg, #fceef2, #fff5f7); border: 1px solid var(--border-color);
-    border-left: 4px solid var(--primary-color); border-radius: 8px; padding: 16px;
-    display: flex; justify-content: space-between; align-items: center;
-}
-.meetingInfo { display: flex; align-items: center; gap: 16px; }
-.meetingInfo h4 { margin: 0 0 4px 0; font-size: 18px; }
-.meetingInfo p { margin: 0; color: var(--text-light); }
-.meetingIcon { font-size: 24px; color: var(--primary-color); animation: pulse 2s infinite; }
-@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-.joinButton {
-    padding: 10px 20px; border: none; border-radius: 8px;
-    background-color: var(--primary-hover-color); color: var(--white); font-weight: 500; text-decoration: none;
+.sendButton { padding: 8px 16px; font-size: 14px; background-color: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer; }
+
+/* File List */
+.fileList { list-style: none; padding: 0; margin: 0; }
+.fileItem { display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 12px; border-radius: 8px; transition: background-color 0.2s; }
+.fileItem:hover { background-color: var(--background-light); }
+.fileInfo { display: flex; align-items: center; gap: 16px; }
+.fileIcon { font-size: 24px; color: var(--primary-color); }
+.fileName { font-weight: 500; }
+.fileMeta { display: grid; grid-template-columns: 120px 100px 40px; align-items: center; gap: 16px; color: var(--text-light); font-size: 14px; }
+.fileActionButton { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text-light); }
+
+/* ==========================================================================
+   --- 6. PHẦN MEMBER & MODAL ---
+   ========================================================================== */
+
+/* Container chính của tab Members */
+.membersContainer {
+    max-width: 900px;
+    margin: 0 auto;
 }
 
-.actionButton {
-  padding: 10px 20px; border: none; border-radius: 8px; background-color: var(--primary-color);
-  color: var(--white); font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 24px;
-  display: inline-flex; align-items: center; gap: 8px;
+.sectionTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--background-light);
+    padding-bottom: 8px;
 }
-.assignmentList { display: flex; flex-direction: column; gap: 16px; }
-.assignmentItem { display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid var(--border-color); border-radius: 8px; }
-.assignmentTitle { margin: 0 0 4px 0; font-size: 18px; }
-.assignmentDue { margin: 0; font-size: 14px; color: var(--text-light); }
-.submitButton { padding: 8px 16px; border: 1px solid var(--primary-color); color: var(--primary-color); background-color: var(--white); border-radius: 6px; cursor: pointer; }
 
-.memberList { padding: 0; margin: 0; list-style-type: none; }
-.memberItem { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-color); }
-.memberItem:last-child { border: none; }
-.memberAvatar {
-    width: 32px; height: 32px; border-radius: 50%; background-color: var(--background-light);
-    color: var(--primary-color); display: flex; align-items: center; justify-content: center;
-    font-weight: bold;
-}
-.memberName { font-weight: 500; }
-
-.fileList {
-    list-style: none;
+.memberList {
     padding: 0;
     margin: 0;
+    list-style-type: none;
 }
-.fileItem {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    padding: 12px;
-    border-radius: 8px;
-    transition: background-color 0.2s;
-}
-.fileItem:hover {
-    background-color: var(--background-light);
-}
-.fileInfo {
+
+.memberItem {
     display: flex;
     align-items: center;
-    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
 }
-.fileIcon {
-    font-size: 24px;
+.memberItem:last-child { border: none; }
+
+.memberAvatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background-color: var(--background-light);
     color: var(--primary-color);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 16px;
+    margin-right: 16px;
+    flex-shrink: 0;
 }
-.fileName {
-    font-weight: 500;
+
+.memberInfo {
+    display: flex;
+    flex-direction: column;
 }
-.fileMeta {
-    display: grid;
-    grid-template-columns: 120px 100px 40px;
+
+.memberName {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 15px;
+}
+
+.memberEmail {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-top: 2px;
+}
+
+/* Header phần danh sách sinh viên (chứa tiêu đề và nút thêm) */
+.studentsHeader {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 16px;
+    margin-top: 32px;
+    margin-bottom: 16px;
+}
+
+/* Nút "Thêm sinh viên" */
+.inviteButton {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex; align-items: center;
+    transition: all 0.2s;
+}
+
+.inviteButton:hover {
+    background-color: #d1e9fc; /* Màu hover đậm hơn chút */
+    transform: translateY(-1px);
+}
+
+.emptyMessage {
+    text-align: center;
+    color: var(--text-light);
+    font-style: italic;
+    padding: 30px;
+    background-color: var(--background-light);
+    border-radius: 8px;
+}
+
+/* --- STYLE CHO MODAL THÊM SINH VIÊN --- */
+
+.modalOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px); /* Hiệu ứng mờ nền */
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1100;
+    animation: fadeIn 0.2s ease-out;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modalContent {
+    background: var(--white);
+    padding: 32px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    position: relative;
+    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.closeButtonIcon {
+    position: absolute; top: 16px; right: 16px;
+    background: none; border: none;
+    color: var(--text-light);
+    font-size: 20px; cursor: pointer;
+    padding: 8px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: background-color 0.2s;
+}
+.closeButtonIcon:hover {
+    background-color: var(--background-light);
+    color: var(--text-dark);
+}
+
+.modalHeaderCenter {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.iconCircle {
+    width: 56px; height: 56px;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 16px auto;
+}
+
+.modalTitleCenter {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    margin-top: 0;
+}
+
+.modalSubtitle {
     color: var(--text-light);
     font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
 }
-.fileActionButton {
+
+.addForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.inputGroup {
+    position: relative;
+}
+
+.inputIcon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    font-size: 18px;
+}
+
+.modernInput {
+    width: 100%;
+    padding: 12px 12px 12px 44px; /* Padding left lớn để tránh icon */
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 16px;
+    color: var(--text-dark);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    box-sizing: border-box; /* Đảm bảo padding không làm vỡ layout */
+}
+
+.modernInput:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+}
+
+.modalActionsFull {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.submitButtonFull {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;
+}
+
+.submitButtonFull:hover {
+    background-color: var(--primary-hover-color);
+}
+
+.cancelButtonGhost {
     background: none;
     border: none;
-    cursor: pointer;
-    font-size: 18px;
     color: var(--text-light);
+    padding: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.cancelButtonGhost:hover {
+    color: var(--text-dark);
+    text-decoration: underline;
 }
 
 .message { text-align: center; padding-top: 40px; color: var(--text-light); }
-
