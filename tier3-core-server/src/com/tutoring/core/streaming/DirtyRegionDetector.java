@@ -2,20 +2,6 @@ package com.tutoring.core.streaming;
 
 import java.util.*;
 
-/**
- * ✅ PHASE 2 UPGRADE: SIMD-Accelerated Dirty Region Detector
- * 
- * Detects changed regions between consecutive frames using SIMD operations
- * 
- * SIMD OPTIMIZATIONS:
- * - Uses Java Vector API (jdk.incubator.vector) for parallel pixel comparison
- * - Processes 8-32 pixels simultaneously (AVX2/AVX-512)
- * - Automatic fallback to scalar operations if Vector API unavailable
- * 
- * PERFORMANCE:
- * - SIMD: 4-6x faster pixel comparison (30-40ms → 5-10ms)
- * - Scalar fallback: Original optimized algorithm
- */
 public class DirtyRegionDetector {
     private static final int BLOCK_SIZE = 64;
     private static final int CHANGE_THRESHOLD = 1000;
@@ -27,15 +13,10 @@ public class DirtyRegionDetector {
 
     private final List<Rectangle> reusableDirtyRegions = new ArrayList<>(256);
 
-    // ✅ PHASE 2: SIMD - Vector API availability check
     private static final boolean VECTOR_API_AVAILABLE = checkVectorAPIAvailable();
 
-    /**
-     * ✅ PHASE 2: SIMD - Check if Vector API is available
-     */
     private static boolean checkVectorAPIAvailable() {
         try {
-            // Try to load Vector API classes
             Class<?> vectorClass = Class.forName("jdk.incubator.vector.ByteVector");
             Class<?> speciesClass = Class.forName("jdk.incubator.vector.VectorSpecies");
             return vectorClass != null && speciesClass != null;
@@ -45,12 +26,8 @@ public class DirtyRegionDetector {
         }
     }
 
-    /**
-     * ✅ PHASE 2: SIMD - Get optimal vector lane count
-     */
     private static int getVectorLanes() {
         try {
-            // Use reflection to get SPECIES_256 (32 bytes = 8 pixels for ARGB)
             Class<?> byteVectorClass = Class.forName("jdk.incubator.vector.ByteVector");
             Object species = byteVectorClass.getField("SPECIES_256").get(null);
             java.lang.reflect.Method lengthMethod = species.getClass().getMethod("length");
@@ -63,19 +40,6 @@ public class DirtyRegionDetector {
         }
     }
 
-    /**
-     * Detect dirty (changed) regions between current and previous frame
-     * 
-     * OPTIMIZATIONS:
-     * - Reuses previous frame buffer (avoids clone on every frame)
-     * - Reusable rectangle list (reduces GC pressure)
-     * - Early exit optimizations in block comparison
-     * 
-     * @param currentFrame Raw frame data (ARGB format)
-     * @param width        Frame width in pixels
-     * @param height       Frame height in pixels
-     * @return List of rectangles representing changed regions
-     */
     public List<Rectangle> detectDirtyRegions(byte[] currentFrame, int width, int height) {
         if (previousFrame == null || width != frameWidth || height != frameHeight) {
             int frameSize = width * height * 4;
@@ -92,11 +56,8 @@ public class DirtyRegionDetector {
 
         int blocksX = (int) Math.ceil((double) width / BLOCK_SIZE);
         int blocksY = (int) Math.ceil((double) height / BLOCK_SIZE);
-
-        // ✅ OPTIMIZATION: Pre-calculate threshold for early exit
         int earlyExitThreshold = CHANGE_THRESHOLD / 100;
 
-        // Scan in blocks
         for (int by = 0; by < blocksY; by++) {
             for (int bx = 0; bx < blocksX; bx++) {
                 int x = bx * BLOCK_SIZE;
@@ -104,8 +65,6 @@ public class DirtyRegionDetector {
                 int w = Math.min(BLOCK_SIZE, width - x);
                 int h = Math.min(BLOCK_SIZE, height - y);
 
-                // ✅ PHASE 2: SIMD - Use vectorized comparison if available, else scalar
-                // fallback
                 boolean changed = VECTOR_API_AVAILABLE
                         ? isBlockChangedVectorized(currentFrame, previousFrame, x, y, w, h, width, earlyExitThreshold)
                         : isBlockChanged(currentFrame, previousFrame, x, y, w, h, width, earlyExitThreshold);
@@ -125,69 +84,47 @@ public class DirtyRegionDetector {
         return new ArrayList<>(merged); // Return new list (caller owns it)
     }
 
-    /**
-     * ✅ PHASE 2: SIMD - Vectorized pixel comparison using Java Vector API
-     * Processes 8 pixels simultaneously (32 bytes = 8 ARGB pixels)
-     * 
-     * @return true if block changed, false otherwise
-     */
     private boolean isBlockChangedVectorized(byte[] current, byte[] previous,
             int x, int y, int w, int h, int frameWidth, int earlyExitThreshold) {
         try {
-            // Use reflection to access Vector API (for compatibility with different JDK
-            // versions)
             Class<?> byteVectorClass = Class.forName("jdk.incubator.vector.ByteVector");
             Class<?> vectorSpeciesClass = Class.forName("jdk.incubator.vector.VectorSpecies");
             Class<?> vectorMaskClass = Class.forName("jdk.incubator.vector.VectorMask");
             Class<?> vectorOperatorsClass = Class.forName("jdk.incubator.vector.VectorOperators");
 
-            // Get SPECIES_256 (32-byte vectors = 8 ARGB pixels)
             Object species = byteVectorClass.getField("SPECIES_256").get(null);
             int vectorLength = (Integer) vectorSpeciesClass.getMethod("length").invoke(species);
 
-            int bytesPerPixel = 4; // ARGB
+            int bytesPerPixel = 4;
             int baseOffset = (y * frameWidth + x) * bytesPerPixel;
             int pixelCount = w * h;
 
             int changedPixels = 0;
-            int vectorBytes = vectorLength; // 32 bytes = 8 pixels
+            int vectorBytes = vectorLength;
 
-            // Process pixels in vector-sized chunks
             for (int i = 0; i < pixelCount; i += 8) {
                 int offset = baseOffset + (i * bytesPerPixel);
-
-                // Check bounds
                 if (offset + vectorBytes - 1 >= current.length ||
                         offset + vectorBytes - 1 >= previous.length) {
-                    // Fallback to scalar for remaining pixels
+
                     break;
                 }
-
-                // Load vectors from current and previous frames
                 Object currentVec = byteVectorClass.getMethod("fromArray", vectorSpeciesClass, byte[].class, int.class)
                         .invoke(null, species, current, offset);
                 Object previousVec = byteVectorClass.getMethod("fromArray", vectorSpeciesClass, byte[].class, int.class)
                         .invoke(null, species, previous, offset);
 
-                // Compute absolute difference: |current - previous|
                 Object diff = byteVectorClass.getMethod("sub", byteVectorClass)
                         .invoke(currentVec, previousVec);
                 diff = byteVectorClass.getMethod("abs").invoke(diff);
-
-                // Compare with threshold (check RGB channels, skip alpha)
-                // Note: This is simplified - full implementation would check each channel
-                // separately
                 Object thresholdVec = byteVectorClass.getMethod("broadcast", vectorSpeciesClass, byte.class)
                         .invoke(null, species, (byte) RGB_THRESHOLD);
                 Object mask = byteVectorClass.getMethod("compare",
                         Class.forName("jdk.incubator.vector.VectorOperators$Comparison"), byteVectorClass)
                         .invoke(diff, vectorOperatorsClass.getField("GT").get(null), thresholdVec);
 
-                // Count changed pixels
                 int trueCount = (Integer) vectorMaskClass.getMethod("trueCount").invoke(mask);
                 changedPixels += trueCount;
-
-                // Early exit
                 if (changedPixels > earlyExitThreshold) {
                     return true;
                 }
@@ -196,24 +133,19 @@ public class DirtyRegionDetector {
             return changedPixels > earlyExitThreshold;
 
         } catch (Exception e) {
-            // Fallback to scalar if Vector API fails
             System.err.println("[DirtyRegionDetector] Vector API error, using scalar fallback: " + e.getMessage());
             return isBlockChanged(current, previous, x, y, w, h, frameWidth, earlyExitThreshold);
         }
     }
 
-    /**
-     * Scalar fallback: Original optimized pixel comparison algorithm
-     */
     private boolean isBlockChanged(byte[] current, byte[] previous,
             int x, int y, int w, int h, int frameWidth, int earlyExitThreshold) {
         int changedPixels = 0;
-        int bytesPerPixel = 4; // ARGB format
+        int bytesPerPixel = 4;
         int stride = frameWidth * bytesPerPixel;
 
-        // ✅ OPTIMIZATION: Calculate base offset once
         int baseOffset = (y * frameWidth + x) * bytesPerPixel;
-        int maxOffset = current.length - 3; // Safety check
+        int maxOffset = current.length - 3;
 
         for (int dy = 0; dy < h; dy++) {
             int rowOffset = baseOffset + (dy * stride);

@@ -1,0 +1,36 @@
+# Compiled class files
+*.class
+
+# Java bytecode
+*.jar
+!tier2-proxy-server/target/*.jar
+
+# Maven
+tier2-proxy-server/target/
+tier2-proxy-server/.mvn/
+
+# Compiled binaries
+tier3-core-server/bin/
+
+# Log files
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# Node modules (if any)
+node_modules/
+
+# Temporary files
+*.tmp
+*.temp
+

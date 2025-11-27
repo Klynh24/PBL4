@@ -1,18 +1,10 @@
 package com.tutoring.core.streaming;
 
-/**
- * Quality levels for adaptive bitrate streaming
- * Each level defines resolution, frame rate, and JPEG compression quality
- */
 public enum QualityLevel {
-    // ✅ PERFORMANCE OPTIMIZATION: Lower quality and FPS for low-spec/localhost
-    // testing
-    // Reduced JPEG quality (0.5) reduces CPU usage by 40-50%
-    // Reduced FPS (10) reduces overall CPU load
-    HIGH(1280, 720, 10, 0.5f), // HD @ 10 FPS, medium quality (was 1920x1080 @ 15 FPS, 0.85)
-    MEDIUM(1280, 720, 10, 0.5f), // HD @ 10 FPS, medium quality (was 0.75f)
-    LOW(854, 480, 8, 0.4f), // SD @ 8 FPS, low quality (was 5 FPS, 0.65f)
-    MINIMAL(640, 360, 5, 0.4f); // Minimal @ 5 FPS, low quality (was 3 FPS, 0.50f)
+    HIGH(1280, 720, 12, 0.6f), // 720p @ 12 FPS, Q:0.6
+    MEDIUM(1024, 576, 10, 0.5f), // 576p @ 10 FPS, Q:0.5
+    LOW(854, 480, 8, 0.4f), // 480p @ 8 FPS, Q:0.4
+    MINIMAL(640, 360, 5, 0.35f);
 
     public final int width;
     public final int height;
@@ -26,17 +18,10 @@ public enum QualityLevel {
         this.jpegQuality = jpegQuality;
     }
 
-    /**
-     * Convert to protocol string for transmission
-     * Format: LEVEL:WIDTH:HEIGHT:FPS:QUALITY
-     */
     public String toProtocol() {
         return name() + ":" + width + ":" + height + ":" + fps + ":" + jpegQuality;
     }
 
-    /**
-     * Get estimated bandwidth usage (KB/s)
-     */
     public int getEstimatedBandwidth() {
         switch (this) {
             case HIGH:

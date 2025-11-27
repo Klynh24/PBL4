@@ -1,6 +1,6 @@
 // Main application logic for room page
 
-const PROXY_SERVER_URL = "ws://localhost:8089/connect";
+const PROXY_SERVER_URL = "wss://192.168.38.74/connect";
 
 class TutoringApp {
   constructor() {
@@ -31,10 +31,10 @@ class TutoringApp {
     // Reduced resolution, FPS, and JPEG quality to reduce CPU usage
     this.currentQuality = {
       level: "HIGH",
-      width: 1280,        // Max 720p (was 1920)
-      height: 720,        // Max 720p (was 1080)
-      fps: 10,            // 10 FPS target (was 15)
-      jpegQuality: 0.5,   // Medium quality (was 0.85)
+      width: 1280, // Max 720p (was 1920)
+      height: 720, // Max 720p (was 1080)
+      fps: 10, // 10 FPS target (was 15)
+      jpegQuality: 0.5, // Medium quality (was 0.85)
     };
 
     // Media device availability (fix for missing camera/microphone)
@@ -591,9 +591,9 @@ class TutoringApp {
       this.screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: {
           mediaSource: "screen",
-          width: { ideal: 1280, max: 1280 },      // ✅ Limit to 720p max
-          height: { ideal: 720, max: 720 },       // ✅ Limit to 720p max
-          frameRate: { ideal: 10, max: 15 }       // ✅ Target 10 FPS (max 15)
+          width: { ideal: 1280, max: 1280 }, // ✅ Limit to 720p max
+          height: { ideal: 720, max: 720 }, // ✅ Limit to 720p max
+          frameRate: { ideal: 10, max: 15 }, // ✅ Target 10 FPS (max 15)
         },
         audio: false, // ✅ FIX: Disable audio to prevent feedback loop
       });
@@ -1077,9 +1077,9 @@ class TutoringApp {
       this.screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: {
           mediaSource: "screen",
-          width: { ideal: Math.min(quality.width, 1280), max: 1280 },      // ✅ Cap at 720p
-          height: { ideal: Math.min(quality.height, 720), max: 720 },      // ✅ Cap at 720p
-          frameRate: { ideal: Math.min(quality.fps, 10), max: 15 },        // ✅ Target 10 FPS max
+          width: { ideal: Math.min(quality.width, 1280), max: 1280 }, // ✅ Cap at 720p
+          height: { ideal: Math.min(quality.height, 720), max: 720 }, // ✅ Cap at 720p
+          frameRate: { ideal: Math.min(quality.fps, 10), max: 15 }, // ✅ Target 10 FPS max
         },
         audio: false, // ✅ FIX: Disable audio to prevent feedback loop
       });
