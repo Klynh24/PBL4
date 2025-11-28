@@ -1,4 +1,4 @@
-package com.tutoring.core.streaming;
+package com.tutoring.core.streaming.encoding;
 
 import java.awt.image.BufferedImage;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.tutoring.core.streaming;
+package com.tutoring.core.concurrency.pool;
 
 import java.util.Arrays;
 

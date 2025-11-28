@@ -1,4 +1,4 @@
-package com.tutoring.core;
+package com.tutoring.core.management;
 
 import java.util.concurrent.ConcurrentHashMap;
 

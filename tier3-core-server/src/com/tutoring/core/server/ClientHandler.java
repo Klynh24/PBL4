@@ -1,8 +1,11 @@
-package com.tutoring.core;
+package com.tutoring.core.server;
 
-import com.tutoring.core.streaming.RetransmissionBuffer;
-import com.tutoring.core.streaming.ClientStreamState;
-import com.tutoring.core.streaming.NetworkQualityMonitor;
+import com.tutoring.core.management.RoomManager;
+import com.tutoring.core.management.UserManager;
+import com.tutoring.core.model.ChatMessage;
+import com.tutoring.core.model.ClientStreamState;
+import com.tutoring.core.streaming.retransmission.RetransmissionBuffer;
+import com.tutoring.core.streaming.network.NetworkQualityMonitor;
 
 import java.io.*;
 import java.net.*;

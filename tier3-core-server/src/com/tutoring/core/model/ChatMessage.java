@@ -1,4 +1,4 @@
-package com.tutoring.core;
+package com.tutoring.core.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

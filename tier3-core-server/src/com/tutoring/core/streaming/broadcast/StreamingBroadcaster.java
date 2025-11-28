@@ -1,4 +1,4 @@
-package com.tutoring.core.streaming;
+package com.tutoring.core.streaming.broadcast;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

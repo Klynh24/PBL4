@@ -1,4 +1,4 @@
-package com.tutoring.core.streaming;
+package com.tutoring.core.streaming.encoding;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;

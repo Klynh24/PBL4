@@ -1,5 +1,6 @@
-package com.tutoring.core;
+package com.tutoring.core.management;
 
+import com.tutoring.core.model.ChatMessage;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 

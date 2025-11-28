@@ -1,4 +1,4 @@
-package com.tutoring.core.streaming;
+package com.tutoring.core.model;
 
 /**
  * ✅ RESTORED: Per-Client Stream State

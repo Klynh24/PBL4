@@ -1,4 +1,4 @@
-package com.tutoring.core.streaming;
+package com.tutoring.core.monitoring;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

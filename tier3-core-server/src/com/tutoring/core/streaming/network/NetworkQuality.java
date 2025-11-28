@@ -1,4 +1,4 @@
-package com.tutoring.core.streaming;
+package com.tutoring.core.streaming.network;
 
 /**
  * Network quality classification based on packet loss rate

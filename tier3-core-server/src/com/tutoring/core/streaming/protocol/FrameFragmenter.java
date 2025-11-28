@@ -1,4 +1,4 @@
-package com.tutoring.core.streaming;
+package com.tutoring.core.streaming.protocol;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

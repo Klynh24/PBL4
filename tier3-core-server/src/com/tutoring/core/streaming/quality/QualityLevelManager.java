@@ -1,5 +1,7 @@
-package com.tutoring.core.streaming;
+package com.tutoring.core.streaming.quality;
 
+import com.tutoring.core.streaming.network.NetworkQualityMonitor;
+import com.tutoring.core.streaming.network.NetworkQuality;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

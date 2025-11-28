@@ -1,4 +1,4 @@
-package com.tutoring.core.streaming;
+package com.tutoring.core.streaming.network;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;

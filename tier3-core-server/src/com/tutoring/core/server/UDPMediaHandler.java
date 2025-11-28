@@ -1,7 +1,10 @@
-package com.tutoring.core;
+package com.tutoring.core.server;
 
-import com.tutoring.core.streaming.NetworkQualityMonitor;
-import com.tutoring.core.streaming.BufferPool;
+import com.tutoring.core.management.RoomManager;
+import com.tutoring.core.server.ClientHandler;
+import com.tutoring.core.server.BroadcastWorker;
+import com.tutoring.core.streaming.network.NetworkQualityMonitor;
+import com.tutoring.core.concurrency.pool.BufferPool;
 
 import java.io.IOException;
 import java.net.*;
@@ -15,6 +18,7 @@ public class UDPMediaHandler implements Runnable {
     private final RoomManager roomManager;
     private final ConcurrentHashMap<String, ClientHandler> clientHandlers;
     private final NetworkQualityMonitor qualityMonitor;
+    private final BroadcastWorker broadcastWorker; // ✅ WORKER PATTERN: Parallel broadcaster
 
     private final ConcurrentHashMap<Integer, Byte> frameMediaTypes = new ConcurrentHashMap<>();
 
@@ -26,11 +30,13 @@ public class UDPMediaHandler implements Runnable {
 
     public UDPMediaHandler(DatagramChannel channel, RoomManager roomManager,
             ConcurrentHashMap<String, ClientHandler> clientHandlers,
-            NetworkQualityMonitor qualityMonitor) {
+            NetworkQualityMonitor qualityMonitor,
+            BroadcastWorker broadcastWorker) {
         this.channel = channel;
         this.roomManager = roomManager;
         this.clientHandlers = clientHandlers;
         this.qualityMonitor = qualityMonitor;
+        this.broadcastWorker = broadcastWorker;
     }
 
     @Override
@@ -221,43 +227,18 @@ public class UDPMediaHandler implements Runnable {
         if (members == null)
             return;
 
-        int broadcastCount = 0;
-        for (String memberId : members) {
-            if (memberId.equals(senderId))
-                continue;
-
-            ClientHandler handler = clientHandlers.get(memberId);
-            if (handler == null)
-                continue;
-
-            InetSocketAddress udpAddress = handler.getUdpAddress();
-            if (udpAddress == null)
-                continue;
-
-            try {
-                ByteBuffer sendBuffer;
-
-                if (broadcastCount == 0) {
-                    sendBuffer = ByteBuffer.wrap(packetData, 0, packetLength);
-                } else {
-                    byte[] packetCopy = bufferPool.acquire(packetLength);
-                    System.arraycopy(packetData, 0, packetCopy, 0, packetLength);
-                    sendBuffer = ByteBuffer.wrap(packetCopy, 0, packetLength);
-                }
-
-                channel.send(sendBuffer, udpAddress);
-                broadcastCount++;
-
-                qualityMonitor.recordPacketSent(memberId);
-
-            } catch (IOException e) {
-                System.err.println("[UDP Handler] Error sending to " + memberId + ": " + e.getMessage());
-            }
-        }
+        // ✅ WORKER PATTERN: Use parallel broadcast worker for high performance
+        int broadcastCount = broadcastWorker.broadcastSmart(
+            members, 
+            senderId, 
+            packetData, 
+            packetLength, 
+            mediaType
+        );
 
         if (broadcastCount > 0) {
             String mediaTypeName = (mediaType == 1) ? "VOICE" : (mediaType == 2) ? "SCREEN" : "UNKNOWN";
-            System.out.println("[UDP Handler] Broadcast " + mediaTypeName + " (advanced) from " +
+            System.out.println("[UDP Handler] ✅ PARALLEL Broadcast " + mediaTypeName + " (advanced) from " +
                     senderId + " in room " + roomId + " to " + broadcastCount + " recipients (" + packetLength
                     + " bytes)");
         }
@@ -269,37 +250,22 @@ public class UDPMediaHandler implements Runnable {
         if (members == null)
             return;
 
-        int broadcastCount = 0;
-        for (String memberId : members) {
-            if (memberId.equals(senderId))
-                continue;
+        // Extract media data from original packet
+        byte[] mediaData = bufferPool.acquire(length);
+        System.arraycopy(data, offset, mediaData, 0, length);
 
-            ClientHandler handler = clientHandlers.get(memberId);
-            if (handler == null)
-                continue;
-
-            InetSocketAddress udpAddress = handler.getUdpAddress();
-            if (udpAddress == null)
-                continue;
-
-            try {
-                byte[] mediaData = bufferPool.acquire(length);
-                System.arraycopy(data, offset, mediaData, 0, length);
-
-                ByteBuffer sendBuffer = ByteBuffer.wrap(mediaData, 0, length);
-                channel.send(sendBuffer, udpAddress);
-                broadcastCount++;
-
-                qualityMonitor.recordPacketSent(memberId);
-
-            } catch (IOException e) {
-                System.err.println("[UDP Handler] Error sending to " + memberId + ": " + e.getMessage());
-            }
-        }
+        // ✅ WORKER PATTERN: Use parallel broadcast worker for high performance
+        int broadcastCount = broadcastWorker.broadcastSmart(
+            members, 
+            senderId, 
+            mediaData, 
+            length, 
+            mediaType
+        );
 
         if (broadcastCount > 0) {
             String mediaTypeName = (mediaType == 1) ? "VOICE" : (mediaType == 2) ? "SCREEN" : "UNKNOWN";
-            System.out.println("[UDP Handler] Broadcast " + mediaTypeName + " from " +
+            System.out.println("[UDP Handler] ✅ PARALLEL Broadcast " + mediaTypeName + " from " +
                     senderId + " in room " + roomId + " to " + broadcastCount + " recipients (" + length + " bytes)");
         }
     }

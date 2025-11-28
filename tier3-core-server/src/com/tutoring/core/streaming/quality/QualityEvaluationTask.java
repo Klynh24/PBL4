@@ -1,7 +1,7 @@
-package com.tutoring.core.streaming;
+package com.tutoring.core.streaming.quality;
 
-import com.tutoring.core.ClientHandler;
-import com.tutoring.core.RoomManager;
+import com.tutoring.core.server.ClientHandler;
+import com.tutoring.core.management.RoomManager;
 
 import java.util.Map;
 import java.util.Set;
@@ -9,15 +9,12 @@ import java.util.Set;
 /**
  * Periodic task that evaluates network quality for all rooms
  * and triggers quality level changes when needed
- * Runs in a dedicated daemon thread
+ * ✅ WORKER PATTERN: Scheduled by ScheduledExecutorService (no internal loop)
  */
 public class QualityEvaluationTask implements Runnable {
     private final QualityLevelManager qualityManager;
     private final RoomManager roomManager;
     private final Map<String, ClientHandler> clientHandlers;
-    
-    private static final long EVALUATION_INTERVAL_MS = 5000; // Evaluate every 5 seconds
-    private volatile boolean running = true;
     
     public QualityEvaluationTask(QualityLevelManager qualityManager,
                                 RoomManager roomManager,
@@ -29,23 +26,13 @@ public class QualityEvaluationTask implements Runnable {
     
     @Override
     public void run() {
-        System.out.println("[QualityEvaluation] Started (interval: " + 
-            EVALUATION_INTERVAL_MS + "ms)");
-        
-        while (running) {
-            try {
-                evaluateAllRooms();
-                Thread.sleep(EVALUATION_INTERVAL_MS);
-            } catch (InterruptedException e) {
-                System.out.println("[QualityEvaluation] Interrupted, stopping");
-                break;
-            } catch (Exception e) {
-                System.err.println("[QualityEvaluation] Error: " + e.getMessage());
-                e.printStackTrace();
-            }
+        // ✅ WORKER PATTERN: Single execution per schedule (no while loop)
+        try {
+            evaluateAllRooms();
+        } catch (Exception e) {
+            System.err.println("[QualityEvaluation] Error: " + e.getMessage());
+            e.printStackTrace();
         }
-        
-        System.out.println("[QualityEvaluation] Stopped");
     }
     
     /**
@@ -106,17 +93,6 @@ public class QualityEvaluationTask implements Runnable {
             " (" + notifiedCount + " clients)");
     }
     
-    /**
-     * Stop the evaluation task
-     */
-    public void stop() {
-        running = false;
-    }
-    
-    /**
-     * Check if task is running
-     */
-    public boolean isRunning() {
-        return running;
-    }
+    // ✅ WORKER PATTERN: No stop/isRunning methods needed
+    // Task lifecycle is managed by ScheduledExecutorService
 }

@@ -1,4 +1,4 @@
-package com.tutoring.core.streaming;
+package com.tutoring.core.streaming.quality;
 
 public enum QualityLevel {
     HIGH(1280, 720, 12, 0.6f), // 720p @ 12 FPS, Q:0.6
