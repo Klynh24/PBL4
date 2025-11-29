@@ -1,6 +1,6 @@
 // Main application logic for room page
 
-const PROXY_SERVER_URL = "wss://192.168.38.74/connect";
+const PROXY_SERVER_URL = "wss://192.168.98.93/connect";
 
 class TutoringApp {
   constructor() {
@@ -21,11 +21,28 @@ class TutoringApp {
     this.audioContext = null;
     this.audioDestination = null;
 
+    // ✅ NEW: Jitter buffer for voice
+    this.jitterBuffer = null;
+
     // Chat history loading state
     this.isLoadingHistory = false;
 
     // Frame reassembler for advanced screen sharing
     this.frameReassembler = null;
+
+    // ✅ FIX: Capture interval ID for dynamic quality adjustment
+    this.captureIntervalId = null;
+    this.captureVideoElement = null;
+    this.captureCanvas = null;
+
+    // ✅ NEW: Priority sender for WebSocket binary messages
+    this.prioritySender = null;
+    this.captureCtx = null;
+
+    // ✅ NEW: H.264 Hardware Decoder (WebCodecs API)
+    this.h264Decoder = null;
+    this.videoCanvas = null;
+    this.useH264Decoding = false;
 
     // ✅ PERFORMANCE OPTIMIZATION: Lower default quality for low-spec/localhost testing
     // Reduced resolution, FPS, and JPEG quality to reduce CPU usage
@@ -147,12 +164,32 @@ class TutoringApp {
         // FrameReassembler will reassemble fragments on client side
         if (typeof FrameReassembler !== "undefined") {
           this.frameReassembler = new FrameReassembler(this.ws);
-          console.log("[App] FrameReassembler ENABLED for advanced streaming");
+          // ✅ NEW: Set callback for frame-ready events (with rate limiting)
+          this.frameReassembler.setOnFrameReady((frame) => {
+            this.displayScreenFrame(frame);
+          });
+          console.log(
+            "[App] FrameReassembler ENABLED for advanced streaming with rate limiting"
+          );
         } else {
           console.warn(
             "[App] FrameReassembler not loaded - using fallback mode"
           );
           this.frameReassembler = null;
+        }
+
+        // ✅ NEW: Initialize H.264 Hardware Decoder (WebCodecs API)
+        this.initH264Decoder();
+
+        // ✅ NEW: Initialize Priority Sender for packet prioritization
+        if (typeof PrioritySender !== "undefined") {
+          this.prioritySender = new PrioritySender(this.ws);
+          console.log(
+            "[App] ✅ PrioritySender ENABLED for packet prioritization"
+          );
+        } else {
+          console.warn("[App] PrioritySender not loaded - using direct send");
+          this.prioritySender = null;
         }
 
         this.authenticate();
@@ -216,6 +253,11 @@ class TutoringApp {
           this.currentRoom = message.room;
           this.showRoomUI();
           this.addSystemMessage("Joined room: " + message.room);
+          // ✅ FIX: Reset frame reassembler to wait for keyframe
+          // Client mới sẽ nhận keyframe từ sender (nếu có sender đang share)
+          if (this.frameReassembler) {
+            this.frameReassembler.resetStats();
+          }
           break;
 
         case "room_left":
@@ -276,16 +318,10 @@ class TutoringApp {
 
       // ✅ ADVANCED PIPELINE: Try frame reassembler first (for fragmented packets)
       if (this.frameReassembler) {
-        const frame = this.frameReassembler.processPacket(arrayBuffer);
-
-        if (frame) {
-          // Frame is complete after reassembly, display it
-          this.displayScreenFrame(frame);
-          return;
-        }
-        // If null, frame not yet complete (waiting for more fragments)
-        // Don't fallback to direct display - wait for all fragments
-        return;
+        // ✅ FIX: processPacket no longer returns frame directly
+        // Frames are rendered via callback with rate limiting
+        this.frameReassembler.processPacket(arrayBuffer);
+        return; // Don't fallback - frame will be rendered via callback when ready
       }
 
       // ✅ FALLBACK: Direct display for non-fragmented packets (if reassembler disabled)
@@ -335,6 +371,87 @@ class TutoringApp {
     }
   }
 
+  /**
+   * ✅ NEW: Initialize H.264 Hardware Decoder
+   */
+  initH264Decoder() {
+    try {
+      // Check if H264Decoder class is available
+      if (typeof H264Decoder === "undefined") {
+        console.warn(
+          "[H264Decoder] H264Decoder class not loaded - falling back to JPEG"
+        );
+        this.useH264Decoding = false;
+        return;
+      }
+
+      // Get canvas element
+      const canvas = document.getElementById("screenCanvas");
+      if (!canvas) {
+        console.warn(
+          "[H264Decoder] Canvas element not found - falling back to JPEG"
+        );
+        this.useH264Decoding = false;
+        return;
+      }
+
+      // Initialize decoder
+      this.h264Decoder = new H264Decoder(canvas, (frame, error) => {
+        if (error) {
+          console.error("[H264Decoder] Decode error:", error);
+          // Don't immediately disable - might be temporary error
+          // Only disable if decoder is in error state
+          if (
+            this.h264Decoder &&
+            this.h264Decoder.decoder &&
+            this.h264Decoder.decoder.state === "closed"
+          ) {
+            console.warn("[H264Decoder] Decoder closed, falling back to JPEG");
+            this.useH264Decoding = false;
+          }
+        } else {
+          // Frame decoded successfully - hide "No screen" message
+          const noScreenEl = document.getElementById("noScreen");
+          if (noScreenEl) {
+            noScreenEl.style.display = "none";
+          }
+        }
+      });
+
+      if (this.h264Decoder.isSupported) {
+        this.useH264Decoding = true;
+        this.videoCanvas = canvas;
+
+        // Setup canvas styling for video display
+        canvas.style.width = "100%";
+        canvas.style.height = "auto";
+        canvas.style.objectFit = "contain";
+        canvas.style.display = "none"; // Hidden by default, shown when H.264 frames arrive
+
+        // Initialize decoder asynchronously
+        this.h264Decoder
+          .init()
+          .then(() => {
+            console.log(
+              "[H264Decoder] ✅ Hardware-accelerated H.264 decoder initialized and ready"
+            );
+          })
+          .catch((error) => {
+            console.error("[H264Decoder] Initialization failed:", error);
+            this.useH264Decoding = false;
+          });
+      } else {
+        console.warn(
+          "[H264Decoder] WebCodecs not supported - falling back to JPEG"
+        );
+        this.useH264Decoding = false;
+      }
+    } catch (error) {
+      console.error("[H264Decoder] Initialization error:", error);
+      this.useH264Decoding = false;
+    }
+  }
+
   displayScreenFrame(frame) {
     try {
       // ✅ FIX: Skip displaying frames if we're currently sharing (have local preview)
@@ -345,52 +462,161 @@ class TutoringApp {
         return;
       }
 
-      // ✅ ADVANCED PIPELINE: frame.data format is [MediaType(1 byte)][JPEG Data]
-      // Need to remove media type byte before creating blob
-      let jpegData = frame.data;
-
-      // Check if first byte is media type (2 = screen)
+      // Extract frame data (remove media type byte if present)
+      let frameData = frame.data;
       const dataView = new DataView(frame.data.buffer || frame.data);
       const firstByte = dataView.getUint8(0);
 
       if (firstByte === 2) {
         // Remove media type byte
-        jpegData = frame.data.slice(1);
-        console.log(
-          "[FrameDisplay] Removed media type byte, JPEG size:",
-          jpegData.byteLength
-        );
+        frameData = frame.data.slice(1);
       }
 
-      // Create blob from JPEG data
-      const blob = new Blob([jpegData], { type: "image/jpeg" });
-      const url = URL.createObjectURL(blob);
+      // ✅ NEW: Auto-detect format and decode accordingly
+      // Check if data is JPEG (magic number: 0xFF 0xD8)
+      const isJPEG =
+        frameData.byteLength >= 2 &&
+        dataView.getUint8(0) === 0xff &&
+        dataView.getUint8(1) === 0xd8;
 
-      // Display in shared screen element
+      // Try H.264 decoding if:
+      // 1. H.264 decoder is enabled and initialized
+      // 2. Data is NOT JPEG (could be H.264)
+      // 3. Data looks like H.264 (check if WebCodecs is supported)
+      if (
+        !isJPEG &&
+        this.useH264Decoding &&
+        this.h264Decoder &&
+        this.h264Decoder.initialized &&
+        typeof H264Decoder !== "undefined" &&
+        H264Decoder.isH264(frameData)
+      ) {
+        // Decode H.264 frame
+        this.decodeH264Frame(frameData, frame);
+        return;
+      }
+
+      // ✅ FALLBACK: JPEG decoding (original method or if H.264 decode failed)
+      this.displayJPEGFrame(frameData);
+    } catch (error) {
+      console.error("Error displaying screen frame:", error);
+    }
+  }
+
+  /**
+   * ✅ NEW: Decode and display H.264 frame
+   */
+  decodeH264Frame(frameData, frame) {
+    try {
+      const isKeyframe = frame.isKeyframe || false;
+      const timestamp = frame.timestamp
+        ? frame.timestamp * 1000
+        : Date.now() * 1000; // Convert to microseconds
+
+      // Hide JPEG container, show canvas for H.264
+      const sharedScreenEl = document.getElementById("sharedScreen");
+      const noScreenEl = document.getElementById("noScreen");
+      if (sharedScreenEl) {
+        // Hide all img elements in JPEG container
+        const imgElements = sharedScreenEl.querySelectorAll("img");
+        imgElements.forEach((img) => (img.style.display = "none"));
+      }
+      if (this.videoCanvas) {
+        this.videoCanvas.style.display = "block"; // Show H.264 canvas
+      }
+
+      // Configure decoder on keyframe
+      if (isKeyframe && this.h264Decoder && this.h264Decoder.initialized) {
+        try {
+          const config = H264Decoder.extractConfig(frameData);
+          if (config && config.description) {
+            this.h264Decoder.configure(config);
+            console.log("[H264Decoder] ✅ Decoder configured with keyframe");
+          }
+        } catch (configError) {
+          console.warn("[H264Decoder] Config extraction failed:", configError);
+        }
+      }
+
+      // Decode frame
+      if (this.h264Decoder && this.h264Decoder.decoder) {
+        const success = this.h264Decoder.decode(
+          frameData,
+          isKeyframe,
+          timestamp
+        );
+
+        if (!success && this.h264Decoder.decoder.state === "configured") {
+          // Decode failed but decoder is configured - might be temporary error
+          // Don't fallback immediately, decoder might recover
+          console.warn(
+            "[H264Decoder] Decode returned false, but decoder is configured"
+          );
+        } else if (!success) {
+          // Decoder not configured or serious error - fallback to JPEG
+          console.warn("[H264Decoder] Decode failed, falling back to JPEG");
+          this.useH264Decoding = false;
+          this.displayJPEGFrame(frameData);
+        } else {
+          // Success - hide "No screen" message
+          if (noScreenEl) {
+            noScreenEl.style.display = "none";
+          }
+        }
+      } else {
+        // Decoder not ready - fallback
+        this.displayJPEGFrame(frameData);
+      }
+    } catch (error) {
+      console.error("[H264Decoder] Error decoding frame:", error);
+      // Fallback to JPEG
+      this.useH264Decoding = false;
+      this.displayJPEGFrame(frameData);
+    }
+  }
+
+  /**
+   * ✅ NEW: Display JPEG frame (fallback method)
+   */
+  displayJPEGFrame(jpegData) {
+    try {
+      // Hide H.264 canvas, show JPEG image
+      if (this.videoCanvas) {
+        this.videoCanvas.style.display = "none";
+      }
+
+      // Show JPEG image container
       const sharedScreenEl = document.getElementById("sharedScreen");
       const noScreenEl = document.getElementById("noScreen");
 
       if (sharedScreenEl) {
-        const img = new Image();
+        // Create or reuse img element
+        let img = sharedScreenEl.querySelector("img");
+        if (!img) {
+          img = new Image();
+          img.style.width = "100%";
+          img.style.height = "auto";
+          img.style.objectFit = "contain";
+          img.style.display = "block";
+          sharedScreenEl.appendChild(img);
+        }
+
+        // Create blob and display
+        const blob = new Blob([jpegData], { type: "image/jpeg" });
+        const url = URL.createObjectURL(blob);
+
         img.onload = () => {
-          // Hide "No screen sharing" message
           if (noScreenEl) {
             noScreenEl.style.display = "none";
           }
-
-          // Clear previous content (including any video elements)
-          sharedScreenEl.innerHTML = "";
-          sharedScreenEl.appendChild(img);
-
-          // Revoke old URL to prevent memory leaks
-          URL.revokeObjectURL(url);
+          setTimeout(() => URL.revokeObjectURL(url), 100);
         };
+
         img.onerror = () => {
           console.error(
-            "[FrameDisplay] Failed to load image. JPEG size:",
+            "[FrameDisplay] Failed to load JPEG image, size:",
             jpegData.byteLength
           );
-          // Log first few bytes for debugging
           const bytes = new Uint8Array(jpegData.slice(0, 10));
           console.error(
             "[FrameDisplay] First bytes:",
@@ -400,12 +626,11 @@ class TutoringApp {
           );
           URL.revokeObjectURL(url);
         };
+
         img.src = url;
-        img.style.width = "100%";
-        img.style.height = "auto";
       }
     } catch (error) {
-      console.error("Error displaying screen frame:", error);
+      console.error("Error displaying JPEG frame:", error);
     }
   }
 
@@ -416,7 +641,17 @@ class TutoringApp {
   }
 
   sendBinary(data) {
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      return;
+    }
+
+    // ✅ NEW: Use priority sender if available
+    if (this.prioritySender) {
+      // Determine priority from packet data
+      const priority = PacketPriority.fromPacket(data);
+      this.prioritySender.send(data, priority);
+    } else {
+      // Fallback: direct send
       this.ws.send(data);
     }
   }
@@ -602,6 +837,12 @@ class TutoringApp {
       document.getElementById("shareScreenBtn").style.display = "none";
       document.getElementById("stopScreenBtn").style.display = "block";
 
+      // ✅ FIX: Reset capture elements for new stream
+      this.captureVideoElement = null;
+      this.captureCanvas = null;
+      this.captureCtx = null;
+      this.frameCount = 0;
+
       // ✅ FIX: Show local preview for teacher (immediate feedback)
       this.showLocalScreenPreview(this.screenStream);
 
@@ -637,80 +878,121 @@ class TutoringApp {
   captureScreenFrames() {
     if (!this.screenStream || !this.isScreenSharing) return;
 
-    const video = document.createElement("video");
-    video.srcObject = this.screenStream;
-    video.play();
+    // ✅ FIX: Reuse video element if exists
+    if (!this.captureVideoElement) {
+      this.captureVideoElement = document.createElement("video");
+      this.captureVideoElement.srcObject = this.screenStream;
+      this.captureVideoElement.play();
+    }
 
-    video.onloadedmetadata = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+    // ✅ FIX: Reuse canvas if exists
+    if (!this.captureCanvas) {
+      this.captureCanvas = document.createElement("canvas");
+      this.captureCtx = this.captureCanvas.getContext("2d");
+    }
 
-      const sendFrame = () => {
-        if (!this.isScreenSharing) return;
+    const video = this.captureVideoElement;
+    const canvas = this.captureCanvas;
+    const ctx = this.captureCtx;
 
-        // ✅ PERFORMANCE OPTIMIZATION: Limit resolution to 720p for CPU efficiency
-        // Lower resolution reduces CPU usage for capture and encoding
-        const maxWidth = 1280; // Max 720p (performance mode)
-        const maxHeight = 720; // Max 720p (performance mode)
+    // Wait for video to be ready
+    if (video.readyState < 2) {
+      video.onloadedmetadata = () => {
+        this.startCaptureLoop(video, canvas, ctx);
+      };
+    } else {
+      this.startCaptureLoop(video, canvas, ctx);
+    }
+  }
 
-        let targetWidth = video.videoWidth;
-        let targetHeight = video.videoHeight;
+  startCaptureLoop(video, canvas, ctx) {
+    if (!this.isScreenSharing) return;
 
-        // Scale down if needed while preserving aspect ratio
-        if (targetWidth > maxWidth || targetHeight > maxHeight) {
-          const scale = Math.min(
-            maxWidth / targetWidth,
-            maxHeight / targetHeight
-          );
-          targetWidth = Math.floor(targetWidth * scale);
-          targetHeight = Math.floor(targetHeight * scale);
-        }
+    const sendFrame = () => {
+      if (!this.isScreenSharing) {
+        this.captureIntervalId = null;
+        return;
+      }
 
+      // ✅ FIX: Use current quality settings dynamically
+      const quality = this.currentQuality;
+      const maxWidth = Math.min(quality.width, 1280); // Cap at 720p max
+      const maxHeight = Math.min(quality.height, 720); // Cap at 720p max
+
+      let targetWidth = video.videoWidth;
+      let targetHeight = video.videoHeight;
+
+      // Scale down if needed while preserving aspect ratio
+      if (targetWidth > maxWidth || targetHeight > maxHeight) {
+        const scale = Math.min(
+          maxWidth / targetWidth,
+          maxHeight / targetHeight
+        );
+        targetWidth = Math.floor(targetWidth * scale);
+        targetHeight = Math.floor(targetHeight * scale);
+      }
+
+      // Only resize canvas if dimensions changed
+      if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
         canvas.width = targetWidth;
         canvas.height = targetHeight;
-        ctx.drawImage(video, 0, 0, targetWidth, targetHeight);
+      }
 
-        // ✅ PERFORMANCE OPTIMIZATION: Lower JPEG quality (0.5) to reduce CPU usage
-        // Quality 0.5 reduces compression CPU by ~40-50% vs 0.75
-        // Fragmentation still handles packets > 65KB automatically
-        canvas.toBlob(
-          (blob) => {
-            if (blob) {
-              // Log first 10 frames + periodically
+      ctx.drawImage(video, 0, 0, targetWidth, targetHeight);
+
+      // ✅ FIX: Use quality.jpegQuality dynamically
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            if (this.frameCount < 10 || this.frameCount % 100 == 0) {
               const frameSizeKB = (blob.size / 1024).toFixed(1);
-              if (this.frameCount < 10 || this.frameCount % 100 == 0) {
-                console.log(
-                  `[ScreenShare] Frame ${this.frameCount}: ${frameSizeKB} KB (${targetWidth}x${targetHeight})`
-                );
-                if (blob.size > 65000) {
-                  console.log(
-                    `[ScreenShare] Will be fragmented: ${frameSizeKB} KB > 65 KB`
-                  );
-                }
-              }
-              this.frameCount++;
-
-              blob.arrayBuffer().then((buffer) => {
-                // Create packet: [ClientID_Length][ClientID][RoomID_Length][RoomID][MediaType][Data]
-                const packet = this.createMediaPacket(2, buffer); // Type 2 = Screen
-                this.sendBinary(packet);
-              });
+              console.log(
+                `[ScreenShare] Frame ${
+                  this.frameCount
+                }: ${frameSizeKB} KB (${targetWidth}x${targetHeight}) @ ${
+                  quality.fps
+                } FPS, Q:${quality.jpegQuality.toFixed(2)}`
+              );
             }
-          },
-          "image/jpeg",
-          0.5 // ✅ PERFORMANCE: Lower quality (0.5) - reduces CPU usage by 40-50%
-        );
+            this.frameCount++;
 
-        // ✅ PERFORMANCE OPTIMIZATION: 10 FPS target (100ms interval) for CPU efficiency
-        setTimeout(sendFrame, 100); // ~10 FPS
-      };
+            blob.arrayBuffer().then((buffer) => {
+              const packet = this.createMediaPacket(2, buffer);
+              this.sendBinary(packet);
+            });
+          }
+        },
+        "image/jpeg",
+        quality.jpegQuality // ✅ FIX: Dynamic quality from currentQuality
+      );
 
-      this.frameCount = 0; // Initialize frame counter for logging
-      sendFrame();
+      // ✅ FIX: Use quality.fps dynamically for frame interval
+      const frameDelay = 1000 / quality.fps; // Calculate delay from FPS
+      this.captureIntervalId = setTimeout(sendFrame, frameDelay);
     };
+
+    if (typeof this.frameCount === "undefined") {
+      this.frameCount = 0;
+    }
+
+    sendFrame();
   }
 
   stopScreenShare() {
+    // ✅ FIX: Stop capture loop
+    if (this.captureIntervalId) {
+      clearTimeout(this.captureIntervalId);
+      this.captureIntervalId = null;
+    }
+
+    // ✅ FIX: Clean up video/canvas elements
+    if (this.captureVideoElement) {
+      this.captureVideoElement.srcObject = null;
+      this.captureVideoElement = null;
+    }
+    this.captureCanvas = null;
+    this.captureCtx = null;
+
     if (this.screenStream) {
       this.screenStream.getTracks().forEach((track) => track.stop());
       this.screenStream = null;
@@ -890,6 +1172,12 @@ class TutoringApp {
       this.voiceStream = null;
     }
 
+    // ✅ NEW: Cleanup jitter buffer
+    if (this.jitterBuffer) {
+      this.jitterBuffer.cleanup();
+      this.jitterBuffer = null;
+    }
+
     if (this.audioContext) {
       this.audioContext.close();
       this.audioContext = null;
@@ -961,34 +1249,89 @@ class TutoringApp {
 
   async playReceivedAudio(arrayBuffer) {
     try {
-      if (!this.audioContext) {
-        this.audioContext = new (window.AudioContext ||
-          window.webkitAudioContext)();
+      // ✅ FIX: Validate arrayBuffer
+      if (!arrayBuffer || arrayBuffer.byteLength === 0) {
+        return;
       }
 
-      // Convert Int16 to Float32
-      const int16Array = new Int16Array(arrayBuffer);
-      const float32Array = new Float32Array(int16Array.length);
-
-      for (let i = 0; i < int16Array.length; i++) {
-        float32Array[i] = int16Array[i] / 32768.0;
+      // ✅ NEW: Use jitter buffer for smooth playback
+      if (!this.jitterBuffer) {
+        if (typeof JitterBuffer !== "undefined") {
+          this.jitterBuffer = new JitterBuffer();
+          console.log("[Audio] ✅ Jitter buffer enabled for voice");
+        } else {
+          console.warn(
+            "[Audio] JitterBuffer not loaded, using direct playback"
+          );
+        }
       }
 
-      // Create audio buffer
-      const audioBuffer = this.audioContext.createBuffer(
-        1,
-        float32Array.length,
-        this.audioContext.sampleRate
-      );
-      audioBuffer.getChannelData(0).set(float32Array);
+      if (this.jitterBuffer) {
+        // Use jitter buffer (recommended for smooth voice)
+        // Note: For now, we don't have sequence numbers from server
+        // So we'll use a simple counter
+        if (!this.audioSeqCounter) {
+          this.audioSeqCounter = 0;
+        }
 
-      // Play audio
-      const source = this.audioContext.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(this.audioContext.destination);
-      source.start();
+        const seq = this.audioSeqCounter++;
+        const timestamp = Date.now();
+
+        this.jitterBuffer.addPacket(seq, timestamp, arrayBuffer);
+      } else {
+        // Fallback: Direct playback (old method)
+        // ✅ FIX: Check audioContext state before creating
+        if (!this.audioContext || this.audioContext.state === "closed") {
+          this.audioContext = new (window.AudioContext ||
+            window.webkitAudioContext)();
+        }
+
+        // ✅ FIX: Resume audio context if suspended (browser autoplay policy)
+        if (this.audioContext.state === "suspended") {
+          try {
+            await this.audioContext.resume();
+          } catch (e) {
+            console.warn("[Audio] Failed to resume audio context:", e);
+          }
+        }
+
+        // Validate audio data
+        if (arrayBuffer.byteLength % 2 !== 0) {
+          console.warn(
+            "[Audio] Invalid audio data length:",
+            arrayBuffer.byteLength
+          );
+          return;
+        }
+
+        // Convert Int16 to Float32
+        const int16Array = new Int16Array(arrayBuffer);
+        const float32Array = new Float32Array(int16Array.length);
+
+        for (let i = 0; i < int16Array.length; i++) {
+          float32Array[i] = int16Array[i] / 32768.0;
+        }
+
+        // Create audio buffer
+        const audioBuffer = this.audioContext.createBuffer(
+          1,
+          float32Array.length,
+          this.audioContext.sampleRate
+        );
+        audioBuffer.getChannelData(0).set(float32Array);
+
+        // Play audio
+        const source = this.audioContext.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(this.audioContext.destination);
+        source.start();
+      }
     } catch (error) {
-      console.error("Error playing audio:", error);
+      console.error("[Audio] Error playing audio:", error);
+      // ✅ FIX: Reset audioContext on error
+      if (this.audioContext && this.audioContext.state === "closed") {
+        this.audioContext = null;
+      }
     }
   }
 
@@ -1047,17 +1390,21 @@ class TutoringApp {
   async adjustScreenShareQuality(quality) {
     console.log("[ABR] Adjusting screen share quality to:", quality);
 
-    const wasSharing = this.isScreenSharing;
-    if (!wasSharing) return;
+    // ✅ FIX: Update quality without restarting screen sharing
+    this.currentQuality = quality;
 
-    // Stop current screen sharing
-    this.stopScreenShare();
+    // If currently sharing, restart capture loop with new settings
+    if (this.isScreenSharing && this.screenStream) {
+      // Stop current capture loop
+      if (this.captureIntervalId) {
+        clearTimeout(this.captureIntervalId);
+        this.captureIntervalId = null;
+      }
 
-    // Wait for cleanup
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // Restart with new quality settings
-    await this.startScreenShareWithQuality(quality);
+      // Restart capture with new quality settings
+      console.log("[ABR] Restarting capture loop with new quality settings");
+      this.captureScreenFrames();
+    }
   }
 
   async startScreenShareWithQuality(quality) {

@@ -24,13 +24,14 @@ if exist "out" (
 
 REM Create output directory
 if not exist "out" mkdir out
+if not exist "bin" mkdir bin
 
 REM Compile all Java files
 echo Compiling Java source files...
-echo Note: Using --add-modules jdk.incubator.vector for SIMD support
+echo Note: Using new package structure (server, management, streaming, etc.)
 echo.
 
-javac -d out --add-modules jdk.incubator.vector -sourcepath src src\com\tutoring\core\*.java src\com\tutoring\core\streaming\*.java
+javac -d out -sourcepath src src\server\*.java src\management\*.java src\model\*.java src\streaming\protocol\*.java src\streaming\encoding\*.java src\streaming\quality\*.java src\streaming\network\*.java src\streaming\retransmission\*.java src\streaming\broadcast\*.java src\concurrency\pool\*.java src\concurrency\worker\*.java src\monitoring\*.java
 
 if %ERRORLEVEL% EQU 0 (
     echo.
@@ -39,21 +40,14 @@ if %ERRORLEVEL% EQU 0 (
 ) else (
     echo.
     echo [ERROR] Tier 3 Core Server compilation failed!
+    echo Please check the errors above.
+    cd ..
     echo.
-    echo Attempting fallback compilation without Vector API module...
-    javac -d out -sourcepath src src\com\tutoring\core\*.java src\com\tutoring\core\streaming\*.java
-    if %ERRORLEVEL% EQU 0 (
-        echo [SUCCESS] Tier 3 Core Server compiled (without Vector API support)
-    ) else (
-        echo [ERROR] Tier 3 Core Server compilation failed even without Vector API!
-        cd ..
-        echo.
-        echo ========================================
-        echo BUILD FAILED - Check errors above
-        echo ========================================
-        pause
-        exit /b 1
-    )
+    echo ========================================
+    echo BUILD FAILED - Check errors above
+    echo ========================================
+    pause
+    exit /b 1
 )
 
 cd ..

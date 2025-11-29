@@ -14,8 +14,34 @@ public class FrameFragmenter {
     private static final int HEADER_SIZE = 28;
     private static final int MAGIC_NUMBER = 0x53435245; // 'SCRE'
     
+    // ✅ NEW: FEC flags
+    private static final byte FLAG_IS_FEC = (byte) 0x01;
+    private static final byte FRAME_TYPE_FEC = (byte) 0xF0;
+    
     private final AtomicInteger globalSequenceNumber = new AtomicInteger(0);
     private final AtomicInteger frameIdCounter = new AtomicInteger(0);
+    
+    // ✅ NEW: FEC encoder
+    private FecXorEncoder fecEncoder;
+    private final boolean enableFec;
+    
+    public FrameFragmenter() {
+        this(false);
+    }
+    
+    public FrameFragmenter(boolean enableFec) {
+        this.enableFec = enableFec;
+        if (enableFec) {
+            this.fecEncoder = new FecXorEncoder(10, 2); // 10 packets, 2 FEC
+        }
+    }
+    
+    public FrameFragmenter(boolean enableFec, int groupSize, int fecCount) {
+        this.enableFec = enableFec;
+        if (enableFec) {
+            this.fecEncoder = new FecXorEncoder(groupSize, fecCount);
+        }
+    }
     
     /**
      * Fragment a binary WebSocket message into multiple UDP packets
@@ -46,7 +72,74 @@ public class FrameFragmenter {
             fragments.add(packet);
         }
         
+        // ✅ NEW: Generate FEC packets if enabled
+        if (enableFec && fecEncoder != null && fragments.size() > 1) {
+            List<byte[]> fecPackets = generateFecPackets(fragments, frameId);
+            fragments.addAll(fecPackets);
+        }
+        
         return fragments;
+    }
+    
+    /**
+     * ✅ NEW: Generate FEC packets from data packets
+     */
+    private List<byte[]> generateFecPackets(List<byte[]> dataPackets, int frameId) {
+        if (fecEncoder == null || dataPackets.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        // Extract payloads (skip 28-byte header)
+        List<byte[]> payloads = new ArrayList<>(dataPackets.size());
+        for (byte[] packet : dataPackets) {
+            if (packet.length > HEADER_SIZE) {
+                byte[] payload = new byte[packet.length - HEADER_SIZE];
+                System.arraycopy(packet, HEADER_SIZE, payload, 0, payload.length);
+                payloads.add(payload);
+            } else {
+                payloads.add(new byte[0]);
+            }
+        }
+        
+        // Generate FEC packets
+        List<byte[]> fecPayloads = fecEncoder.encode(payloads);
+        
+        // Wrap FEC packets with header
+        List<byte[]> fecPacketsWithHeader = new ArrayList<>(fecPayloads.size());
+        long timestamp = System.currentTimeMillis();
+        byte originalFrameType = 0x01; // Keyframe (default for proxy server)
+        
+        for (int i = 0; i < fecPayloads.size(); i++) {
+            byte[] fecPayload = fecPayloads.get(i);
+            byte[] fecPacket = createFecPacket(frameId, i, fecPayloads.size(), 
+                                             originalFrameType, fecPayload, timestamp);
+            fecPacketsWithHeader.add(fecPacket);
+        }
+        
+        return fecPacketsWithHeader;
+    }
+    
+    /**
+     * ✅ NEW: Create FEC packet with header
+     */
+    private byte[] createFecPacket(int frameId, int fecIndex, int totalFec, 
+                                   byte originalFrameType, byte[] fecData, long timestamp) {
+        byte[] packet = new byte[HEADER_SIZE + fecData.length];
+        ByteBuffer buffer = ByteBuffer.wrap(packet);
+        
+        buffer.putInt(MAGIC_NUMBER);
+        buffer.putInt(globalSequenceNumber.getAndIncrement());
+        buffer.putInt(frameId);
+        buffer.putShort((short) fecIndex);
+        buffer.putShort((short) totalFec);
+        buffer.put((byte)(FRAME_TYPE_FEC | originalFrameType));
+        buffer.putLong(timestamp);
+        buffer.putShort((short) fecData.length);
+        buffer.put(FLAG_IS_FEC);
+        
+        buffer.put(fecData);
+        
+        return packet;
     }
     
     /**
@@ -61,7 +154,7 @@ public class FrameFragmenter {
      * 16:    Frame Type (0x01 = keyframe)
      * 17-24: Timestamp (milliseconds)
      * 25-26: Payload Length
-     * 27:    Reserved (0x00)
+     * 27:    Flags (bit 0: isFEC, bit 1-7: reserved)
      */
     private byte[] createPacket(int frameId, int fragmentIndex, 
                                 int totalFragments, byte[] data, 
@@ -78,7 +171,7 @@ public class FrameFragmenter {
         buffer.put((byte) 0x01);                               // 16: Frame type (keyframe)
         buffer.putLong(System.currentTimeMillis());            // 17-24: Timestamp
         buffer.putShort((short) length);                       // 25-26: Payload length
-        buffer.put((byte) 0);                                  // 27: Reserved
+        buffer.put((byte) 0);                                  // 27: Flags (0 = data packet)
         
         // Write payload (starting at byte 28)
         buffer.put(data, offset, length);

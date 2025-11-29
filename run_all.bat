@@ -5,7 +5,7 @@ echo ========================================
 echo.
 
 REM Check if build outputs exist
-if not exist "tier3-core-server\out\com\tutoring\core\CoreServer.class" (
+if not exist "tier3-core-server\out\server\CoreServer.class" (
     echo [ERROR] Tier 3 Core Server not compiled!
     echo Please run build_all.bat first.
     pause
@@ -26,7 +26,7 @@ REM ============================================
 REM Tier 3: Core Server (Start first)
 REM ============================================
 echo [1/3] Starting Tier 3 Core Server...
-start "Tier 3 - Core Server" cmd /k "cd /d %~dp0tier3-core-server && java --add-modules jdk.incubator.vector -cp out com.tutoring.core.CoreServer"
+start "Tier 3 - Core Server" cmd /k "cd /d %~dp0tier3-core-server && java -cp out server.CoreServer"
 
 REM Wait a bit for Core Server to initialize
 timeout /t 3 /nobreak >nul

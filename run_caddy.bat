@@ -38,7 +38,7 @@ echo [INFO] Starting Caddy server...
 echo [INFO] Using Caddyfile: %CD%\Caddyfile
 echo.
 echo Caddy will:
-echo   - Listen on https://192.168.38.74:443 (LAN)
+echo   - Listen on https://192.168.98.93:443 (LAN)
 echo   - Listen on https://toan-webrtc.ddns.net (Internet)
 echo   - Reverse proxy WebSocket connections to localhost:8089
 echo   - Serve static files from tier1-web-client

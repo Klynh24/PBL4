@@ -12,7 +12,9 @@
       <header class="header">
         <h1>Online Tutoring System</h1>
         <div class="user-info">
-          <span class="quality-indicator quality-high" id="qualityIndicator">HIGH</span>
+          <span class="quality-indicator quality-high" id="qualityIndicator"
+            >HIGH</span
+          >
           <span id="username-display">Loading...</span>
           <button id="logoutBtn" class="btn btn-secondary">Logout</button>
         </div>
@@ -136,7 +138,14 @@
     </div>
 
     <!-- Advanced Screen Sharing Scripts -->
+    <script src="js/fec-decoder.js"></script>
     <script src="js/frame-reassembler.js"></script>
+    <!-- ✅ NEW: Jitter Buffer for Voice -->
+    <script src="js/jitter-buffer.js"></script>
+    <!-- ✅ NEW: Packet Prioritization -->
+    <script src="js/packet-priority.js"></script>
+    <!-- ✅ NEW: H.264 Hardware Decoder (WebCodecs API) -->
+    <script src="js/h264-decoder.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>
