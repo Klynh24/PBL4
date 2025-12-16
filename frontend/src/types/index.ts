@@ -98,7 +98,13 @@ export interface Assignment {
 }
 
 export interface SubmissionData {
- fileUrl: string;
+    // Trường này đã được thêm vào payload nhưng thiếu trong interface
+    assignmentId: number;
+
+    // Trường fileUrl đã có
+    fileUrl: string;
+
+    // Bạn có thể thêm các trường khác nếu cần (ví dụ: description)
 }
 
 export interface GradeData {

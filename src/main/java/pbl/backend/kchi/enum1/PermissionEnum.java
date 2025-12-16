@@ -10,7 +10,8 @@ public enum PermissionEnum {
     ASSIGNMENT("assignments"),
     CONVERSATIONS("conversations"),
     MESSAGE("messages"),
-    SUBMISSION("submissions");
+    SUBMISSION("submissions"),
+    UPLOAD("upload");
 
     private final String prefix;
 

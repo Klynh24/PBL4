@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-// Import API và Types (Dùng ../ vì file này nằm trong src/pages)
 import * as api from '../../api/apiService';
-import { Assignment } from '../../types';
-// Import CSS cùng thư mục
-import styles from './ClassDetailsPage.module.css'; // SỬ DỤNG CSS CHUNG
+import { Assignment, SubmissionData } from '../../types'; // ⭐ Import SubmissionData
+import styles from './ClassDetailsPage.module.css';
 
-// Import Components Modal
 import AssignmentModal from '../../components/common/AssignmentModal/AssignmentModal';
 import SubmissionModal from '../../components/common/SubmissionModal/SubmissionModal';
-
-// Import hook context từ file cùng cấp
 import { useClassDetailsContext } from './ClassDetailsPage';
 
 const AssignmentsTab: React.FC = () => {
   const { classId } = useParams<{ classId: string }>();
-  const { user } = useClassDetailsContext(); // Lấy user từ context
+  const { user } = useClassDetailsContext();
 
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
@@ -26,16 +21,15 @@ const AssignmentsTab: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
 
-  // Đã sửa lỗi: Chuẩn hóa về chữ thường để tránh lỗi Case Sensitivity
-  const isTeacher = user?.role?.toLowerCase() === 'teacher';
+  const isTeacher = user?.role?.toLowerCase() === 'teacher' || user?.role?.toLowerCase() === 'admin';
   const isStudent = user?.role?.toLowerCase() === 'student';
 
-  // --- HÀM FORMAT NGÀY GIỜ ---
+
+  // --- HÀM FORMAT NGÀY GIỜ (Giữ nguyên) ---
   const formatDate = (dateString: string) => {
     if (!dateString) return "Chưa cập nhật";
     try {
       let formattedString = dateString;
-      // Đảm bảo có thông tin giờ phút nếu chuỗi chỉ có ngày
       if (dateString.length === 10) {
           formattedString = `${dateString}T00:00:00`;
       }
@@ -46,12 +40,11 @@ const AssignmentsTab: React.FC = () => {
         month: '2-digit', year: 'numeric',
       }).format(date);
     } catch (e) {
-      // Trường hợp lỗi parse, trả về chuỗi gốc
       return dateString;
     }
   };
 
-  // --- HÀM TẢI DANH SÁCH BÀI TẬP (ĐÃ SỬA LỖI BUILD TS2339) ---
+  // --- HÀM TẢI DANH SÁCH BÀI TẬP (Giữ nguyên logic bóc tách data) ---
   const fetchAssignments = () => {
     if(classId) {
       setIsLoading(true);
@@ -62,35 +55,25 @@ const AssignmentsTab: React.FC = () => {
             let assignmentsData: Assignment[] = [];
             const responseData = res.data;
 
-            // ⭐ ĐOẠN CODE ĐÃ SỬA LỖI TS2339 BẰNG CÁCH SỬ DỤNG ASSERTION (AS) ⭐
-            // Đặt responseData.data vào một biến mới với kiểu any để truy cập các thuộc tính pagination
             const apiData: any = responseData.data;
 
             if (Array.isArray(responseData)) {
-                // Trường hợp 1: API trả về mảng trực tiếp
                 assignmentsData = responseData as Assignment[];
             } else if (apiData) {
-                // Trường hợp 2: API trả về đối tượng có field 'data'
                 if (Array.isArray(apiData)) {
-                     // 2a: Nếu res.data.data là mảng
                     assignmentsData = apiData as Assignment[];
                 } else if (apiData.content || apiData.list) {
-                     // 2b: Nếu res.data.data là đối tượng phân trang (có content/list)
                      const paginatedContent = apiData.content || apiData.list;
                      if(Array.isArray(paginatedContent)) {
                         assignmentsData = paginatedContent as Assignment[];
                      }
                 } else {
-                    // Trường hợp 2c: Nếu res.data.data là một đối tượng chứa dữ liệu chính (nhưng không phải phân trang)
-                    // (Ít phổ biến, nhưng để dự phòng)
                      assignmentsData = Array.isArray(apiData) ? apiData as Assignment[] : [];
                 }
             } else if (Array.isArray(responseData)) {
-                // Trường hợp 4: (Dự phòng) Nếu responseData là mảng
                 assignmentsData = responseData as Assignment[];
             }
 
-            // Cuối cùng, đảm bảo state luôn là một mảng Assignment[]
             setAssignments(assignmentsData);
             setError('');
         })
@@ -103,16 +86,13 @@ const AssignmentsTab: React.FC = () => {
         .finally(() => setIsLoading(false));
     }
   };
-  // --- HẾT SỬA LỖI ---
 
   useEffect(() => {
-    // Luôn cố gắng tải bài tập khi classId thay đổi
     if (classId) {
       fetchAssignments();
     }
   }, [classId]);
 
-  // --- XỬ LÝ TẠO BÀI TẬP ---
   const handleCreateAssignment = async (data: any) => {
     if(classId) {
       setIsCreating(true);
@@ -134,17 +114,29 @@ const AssignmentsTab: React.FC = () => {
     setSubmitModalOpen(true);
   };
 
-  // --- XỬ LÝ NỘP BÀI (Giữ nguyên) ---
+  // --- XỬ LÝ NỘP BÀI (FINAL FIX) ---
   const handleConfirmSubmission = async (file: File) => {
     if (!selectedAssignment) return;
     try {
+      // 1. Upload file
       const uploadRes = await api.uploadFile(file);
       const data: any = uploadRes.data.data ? uploadRes.data.data : uploadRes.data;
       const fileUrl = typeof data === 'string' ? data : data.url;
+
       if (!fileUrl) {
         throw new Error("Không nhận được đường dẫn file từ máy chủ.");
       }
-      await api.submitAssignment(selectedAssignment.id, { fileUrl });
+
+      // ⭐ 2. GỌI API SUBMISSION VỚI 1 ARGUMENT (Payload) ⭐
+      const submissionPayload: SubmissionData = {
+          assignmentId: selectedAssignment.id, // ID bài tập vào Payload
+          fileUrl: fileUrl,
+      };
+
+      // LỖI CŨ: await api.submitAssignment(selectedAssignment.id, { fileUrl });
+      await api.submitAssignment(submissionPayload); // FIX!
+      // ----------------------------------------------------
+
       alert(`Đã nộp bài tập "${selectedAssignment.title}" thành công!`);
       setSubmitModalOpen(false);
     } catch (err) {
@@ -153,14 +145,13 @@ const AssignmentsTab: React.FC = () => {
     }
   };
 
-  // Nếu đang tải LẦN ĐẦU và chưa có dữ liệu nào, hiển thị thông báo tải
   if (isLoading && assignments.length === 0 && !error) {
       return <p className={styles.message}>Đang tải bài tập...</p>;
   }
 
   return (
     <>
-      {/* Nút tạo bài tập (Luôn hiển thị cho Giáo viên) */}
+      {/* Nút tạo bài tập */}
       {isTeacher && (
         <button
             onClick={() => setCreateModalOpen(true)}
@@ -173,7 +164,6 @@ const AssignmentsTab: React.FC = () => {
 
       <div className={styles.assignmentList}>
 
-        {/* HIỂN THỊ LỖI KHI TẢI THẤT BẠI LẦN ĐẦU */}
         {error && assignments.length === 0 ? (
             <p className={`${styles.message} ${styles.error}`}>
                 {error}
@@ -209,7 +199,6 @@ const AssignmentsTab: React.FC = () => {
                 </div>
             ))
         ) : (
-             // HIỂN THỊ KHI TẢI XONG MÀ DANH SÁCH RỖNG
             <p className={styles.message}>Chưa có bài tập nào trong lớp này.</p>
         )}
       </div>

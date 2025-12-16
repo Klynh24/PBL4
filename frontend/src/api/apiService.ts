@@ -159,8 +159,9 @@ export const getAssignments = async (classId: string) => {
 export const createAssignment = async (data: AssignmentData) => {
     return await axiosInstance.post<ApiResponse<any>>('/api/v1/assignments', data);
 };
-export const submitAssignment = async (id: number, data: SubmissionData) => {
-    return await axiosInstance.post<ApiResponse<any>>(`/api/v1/assignments/${id}/submit`, data);
+export const submitAssignment = async (data: SubmissionData) => {
+    // URL đã được chuẩn hóa về POST /submission
+    return await axiosInstance.post<ApiResponse<any>>('/api/v1/submission', data);
 };
 export const gradeAssignment = async (id: number, data: GradeData) => {
     return await axiosInstance.post<ApiResponse<any>>(`/api/v1/assignments/${id}/grade`, data);

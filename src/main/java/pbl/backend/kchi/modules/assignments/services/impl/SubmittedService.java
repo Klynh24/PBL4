@@ -42,7 +42,7 @@ public class SubmittedService extends BaseService<
 
     @Override
     protected String[] getRelations(){
-        return new String[]{"permissions"};
+        return new String[]{};
     }
 
     @Override
