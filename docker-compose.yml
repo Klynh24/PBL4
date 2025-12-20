@@ -1,7 +1,23 @@
 version: '3.8'
 
 services:
+  # 1. Cơ sở dữ liệu MySQL
+  db:
+    image: mysql:8.0
+    container_name: kchi_db
+    environment:
+      MYSQL_DATABASE: team1
+      MYSQL_ROOT_PASSWORD: 123456789
+    ports:
+      - "3306:3306"
+    restart: always
+    # Đảm bảo DB sẵn sàng trước khi Backend kết nối
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
 
+  # 2. Backend (Java Spring Boot) - Có hỗ trợ Ctrl + S (Hot Reload)
   backend:
     build:
       context: .
@@ -9,11 +25,23 @@ services:
     container_name: kchi_backend
     ports:
       - "8080:8080"
-    expose:
-      - "8080"
+    # Cấu hình Volume để đồng bộ code từ ổ D vào Container
+    volumes:
+      - .:/app
+      - /app/target  # Tránh ghi đè file build của container lên máy thật
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # URL phải dùng 'db' thay vì 'localhost' để gọi đúng container MySQL
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/team1
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456789
+      # Kích hoạt DevTools để tự restart khi có thay đổi file
+      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
     restart: always
 
-
+  # 3. Frontend Proxy (Node.js/Nginx) - Có hỗ trợ Ctrl + S
   frontend_proxy:
     build:
       context: ./frontend
@@ -21,6 +49,8 @@ services:
     container_name: kchi_frontend_proxy
     ports:
       - "8088:80"
+    volumes:
+      - ./frontend:/app # Đồng bộ code frontend để tự update giao diện
     depends_on:
       - backend
     restart: always

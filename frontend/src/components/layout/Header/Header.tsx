@@ -6,7 +6,6 @@ import { FiBell } from 'react-icons/fi';
 import * as api from '../../../api/apiService'; 
 import { Notification } from '../../../types'; 
 
-
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -18,38 +17,47 @@ const Header: React.FC = () => {
     const fetchNotifications = async () => {
       try {
         const response = await api.getNotifications();
-        setNotifications(response.data.data.slice(0, 3)); 
+        const rawData = response.data.data;
+        
+        /**
+         * XỬ LÝ CẤU TRÚC PAGEIMPL:
+         * Backend trả về đối tượng Page, mảng thực tế nằm ở trường 'content'.
+         */
+        const actualArray = (rawData && typeof rawData === 'object' && 'content' in rawData)
+          ? (rawData as any).content
+          : (Array.isArray(rawData) ? rawData : []);
+
+        // Sử dụng .slice() an toàn sau khi đã đảm bảo là mảng
+        setNotifications(actualArray.slice(0, 3)); 
       } catch (error) {
-        console.error("Không thể tải thông báo:", api.getErrorMessage(error));
+        console.error("Lỗi nạp thông báo tại Header:", api.getErrorMessage(error));
+        setNotifications([]); // Gán mảng rỗng để các hàm .filter, .map không bị crash
       }
     };
-    fetchNotifications();
-  }, []);
+
+    if (user) fetchNotifications();
+  }, [user]);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const handleLogout = () => {
     navigate('/'); 
-
-    setTimeout(() => {
-      logout();
-    }, 0);
+    setTimeout(() => logout(), 0);
   };
   
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        <Link to="/classes" className={styles.logo}>
-          Online learning
-        </Link>
+        <Link to="/classes" className={styles.logo}>Online learning</Link>
         <nav className={styles.nav}>
           <NavLink to="/classes" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>Lớp học</NavLink>
           <NavLink to="/chat" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>Chat</NavLink>
+          
+          {/* Menu Quản lý cho Admin */}
           {user?.role === 'admin' && (
              <NavLink to="/admin/dashboard" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.active}` : styles.navLink}>Quản lý</NavLink>
           )}
 
-          {/* Wrapper Thông báo */}
           <div 
             className={styles.iconWrapper}
             onMouseEnter={() => setNotifOpen(true)}
@@ -62,7 +70,7 @@ const Header: React.FC = () => {
             {isNotifOpen && (
               <div className={`${styles.dropdown} ${styles.notifDropdown}`}>
                 <div className={styles.dropdownHeader}>
-                  <p>Thông báo</p>
+                  <p>Thông báo mới</p>
                   <Link to="/notifications">Xem tất cả</Link>
                 </div>
                 {notifications.length > 0 ? (
@@ -73,20 +81,14 @@ const Header: React.FC = () => {
                     </div>
                   ))
                 ) : (
-                  <p className={styles.noNotif}>Không có thông báo mới.</p>
+                  <p className={styles.noNotif}>Không có thông báo.</p>
                 )}
               </div>
             )}
           </div>
           
-          {/* Wrapper Profile */}
-          <div 
-            className={styles.profileWrapper}
-            onMouseEnter={() => setProfileOpen(true)}
-            onMouseLeave={() => setProfileOpen(false)}
-          >
+          <div className={styles.profileWrapper} onMouseEnter={() => setProfileOpen(true)} onMouseLeave={() => setProfileOpen(false)}>
             <div className={styles.avatar} onClick={() => navigate('/profile')}>
-              {/* TODO: Thêm ảnh avatar nếu có */}
               {user?.name?.charAt(0).toUpperCase() || '?'}
             </div>
             {isProfileOpen && (
@@ -95,10 +97,8 @@ const Header: React.FC = () => {
                   <p className={styles.dropdownName}>{user?.name}</p>
                   <p className={styles.dropdownEmail}>{user?.email}</p>
                 </div>
-                <Link to="/profile" className={styles.dropdownItem}>Thông tin cá nhân</Link>
-                <button onClick={handleLogout} className={`${styles.dropdownItem} ${styles.logoutButton}`}>
-                  Đăng xuất
-                </button>
+                <Link to="/profile" className={styles.dropdownItem}>Cá nhân</Link>
+                <button onClick={handleLogout} className={`${styles.dropdownItem} ${styles.logoutButton}`}>Đăng xuất</button>
               </div>
             )}
           </div>

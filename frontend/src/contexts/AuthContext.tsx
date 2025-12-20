@@ -15,8 +15,7 @@ const getPrimaryRole = (roles?: string[]): 'admin' | 'teacher' | 'student' => {
   if (!roles || roles.length === 0) return 'student';
   const normalized = roles.map(removeDiacritics);
 
-  if (normalized.some(r => r === 'ROLE_ADMIN' || r === 'ADMIN')) return 'admin';
-  if (normalized.some(r => r === 'ROLE_TEACHER' || r === 'TEACHER' || r === 'GIAO VIEN')) return 'teacher';
+if (normalized.some(r => r === 'ROLE_ADMIN' || r === 'ADMIN' || r === 'QUAN TRI VIEN')) return 'admin';  if (normalized.some(r => r === 'ROLE_TEACHER' || r === 'TEACHER' || r === 'GIAO VIEN')) return 'teacher';
   return 'student';
 };
 

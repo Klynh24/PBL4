@@ -136,6 +136,7 @@ export interface Notification {
  id: number;
  message: string;
  read: boolean;
+ createAt?: string;
 }
 
 export interface Post {
