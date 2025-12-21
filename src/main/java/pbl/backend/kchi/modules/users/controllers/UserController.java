@@ -28,9 +28,13 @@ import pbl.backend.kchi.modules.users.requests.UpdateUserRequest;
 import pbl.backend.kchi.modules.users.resources.UserResource;
 import pbl.backend.kchi.modules.users.services.interfaces.UserServiceInterface;
 import pbl.backend.kchi.resources.ApiResource;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 @Tag(name="API Thành viên")
 @RestController
@@ -100,6 +104,33 @@ public class UserController extends BaseController<
         logger.info("Success!");
         return ResponseEntity.ok(response);
 
+    }
+    @Override
+    @GetMapping("")
+    public ResponseEntity<?> pagination(HttpServletRequest request) {
+        // 1. Lấy tham số và thực hiện phân trang từ service của BaseController
+        Map<String, String[]> parameters = request.getParameterMap();
+        Page<User> entities = service.paginate(parameters, request);
+
+        // 2. Chuyển đổi Page<User> thành Page<UserResource> và nạp quyền
+        Page<UserResource> resourcePage = entities.map(user -> {
+            List<String> roles = user.getUserCatalogues().stream()
+                    .map(UserCatalogue::getName)
+                    .collect(Collectors.toList());
+
+            return UserResource.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .phone(user.getPhone())
+                    .address(user.getAddress())
+                    .roles(roles) // Nạp mảng roles vào DTO
+                    .build();
+        });
+
+        // 3. Trả về đúng cấu trúc ApiResource của hệ thống
+        ApiResource<Page<UserResource>> response = ApiResource.ok(resourcePage, "SUCCESS");
+        return ResponseEntity.ok(response);
     }
 
 }

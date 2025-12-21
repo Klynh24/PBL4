@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserResource {
-    private final Long id;
+      private final Long id;
     private final String email;
     private final String name;
     private final String password;
@@ -20,5 +20,4 @@ public class UserResource {
     private final String address;
     private final String image;
     private List<String> roles;
-
 }
