@@ -16,6 +16,7 @@ import pbl.backend.kchi.modules.users.resources.UserResource;
 import lombok.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class RoomService implements RoomServiceInterface {
@@ -33,29 +34,7 @@ public class RoomService implements RoomServiceInterface {
     private UserMapper userMapper;
 
 
-    @Override
-@Transactional
-public Room createRoom(StoreRoomRequest request, Long creatorId) {
-    User creator = userRepository.findById(creatorId)
-            .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người tạo"));
-
-    Room room = roomMapper.toEntity(request);
-
-    // 1. Đồng bộ tên phương thức với biến trong Entity Room.java
-    // Lưu ý: Có chữ 'd' ở cuối (CreatedAt / UpdatedAt)
-    LocalDateTime now = LocalDateTime.now();
-    room.setCreatedAt(now); 
-    room.setUpdatedAt(now);
-
-    // 2. Đảm bảo trạng thái không null (Dòng này để chắc chắn hơn nữa)
-    if (room.getStatus() == null) {
-        room.setStatus("ACTIVE");
-    }
-
-    room.getParticipants().add(creator);
-
-    return roomRepository.save(room);
-}
+  
 
     @Override
     @Transactional(readOnly = true)
@@ -65,16 +44,47 @@ public Room createRoom(StoreRoomRequest request, Long creatorId) {
     }
 
     @Override
-    @Transactional
-    public void joinRoom(Long roomId, Long userId) {
-        Room room = findRoomById(roomId);
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng"));
+@Transactional
+public Room createRoom(StoreRoomRequest request, Long creatorId) {
+    // 1. KIỂM TRA TRƯỚC: Nếu lớp đã có phòng ACTIVE, trả về phòng đó luôn
+    return roomRepository.findByClassesIdAndStatus(request.getClassId(), "ACTIVE")
+        .orElseGet(() -> {
+            // 2. Nếu CHƯA CÓ, mới thực hiện logic tạo phòng của bạn
+            User creator = userRepository.findById(creatorId)
+                    .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người tạo"));
 
-        room.getParticipants().add(user);
+            Room room = roomMapper.toEntity(request);
 
-        roomRepository.save(room);
-    }
+            LocalDateTime now = LocalDateTime.now();
+            room.setCreatedAt(now); // Khớp với Room.java (có chữ 'd')
+            room.setUpdatedAt(now);
+
+            if (room.getStatus() == null) {
+                room.setStatus("ACTIVE");
+            }
+
+            // Thêm giáo viên/người tạo vào danh sách tham gia
+            room.getParticipants().add(creator);
+
+            return roomRepository.save(room);
+        });
+}
+
+@Transactional
+public void joinRoom(Long roomId, Long userId) {
+    // Lấy đúng roomId đang tồn tại
+    Room room = roomRepository.findById(roomId)
+            .orElseThrow(() -> new EntityNotFoundException("Phòng không tồn tại hoặc đã kết thúc"));
+    
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("Người dùng không tồn tại"));
+
+    // Thêm sinh viên vào Set participants (Set tự động tránh trùng lặp)
+    room.getParticipants().add(user);
+
+    // Lưu lại để cập nhật bảng trung gian room_participants
+    roomRepository.save(room);
+}
 
     @Override
     @Transactional

@@ -23,38 +23,46 @@ const ClassDetailsPage: React.FC = () => {
 
   useEffect(() => {
     const init = async () => {
-      if (!classId || !user) return;
-      try {
-        setLoading(true);
-        const classRes = await api.getClassDetails(classId);
-        const data = classRes.data.data;
-        setClassDetails(data);
+        if (!classId || !user) return;
+        try {
+            setLoading(true);
+            const classRes = await api.getClassDetails(classId);
+            const data = classRes.data.data;
+            setClassDetails(data);
 
-        // Khởi tạo phòng họp với userId
-        const roomRes = await api.createRoom({ 
-          classId: parseInt(classId), 
-          name: `Lớp: ${data.name}`,
-          userId: user.id 
-        });
-        setRoomId(roomRes.data.data.id);
-      } catch (err) { console.error(err); } finally { setLoading(false); }
+            // THAY ĐỔI: Chỉ đi TÌM phòng đang có sẵn, KHÔNG tự ý tạo mới ở đây
+            const roomRes = await api.getActiveRoom(classId); // Giả sử bạn đã thêm API này
+            if (roomRes.data && roomRes.data.data) {
+                setRoomId(roomRes.data.data.id);
+            }
+        } catch (err) { console.error(err); } finally { setLoading(false); }
     };
     init();
-  }, [classId, user]);
+}, [classId, user]);
 
-  const handleStartOrJoinMeeting = async () => {
+const handleStartOrJoinMeeting = async () => {
     if (!classId || !classDetails || !user) return;
     try {
-      setIsPreparingMeeting(true);
-      const roomRes = await api.createRoom({ 
-        classId: parseInt(classId), 
-        name: classDetails.name,
-        userId: user.id
-      });
-      setRoomId(roomRes.data.data.id);
-      navigate(`/classes/${classId}/meet`);
+        setIsPreparingMeeting(true);
+        
+        // Nếu đã có roomId từ useEffect, vào thẳng luôn
+        if (roomId) {
+            navigate(`/classes/${classId}/meet`);
+            return;
+        }
+
+        // Chỉ tạo phòng nếu roomId chưa tồn tại (Dành cho Giáo viên)
+        const roomRes = await api.createRoom({ 
+            classId: parseInt(classId), 
+            name: classDetails.name,
+            userId: user.id
+        });
+        setRoomId(roomRes.data.data.id);
+        navigate(`/classes/${classId}/meet`);
     } catch (err) { alert(api.getErrorMessage(err)); } finally { setIsPreparingMeeting(false); }
-  };
+};
+
+  
 
   const handleCopyCode = () => {
     if (classDetails?.code) {

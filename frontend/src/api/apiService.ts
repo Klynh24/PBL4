@@ -74,4 +74,9 @@ export const uploadFile = (file: File) => {
     return axiosInstance.post<T.ApiResponse<string>>('/api/v1/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
 };
 
+export const getActiveRoom = (classId: string | number) => {
+    // Sửa api.get thành axiosInstance.get và thêm /api/v1
+    return axiosInstance.get<T.ApiResponse<{id: number}>>(`/api/v1/rooms/active/${classId}`);
+};
+
 export default axiosInstance;

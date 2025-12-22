@@ -84,7 +84,12 @@ public class RoomController {
         ApiResource<String> response = ApiResource.message("Rời phòng thành công", HttpStatus.OK);
         return new ResponseEntity<>(response, response.getStatus());
     }
-
+@GetMapping("/active/{classId}")
+public ResponseEntity<?> getActiveRoom(@PathVariable("classId") Long classId) {
+    return roomRepository.findByClassesIdAndStatus(classId, "ACTIVE")
+        .map(room -> ResponseEntity.ok(new ResponseData(room.getId())))
+        .orElse(ResponseEntity.noContent().build());
+}
 
     @GetMapping("/{roomId}/participants")
     public ResponseEntity<ApiResource<List<UserResource>>> getParticipants(
