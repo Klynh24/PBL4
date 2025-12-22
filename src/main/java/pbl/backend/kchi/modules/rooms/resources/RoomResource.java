@@ -19,5 +19,6 @@ public class RoomResource {
     private LocalDateTime endedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long classId;
 
 }

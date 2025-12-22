@@ -23,7 +23,13 @@ public interface RoomMapper extends BaseMapper<
 
     @Override
     @BaseMapperAnnotation
-    @Mapping(target = "classes", ignore = true)
+    // Ánh xạ từ Room (Entity) sang RoomResource (JSON)
+    @Mapping(source = "classes.id", target = "classId") 
+    RoomResource tResource(Room entity);
+
+    @Override
+    @BaseMapperAnnotation
+    @Mapping(target = "classes", ignore = true) // Vẫn giữ ignore vì ta sẽ set thủ công ở Service
     @Mapping(target = "participants", ignore = true)
     @Mapping(target = "status", constant = "Active")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

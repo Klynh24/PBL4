@@ -17,6 +17,7 @@ import lombok.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
+import pbl.backend.kchi.modules.classes.repositories.ClassRepository;
 
 @Service
 public class RoomService implements RoomServiceInterface {
@@ -33,6 +34,9 @@ public class RoomService implements RoomServiceInterface {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired // BẮT BUỘC PHẢI THÊM CÁI NÀY
+    private ClassRepository classRepository;
+
 
   
 
@@ -46,26 +50,20 @@ public class RoomService implements RoomServiceInterface {
     @Override
 @Transactional
 public Room createRoom(StoreRoomRequest request, Long creatorId) {
-    // 1. KIỂM TRA TRƯỚC: Nếu lớp đã có phòng ACTIVE, trả về phòng đó luôn
+    // 1. Kiểm tra phòng ACTIVE cũ
     return roomRepository.findByClassesIdAndStatus(request.getClassId(), "ACTIVE")
         .orElseGet(() -> {
-            // 2. Nếu CHƯA CÓ, mới thực hiện logic tạo phòng của bạn
-            User creator = userRepository.findById(creatorId)
-                    .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người tạo"));
-
             Room room = roomMapper.toEntity(request);
+            
+            // Tìm và gán Entity Class để tránh lỗi NULL class_id
+            pbl.backend.kchi.modules.classes.entities.Classes classes = classRepository.findById(request.getClassId())
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy lớp học"));
+            room.setClasses(classes); 
 
-            LocalDateTime now = LocalDateTime.now();
-            room.setCreatedAt(now); // Khớp với Room.java (có chữ 'd')
-            room.setUpdatedAt(now);
-
-            if (room.getStatus() == null) {
-                room.setStatus("ACTIVE");
-            }
-
-            // Thêm giáo viên/người tạo vào danh sách tham gia
+            User creator = userRepository.findById(creatorId).orElseThrow();
+            room.setStatus("ACTIVE");
             room.getParticipants().add(creator);
-
+            
             return roomRepository.save(room);
         });
 }

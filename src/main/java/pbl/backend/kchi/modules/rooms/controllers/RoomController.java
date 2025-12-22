@@ -15,7 +15,9 @@ import pbl.backend.kchi.modules.rooms.resources.RoomResource;
 import pbl.backend.kchi.modules.rooms.services.interfaces.RoomServiceInterface;
 import pbl.backend.kchi.modules.users.resources.UserResource;
 import pbl.backend.kchi.resources.ApiResource;
-
+import pbl.backend.kchi.modules.rooms.repositories.RoomRepository;
+import pbl.backend.kchi.modules.classes.repositories.ClassRepository;
+import java.util.Optional;
 import java.util.List;
 
 @Tag(name="API ROOMS")
@@ -30,24 +32,29 @@ public class RoomController {
     @Autowired
     private RoomMapper roomMapper;
 
+     @Autowired
+    private RoomRepository roomRepository;
 
-    @PostMapping
-    public ResponseEntity<ApiResource<RoomResource>> createRoom(
-            @Valid @RequestBody StoreRoomRequest request,
-            HttpServletRequest httpServletRequest
-    ) {
-        Long creatorId = (Long) httpServletRequest.getAttribute("userId");
-        Room newRoom = roomService.createRoom(request, creatorId);
+    @Autowired
+    private ClassRepository classRepository;
 
 
-        RoomResource roomResource = roomMapper.tResource(newRoom);
-
-
-        ApiResource<RoomResource> response = ApiResource.ok(roomResource, "Tạo phòng thành công");
-        return new ResponseEntity<>(response, response.getStatus());
-    }
-
-
+   @PostMapping
+public ResponseEntity<ApiResource<RoomResource>> createRoom(
+        @Valid @RequestBody StoreRoomRequest request, // Thêm @RequestBody
+        HttpServletRequest httpServletRequest
+) {
+    // Lấy userId từ request giống như bạn làm ở hàm joinRoom
+    Long userId = (Long) httpServletRequest.getAttribute("userId");
+    
+    // Gọi Service để xử lý (Logic setClasses phải nằm ở Service)
+    Room room = roomService.createRoom(request, userId);
+    
+    RoomResource roomResource = roomMapper.tResource(room);
+    ApiResource<RoomResource> response = ApiResource.ok(roomResource, "Tạo phòng thành công");
+    
+    return new ResponseEntity<>(response, HttpStatus.OK);
+}
     @GetMapping("/{roomId}")
     public ResponseEntity<ApiResource<RoomResource>> getRoomInfo(
             @PathVariable Long roomId
@@ -87,8 +94,13 @@ public class RoomController {
 @GetMapping("/active/{classId}")
 public ResponseEntity<?> getActiveRoom(@PathVariable("classId") Long classId) {
     return roomRepository.findByClassesIdAndStatus(classId, "ACTIVE")
-        .map(room -> ResponseEntity.ok(new ResponseData(room.getId())))
-        .orElse(ResponseEntity.noContent().build());
+        .map(room -> {
+            // Sử dụng Map để trả về cấu trúc { "data": { "id": ... } }
+            java.util.Map<String, Object> data = java.util.Map.of("id", room.getId());
+            return ResponseEntity.ok(java.util.Map.of("data", data));
+        })
+        // Sử dụng orElseGet để đảm bảo cùng kiểu trả về ResponseEntity<?>
+        .orElseGet(() -> ResponseEntity.noContent().build());
 }
 
     @GetMapping("/{roomId}/participants")
