@@ -2,7 +2,9 @@ import axios, { AxiosError } from 'axios';
 import * as T from '../types';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080',
+    // Use same-origin so Docker nginx proxy can forward /api/v1/* to backend
+    // (avoids hardcoding localhost:8080 which breaks inside containers)
+    baseURL: '',
     headers: { 'Content-Type': 'application/json' },
 });
 

@@ -9,11 +9,11 @@ services:
       MYSQL_DATABASE: team1
       MYSQL_ROOT_PASSWORD: 123456789
     ports:
-      - "3306:3306"
+      - "3307:3306"
     restart: always
     # Đảm bảo DB sẵn sàng trước khi Backend kết nối
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       timeout: 5s
       retries: 10
 
@@ -24,11 +24,11 @@ services:
       dockerfile: Dockerfile
     container_name: kchi_backend
     ports:
-      - "8080:8080"
+      - "8081:8080"
     # Cấu hình Volume để đồng bộ code từ ổ D vào Container
     volumes:
       - .:/app
-      - /app/target  # Tránh ghi đè file build của container lên máy thật
+      - /app/target # Tránh ghi đè file build của container lên máy thật
     depends_on:
       db:
         condition: service_healthy
@@ -46,6 +46,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        # Browser will connect to Tier2 via host port mapping
+        VITE_NETWORK_PROXY_URL: ws://localhost:8089/connect
     container_name: kchi_frontend_proxy
     ports:
       - "8088:80"
@@ -53,4 +56,33 @@ services:
       - ./frontend:/app # Đồng bộ code frontend để tự update giao diện
     depends_on:
       - backend
+    restart: always
+
+  # 4. Tier 3 Core Server (Network branch)
+  tier3_core:
+    build:
+      context: ./Network/tier3-core-server
+      dockerfile: Dockerfile
+    container_name: kchi_tier3_core
+    # Internal only; Tier2 connects over Docker network
+    expose:
+      - "9000"
+      - "9001"
+    restart: always
+
+  # 5. Tier 2 Proxy Server (WebSocket <-> Core TCP/UDP)
+  tier2_proxy:
+    build:
+      context: ./Network/tier2-proxy-server
+      dockerfile: Dockerfile
+    container_name: kchi_tier2_proxy
+    environment:
+      CORE_SERVER_HOST: tier3_core
+      CORE_SERVER_TCP_PORT: "9000"
+      CORE_SERVER_UDP_PORT: "9001"
+      PROXY_PORT: "8089"
+    ports:
+      - "8089:8089"
+    depends_on:
+      - tier3_core
     restart: always

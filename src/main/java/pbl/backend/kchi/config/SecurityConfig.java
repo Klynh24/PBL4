@@ -41,6 +41,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
+                        // SockJS handshake endpoints (auth is enforced at STOMP CONNECT)
+                        .requestMatchers("/ws/**").permitAll()
+
                         .requestMatchers(
                                 "/api/v1/auth/login",
                                 "/api/v1/auth/refresh",
@@ -64,7 +67,6 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
 
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:8088", "http://127.0.0.1:8088"));
 

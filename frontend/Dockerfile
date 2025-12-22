@@ -2,6 +2,10 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
+# Vite env vars are baked at build time
+ARG VITE_NETWORK_PROXY_URL
+ENV VITE_NETWORK_PROXY_URL=${VITE_NETWORK_PROXY_URL}
+
 # 1. Copy dependencies và cài đặt (lớp cache 1)
 COPY package.json package-lock.json ./
 RUN npm install
