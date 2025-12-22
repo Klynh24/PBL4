@@ -92,6 +92,7 @@ const AppRoutes = () => {
                         <Route path="files" element={<FilesTab />} />
                         <Route path="assignments" element={<AssignmentsTab />} />
                         <Route path="members" element={<MembersTab />} />
+                        <Route path="meet" element={<MeetingPage />} />
                     </Route>
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/notifications" element={<NotificationsPage />} />

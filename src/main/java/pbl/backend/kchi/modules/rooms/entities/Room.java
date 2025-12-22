@@ -44,7 +44,9 @@ public class Room {
 
     private String name;
 
-    private String status;
+    @Builder.Default 
+    @Column(name = "status", nullable = false)
+    private String status = "ACTIVE";
 
     @Column(name = "started_at")
     private LocalDateTime startedAt;
@@ -61,6 +63,7 @@ public class Room {
     @PrePersist
     protected void onCreated(){
         createdAt = LocalDateTime.now();
+        if (status == null) status = "ACTIVE";
     }
 
     @PreUpdate

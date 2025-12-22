@@ -1,5 +1,5 @@
 package pbl.backend.kchi.modules.rooms.services.impl;
-
+import java.time.LocalDateTime;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,17 +34,28 @@ public class RoomService implements RoomServiceInterface {
 
 
     @Override
-    @Transactional
-    public Room createRoom(StoreRoomRequest request, Long creatorId) {
-        User creator = userRepository.findById(creatorId)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người tạo"));
+@Transactional
+public Room createRoom(StoreRoomRequest request, Long creatorId) {
+    User creator = userRepository.findById(creatorId)
+            .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người tạo"));
 
-        Room room = roomMapper.toEntity(request);
+    Room room = roomMapper.toEntity(request);
 
-        room.getParticipants().add(creator);
+    // 1. Đồng bộ tên phương thức với biến trong Entity Room.java
+    // Lưu ý: Có chữ 'd' ở cuối (CreatedAt / UpdatedAt)
+    LocalDateTime now = LocalDateTime.now();
+    room.setCreatedAt(now); 
+    room.setUpdatedAt(now);
 
-        return roomRepository.save(room);
+    // 2. Đảm bảo trạng thái không null (Dòng này để chắc chắn hơn nữa)
+    if (room.getStatus() == null) {
+        room.setStatus("ACTIVE");
     }
+
+    room.getParticipants().add(creator);
+
+    return roomRepository.save(room);
+}
 
     @Override
     @Transactional(readOnly = true)

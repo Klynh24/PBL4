@@ -109,6 +109,7 @@ public class JwtAuthFilter extends OncePerRequestFilter{
                 );
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                request.setAttribute("userId", Long.parseLong(userId));
                 logger.info("Xác thực tài khoản thành công: " + userDetails.getUsername());
             }
 

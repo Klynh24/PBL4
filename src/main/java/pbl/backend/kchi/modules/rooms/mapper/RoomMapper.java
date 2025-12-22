@@ -25,6 +25,7 @@ public interface RoomMapper extends BaseMapper<
     @BaseMapperAnnotation
     @Mapping(target = "classes", ignore = true)
     @Mapping(target = "participants", ignore = true)
+    @Mapping(target = "status", constant = "Active")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Room toEntity(StoreRoomRequest createRequest);
 

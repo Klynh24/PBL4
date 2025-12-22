@@ -1,161 +1,88 @@
-// src/types/index.ts
-
+// --- 1. CẤU TRÚC CHUNG ---
 export interface ApiResponse<T> {
- success: boolean;
- message: string;
- data: T;
- status?: string;
- timestamp?: string;
-}
-
-export interface UserCatalogue {
- id: number;
- name: string;
- publish: number;
+  success: boolean;
+  message: string;
+  data: T;
+  status?: string;
+  timestamp?: string;
 }
 
 export type PrimaryRole = 'student' | 'teacher' | 'admin';
 
-// Sửa: Không khai báo trùng 'role'. Giữ roles (mảng) và role (vai trò chính) dạng optional.
+// --- 2. NGƯỜI DÙNG & DANH MỤC ---
+export interface UserCatalogue {
+  id: number;
+  name: string;
+  publish: number;
+}
+
 export interface User {
- id: number;
- email: string;
- name: string;
- phone?: string | null;
- image?: string | null;
- address?: string | null;
-
- // BE trả về mảng tên vai trò
- roles?: string[];
-
- // Vai trò chính đã chuẩn hoá (tính ở FE)
- role?: PrimaryRole;
-
- isBanned?: boolean;
+  id: number;
+  email: string;
+  name: string;
+  phone?: string | null;
+  image?: string | null;
+  address?: string | null;
+  roles?: string[]; // Trả về từ Backend
+  role?: PrimaryRole; // Chuẩn hoá ở Frontend
+  isBanned?: boolean;
 }
 
-export interface Class {
- id: number;
- name: string;
- teacher: string;
- description?: string;
- user?: User;
-}
-
-export interface ClassDetails {
- id: number;
- name: string;
- code: string; // <-- ĐÃ THÊM: Mã lớp học cho tính năng Join Class
- teacher: string;
- teacherId: number;
- students: User[];
- user: User;
-}
-
-// --- Các kiểu dữ liệu cho API ---
-
-export interface LoginCredentials {
- email: string;
- password: string;
-}
-
-export interface LoginResponseData {
- token: string;
- refreshToken: string;
- user: any; // hoặc User nếu BE trả về
-}
-
-export interface RegisterData {
- email: string;
- password: string;
- userCatalogues: number[];
- name: string;
- address: string;
- phone: string;
-}
-
+// FIX LỖI TS2305: Export UpdateUserData cho ProfilePage
 export type UpdateUserData = Partial<Pick<User, 'name' | 'address' | 'phone' | 'image'>>;
 
-export interface CreateClassData {
- name: string;
+// --- 3. LỚP HỌC & PHÒNG HỌP ---
+export interface Class {
+  id: number;
+  name: string;
+  code: string;
+  description?: string;
+  user?: User; // Đối tượng giáo viên
 }
 
-export interface JoinClassData {
- code?: string;
+export interface ClassDetails extends Class {
+  teacher?: string;
+  teacherId?: number;
+  students?: User[];
 }
 
-export interface AssignmentData {
- classId: number;
- title: string;
- description: string;
- dueDate: string;
+export interface RoomResource {
+  id: number;
+  code: string;
+  name: string;
+  user?: User; // Người tạo phòng
 }
 
-export interface Assignment {
- id: number;
- title: string;
- dueDate: string;
+export interface StoreRoomRequest {
+  classId: number;
+  name?: string;
+  userId: number; // Bắt buộc theo RoomController
 }
 
-export interface SubmissionData {
-    // Trường này đã được thêm vào payload nhưng thiếu trong interface
-    assignmentId: number;
+// --- 4. AUTH & REQUEST DATA ---
+export interface LoginCredentials { email: string; password: string; }
+export interface LoginResponseData { token: string; refreshToken: string; user: any; }
 
-    // Trường fileUrl đã có
-    fileUrl: string;
+export interface PasswordResetRequestData { email: string; }
+export interface ResetPasswordData { token: string; newPassword: string; }
 
-    // Bạn có thể thêm các trường khác nếu cần (ví dụ: description)
+export interface RegisterData {
+  email: string;
+  password: string;
+  name: string;
+  address: string;
+  phone: string; // Fix lỗi 400 validation
+  userCatalogues: number[]; // Mảng ID
 }
 
-export interface GradeData {
- studentId: number;
- score: number;
-}
-
-export interface ChatMessageData {
- message: string;
-}
-
-export interface NotificationData {
- message: string;
- targetRole?: 'student' | 'teacher' | 'admin';
-}
-
-export interface MarkReadData {
- read: boolean;
-}
-
-export interface CreateUserCatalogueData {
- name: string;
- publish: string | number;
-}
-
-export type UpdateUserCatalogueData = Partial<CreateUserCatalogueData>;
-
-export interface Notification {
- id: number;
- message: string;
- read: boolean;
- createAt?: string;
-}
-
-export interface Post {
- id: number;
- authorName: string;
- content: string;
- timestamp: string;
- authorRole: 'teacher' | 'student' | 'admin';
-}
-
-export interface CreatePostData {
- content: string;
-}
-
-export interface PasswordResetRequestData {
- email: string;
-}
-
-export interface ResetPasswordData {
- token: string;
- newPassword: string;
-}
+// --- 5. BÀI TẬP, BÀI ĐĂNG, CHAT & NOTIFY ---
+export interface CreateClassData { name: string; }
+export interface AssignmentData { classId: number; title: string; description: string; dueDate: string; }
+export interface Assignment { id: number; title: string; dueDate: string; description?: string; }
+export interface SubmissionData { assignmentId: number; fileUrl: string; }
+export interface GradeData { studentId: number; score: number; }
+export interface CreatePostData { content: string; }
+export interface ChatMessageData { message: string; }
+export interface NotificationData { message: string; targetRole?: PrimaryRole; }
+export interface Post { id: number; authorName: string; content: string; timestamp: string; authorRole: PrimaryRole; }
+export interface Notification { id: number; message: string; read: boolean; createAt?: string; }

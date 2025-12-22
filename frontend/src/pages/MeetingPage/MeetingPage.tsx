@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import styles from './MeetingPage.module.css';
 import * as api from '../../api/apiService';
-import { useAuth } from '../../contexts/AuthContext';
 import Modal from '../../components/common/Modal/Modal';
 import { User, ClassDetails } from '../../types'; 
-import {
-    FiMic, FiMicOff, FiVideo, FiVideoOff, FiShare, FiMessageSquare,
-    FiUsers, FiPhoneMissed, FiClipboard, FiSend
-} from 'react-icons/fi';
+import { FiMic, FiMicOff, FiVideo, FiVideoOff, FiShare, FiMessageSquare, FiUsers, FiPhoneMissed, FiSend } from 'react-icons/fi';
 import { FaHandPaper } from 'react-icons/fa';
 
 interface Participant {
@@ -21,13 +17,17 @@ interface Participant {
 const MeetingPage: React.FC = () => {
     const { classId } = useParams<{ classId: string }>();
     const navigate = useNavigate();
-    const { user } = useAuth();
+    
+    // Lấy dữ liệu đã chuẩn bị sẵn từ ClassDetailsPage
+    const { user, classDetails, roomId } = useOutletContext<{ 
+        user: User | null; 
+        classDetails: ClassDetails | null; 
+        roomId: number | null; 
+    }>();
     
     const [meetingState, setMeetingState] = useState<'lobby' | 'in_call'>('lobby');
-    
-    const [classDetails, setClassDetails] = useState<ClassDetails | null>(null);
     const [participants, setParticipants] = useState<Participant[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     
     const [isMicMuted, setMicMuted] = useState(false);
     const [isCameraOff, setCameraOff] = useState(false);
@@ -35,123 +35,112 @@ const MeetingPage: React.FC = () => {
     const [sidePanel, setSidePanel] = useState<'chat' | 'participants' | null>(null);
     const [isLeaveModalOpen, setLeaveModalOpen] = useState(false);
 
+    // 1. CẬP NHẬT THÀNH VIÊN THỰC TẾ: Gọi API mỗi 5 giây
+    const fetchParticipants = useCallback(async () => {
+        if (!roomId || meetingState !== 'in_call') return;
+        try {
+            const res = await api.getParticipants(roomId); // GET /api/v1/rooms/{roomId}/participants
+            const onlineUsers: User[] = res.data.data;
+            setParticipants(onlineUsers.map(u => ({
+                id: u.id,
+                name: u.name,
+                isTeacher: u.id === classDetails?.user?.id,
+                handRaised: false 
+            })));
+        } catch (err) { console.error("Lỗi cập nhật thành viên:", err); }
+    }, [roomId, meetingState, classDetails]);
+
     useEffect(() => {
-        if (classId) {
-            setIsLoading(true);
-            api.getClassDetails(classId)
-                .then(res => {
-                    const details: ClassDetails = res.data.data;
-                    setClassDetails(details);
-
-                    const teacher: Participant = { 
-                        id: details.teacherId || details.user.id, 
-                        name: details.teacher, 
-                        isTeacher: true, 
-                        handRaised: false 
-                    };
-                    
-                    const students: Participant[] = (details.students || []).map((s: User) => ({ 
-                        id: s.id, 
-                        name: s.name, 
-                        isTeacher: false, 
-                        handRaised: false 
-                    }));
-
-                    setParticipants([teacher, ...students]);
-                    setPinnedParticipantId(teacher.id);
-                })
-                .catch(err => {
-                    console.error("Không thể tải chi tiết lớp học:", api.getErrorMessage(err));
-                    navigate('/classes', { replace: true });
-                })
-                .finally(() => setIsLoading(false));
+        let interval: any;
+        if (meetingState === 'in_call' && roomId) {
+            fetchParticipants();
+            interval = setInterval(fetchParticipants, 5000);
         }
-    }, [classId, navigate]);
+        return () => clearInterval(interval);
+    }, [meetingState, roomId, fetchParticipants]);
 
-    const handleToggleHandRaise = () => {
-        setParticipants(prev => 
-            prev.map(p => 
-                p.id === user?.id ? { ...p, handRaised: !p.handRaised } : p
-            )
-        );
+    // 2. GIA NHẬP PHÒNG
+    const handleJoinCall = async () => {
+        if (!roomId) return;
+        try {
+            setIsLoading(true);
+            await api.joinRoom(roomId); // POST /api/v1/rooms/{roomId}/join
+            setMeetingState('in_call');
+        } catch (err) {
+            alert("Không thể vào phòng: " + api.getErrorMessage(err));
+        } finally { setIsLoading(false); }
+    };
+
+    // 3. RỜI PHÒNG
+    const handleConfirmLeave = async () => {
+        if (roomId) {
+            try { await api.leaveRoom(roomId); } catch (e) { console.error(e); } // POST /api/v1/rooms/{roomId}/leave
+        }
+        navigate(`/classes/${classId}/posts`);
     };
 
     const isCurrentUserHandRaised = participants.find(p => p.id === user?.id)?.handRaised || false;
-    const handleJoinCall = () => setMeetingState('in_call'); 
-    const handlePinParticipant = (id: number) => setPinnedParticipantId(prevId => prevId === id ? null : id);
 
     if (meetingState === 'lobby') {
         return (
             <div className={styles.lobbyContainer}>
                 <div className={styles.videoPreview}>
-                    {isLoading ? <p>Đang tải...</p> : <div className={styles.avatarPreview}>{user?.name.charAt(0)}</div>}
+                    <div className={styles.avatarPreview}>{user?.name.charAt(0)}</div>
                     <div className={styles.lobbyControls}>
                         <button className={`${styles.controlButton} ${isMicMuted ? styles.toggledOff : ''}`} onClick={() => setMicMuted(!isMicMuted)}>{isMicMuted ? <FiMicOff /> : <FiMic />}</button>
                         <button className={`${styles.controlButton} ${isCameraOff ? styles.toggledOff : ''}`} onClick={() => setCameraOff(!isCameraOff)}>{isCameraOff ? <FiVideoOff /> : <FiVideo />}</button>
                     </div>
                 </div>
                 <div className={styles.joinSection}>
-                    <h2>{classDetails?.name || 'Sẵn sàng tham gia?'}</h2>
-                    <button className={styles.joinNowButton} onClick={handleJoinCall} disabled={isLoading}>{isLoading ? 'Đang tải...' : 'Tham gia ngay'}</button>
+                    <h2>{classDetails?.name || 'Sẵn sàng?'}</h2>
+                    <button className={styles.joinNowButton} onClick={handleJoinCall} disabled={isLoading || !roomId}>
+                        {isLoading ? 'Đang vào...' : 'Tham gia ngay'}
+                    </button>
                 </div>
             </div>
         );
     }
 
-    const pinnedParticipant = participants.find(p => p.id === pinnedParticipantId);
-    const otherParticipants = participants.filter(p => p.id !== pinnedParticipantId);
+    const pinnedParticipant = participants.find(p => p.id === pinnedParticipantId) || participants[0];
 
     return (
-        <>
-            <div className={styles.meetingContainer}>
-                <header className={styles.header}><h3>{classDetails?.name || 'Đang tải...'}</h3></header>
-                
-                <div className={`${styles.mainLayout} ${sidePanel ? styles.sidePanelOpen : ''}`}>
-                    <main className={`${styles.mainContent} ${pinnedParticipantId ? styles.pinnedLayout : ''}`}>
-                        <div className={styles.mainVideoArea}>
-                            {pinnedParticipant ? (
-                                <div className={`${styles.participant} ${pinnedParticipant.handRaised ? styles.handRaised : ''}`} key={pinnedParticipant.id}>
-                                    {pinnedParticipant.handRaised && <FaHandPaper className={styles.handRaisedIcon} />}
-                                    <div className={styles.avatar}>{pinnedParticipant.name.charAt(0)}</div>
-                                    <span className={styles.nameTag}>{pinnedParticipant.name} {pinnedParticipant.isTeacher && '(Giáo viên)'}</span>
-                                </div>
-                            ) : <div className={styles.galleryInfo}>Chế độ xem thư viện</div>}
-                        </div>
-                        
-                        <div className={styles.sideVideoArea}>
-                            {(pinnedParticipantId ? otherParticipants : participants).map((p) => (
-                                <div className={`${styles.participant} ${p.handRaised ? styles.handRaised : ''}`} key={p.id} onClick={() => handlePinParticipant(p.id)}>
-                                    {p.handRaised && <FaHandPaper className={styles.handRaisedIcon} />}
-                                    <div className={styles.avatar}>{p.name.charAt(0)}</div>
-                                    <span className={styles.nameTag}>{p.name} {p.id === user?.id && '(Bạn)'}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </main>
-
-                    {sidePanel && (
-                        <aside className={styles.sidePanel}>
-                            {sidePanel === 'participants' && (<><h4>Thành viên ({participants.length})</h4><ul className={styles.participantList}>{participants.map(p => <li key={p.id} className={styles.participantItem}>{p.name} {p.isTeacher && '(GV)'} {p.handRaised && <FaHandPaper />}</li>)}</ul></>)}
-                            {sidePanel === 'chat' && (<><h4>Trò chuyện</h4><div className={styles.chatMessages}><p><strong>GV:</strong> Chào cả lớp!</p></div><div className={styles.chatInputContainer}><input type="text" placeholder="Gửi tin nhắn..." className={styles.chatInput} /><button><FiSend/></button></div></>)}
-                        </aside>
-                    )}
-                </div>
-
-                <footer className={styles.controlBar}>
-                    <button className={`${styles.controlButton} ${isMicMuted ? styles.toggledOff : ''}`} onClick={() => setMicMuted(!isMicMuted)}>{isMicMuted ? <FiMicOff /> : <FiMic />}</button>
-                    <button className={`${styles.controlButton} ${isCameraOff ? styles.toggledOff : ''}`} onClick={() => setCameraOff(!isCameraOff)}>{isCameraOff ? <FiVideoOff /> : <FiVideo />}</button>
-                    <button className={`${styles.controlButton} ${isCurrentUserHandRaised ? styles.toggledOn : ''}`} onClick={handleToggleHandRaise}><FaHandPaper /></button>
-                    <button className={styles.controlButton}><FiShare /></button>
-                    <button className={`${styles.controlButton} ${sidePanel === 'participants' ? styles.toggledOn : ''}`} onClick={() => setSidePanel(sidePanel === 'participants' ? null : 'participants')}><FiUsers /></button>
-                    <button className={`${styles.controlButton} ${sidePanel === 'chat' ? styles.toggledOn : ''}`} onClick={() => setSidePanel(sidePanel === 'chat' ? null : 'chat')}><FiMessageSquare /></button>
-                    <button className={`${styles.controlButton} ${styles.leaveButton}`} onClick={() => setLeaveModalOpen(true)}><FiPhoneMissed /></button>
-                </footer>
+        <div className={styles.meetingContainer}>
+            <header className={styles.header}><h3>{classDetails?.name}</h3></header>
+            <div className={`${styles.mainLayout} ${sidePanel ? styles.sidePanelOpen : ''}`}>
+                <main className={styles.mainContent}>
+                    <div className={styles.mainVideoArea}>
+                        {pinnedParticipant && (
+                            <div className={styles.participant} key={pinnedParticipant.id}>
+                                <div className={styles.avatar}>{pinnedParticipant.name.charAt(0)}</div>
+                                <span className={styles.nameTag}>{pinnedParticipant.name} {pinnedParticipant.isTeacher && '(GV)'}</span>
+                            </div>
+                        )}
+                    </div>
+                    <div className={styles.sideVideoArea}>
+                        {participants.filter(p => p.id !== pinnedParticipant?.id).map(p => (
+                            <div className={styles.participant} key={p.id} onClick={() => setPinnedParticipantId(p.id)}>
+                                <div className={styles.avatar}>{p.name.charAt(0)}</div>
+                                <span className={styles.nameTag}>{p.name}</span>
+                            </div>
+                        ))}
+                    </div>
+                </main>
+                {sidePanel && (
+                    <aside className={styles.sidePanel}>
+                        {sidePanel === 'participants' && (<><h4>Thành viên ({participants.length})</h4><ul>{participants.map(p => <li key={p.id}>{p.name}</li>)}</ul></>)}
+                        {sidePanel === 'chat' && <><h4>Trò chuyện</h4><div className={styles.chatMessages}><p>Hệ thống: Chào mừng!</p></div></>}
+                    </aside>
+                )}
             </div>
-
-            <Modal isOpen={isLeaveModalOpen} onClose={() => setLeaveModalOpen(false)} onConfirm={() => navigate(`/classes/${classId}`)} title="Rời khỏi buổi học">
-                <p>Bạn có chắc chắn muốn kết thúc và rời khỏi buổi học này không?</p>
-            </Modal>
-        </>
+            <footer className={styles.controlBar}>
+                <button className={styles.controlButton} onClick={() => setMicMuted(!isMicMuted)}>{isMicMuted ? <FiMicOff /> : <FiMic />}</button>
+                <button className={styles.controlButton} onClick={() => setCameraOff(!isCameraOff)}>{isCameraOff ? <FiVideoOff /> : <FiVideo />}</button>
+                <button className={styles.controlButton} onClick={() => setSidePanel(sidePanel === 'participants' ? null : 'participants')}><FiUsers /></button>
+                <button className={styles.controlButton} onClick={() => setSidePanel(sidePanel === 'chat' ? null : 'chat')}><FiMessageSquare /></button>
+                <button className={`${styles.controlButton} ${styles.leaveButton}`} onClick={() => setLeaveModalOpen(true)}><FiPhoneMissed /></button>
+            </footer>
+            <Modal isOpen={isLeaveModalOpen} onClose={() => setLeaveModalOpen(false)} onConfirm={handleConfirmLeave} title="Rời cuộc họp"><p>Bạn có chắc muốn rời khỏi phòng họp này?</p></Modal>
+        </div>
     );
 };
 
