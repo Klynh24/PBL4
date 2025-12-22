@@ -62,7 +62,7 @@ public class RoomController {
 
     @PostMapping("/{roomId}/join")
     public ResponseEntity<ApiResource<String>> joinRoom(
-            @PathVariable Long roomId,
+            @PathVariable("roomId") Long roomId,
             HttpServletRequest httpServletRequest
     ) {
         Long userId = (Long) httpServletRequest.getAttribute("userId");
@@ -75,7 +75,7 @@ public class RoomController {
 
     @PostMapping("/{roomId}/leave")
     public ResponseEntity<ApiResource<String>> leaveRoom(
-            @PathVariable Long roomId,
+            @PathVariable("roomId") Long roomId,
             HttpServletRequest httpServletRequest
     ) {
         Long userId = (Long) httpServletRequest.getAttribute("userId");
@@ -88,7 +88,7 @@ public class RoomController {
 
     @GetMapping("/{roomId}/participants")
     public ResponseEntity<ApiResource<List<UserResource>>> getParticipants(
-            @PathVariable Long roomId
+            @PathVariable("roomId") Long roomId
     ) {
         List<UserResource> participants = roomService.getParticipants(roomId);
 
