@@ -77,8 +77,7 @@ const AppRoutes = () => {
                         <Route path="assignments" element={<AssignmentsTab />} />
                         <Route path="members" element={<MembersTab />} />
                         
-                        {/* Trang họp của bạn khôi phục tại đây */}
-                        <Route path="meet" element={<MeetingPage />} /> 
+                        
                     </Route>
 
                     <Route path="/profile" element={<ProfilePage />} />
@@ -86,6 +85,9 @@ const AppRoutes = () => {
                     <Route path="/chat" element={<ChatPage />} />
                 </Route>
             </Route>
+
+            <Route path="/classes/:classId" element={<ClassDetailsPage />} />
+            <Route path="/classes/:classId/meet" element={<MeetingPage />} />
 
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                 <Route element={<MainLayout />}>
